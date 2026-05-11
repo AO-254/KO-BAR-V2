@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KO Staff POS</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#1a4a8a;--blue-dk:#102d5e;--blue-lt:#e8f0fb;
+  --teal:#0f6e56;--teal-lt:#e1f5ee;
+  --red:#a32d2d;--red-lt:#fcebeb;
+  --amber:#85500b;--amber-lt:#faeeda;
+  --gray:#6b7280;--border:rgba(0,0,0,0.09);
+  --card:#ffffff;--bg:#f2f4f8;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh;}
+input,button{font-family:inherit;}
+.hidden{display:none!important;}
+
+/* ─── SHARED ─── */
+.page-wrap{min-height:100vh;background:var(--blue);display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-card{background:var(--card);border-radius:14px;padding:2rem;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.brand{text-align:center;margin-bottom:1.75rem;}
+.brand-logo{width:56px;height:56px;background:var(--blue);border-radius:14px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;}
+.brand h1{font-size:20px;font-weight:700;color:var(--blue);}
+.brand p{font-size:12px;color:var(--gray);margin-top:3px;}
+.brand-sm{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;}
+.brand-sm .logo-sm{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:700;flex-shrink:0;}
+.brand-sm h2{font-size:16px;font-weight:700;color:var(--blue);}
+.brand-sm p{font-size:12px;color:var(--gray);}
+.fld{margin-bottom:13px;}
+.fld label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.fld input{width:100%;padding:11px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;color:var(--blue-dk);outline:none;transition:border-color .2s;background:white;}
+.fld input:focus{border-color:var(--blue);}
+.fld .hint{font-size:11px;color:var(--gray);margin-top:4px;}
+.btn-primary{width:100%;padding:13px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;}
+.btn-primary:hover{background:var(--blue-dk);}
+.btn-primary:disabled{background:#9ca3af;cursor:not-allowed;}
+.btn-secondary{width:100%;padding:11px;background:transparent;color:var(--blue);border:1.5px solid var(--blue-lt);border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;}
+.btn-secondary:hover{background:var(--blue-lt);}
+.btn-ghost{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer;padding:6px 0;text-decoration:underline;}
+.btn-ghost:hover{color:var(--blue);}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.err{background:var(--red-lt);color:var(--red);border-radius:8px;padding:9px 12px;font-size:12px;text-align:center;margin-top:10px;}
+.suc{background:var(--teal-lt);color:var(--teal);border-radius:8px;padding:9px 12px;font-size:12px;text-align:center;margin-top:10px;}
+.info-box{background:var(--blue-lt);color:var(--blue);border-radius:8px;padding:12px 13px;font-size:12px;line-height:1.6;margin-bottom:14px;}
+.info-box strong{display:block;font-size:13px;margin-bottom:2px;}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+
+/* ─── PIN DOTS ─── */
+.pin-dots{display:flex;justify-content:center;gap:12px;margin:16px 0;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid #e5e7eb;transition:all .2s;}
+.pin-dot.filled{background:var(--blue);border-color:var(--blue);}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;}
+.pk{padding:14px;border:1.5px solid var(--border);border-radius:10px;font-size:20px;font-weight:500;cursor:pointer;background:white;color:#1a1a2e;transition:all .15s;}
+.pk:hover{background:var(--blue-lt);border-color:var(--blue);color:var(--blue);}
+.pk:active{transform:scale(.95);}
+.pk.del{font-size:16px;color:var(--gray);}
+.pk.empty{border:none;background:transparent;cursor:default;}
+
+/* ─── SHOP HEADER ─── */
+.shop-hdr{background:var(--blue);color:white;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:10;}
+.hdr-name{font-size:15px;font-weight:600;}
+.hdr-id{font-size:11px;opacity:.75;margin-top:1px;}
+.hdr-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.cart-pill{background:rgba(255,255,255,.15);border:none;color:white;padding:7px 12px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.cart-pill:hover{background:rgba(255,255,255,.25);}
+.badge{background:#facc15;color:#1a1a00;border-radius:9px;padding:1px 7px;font-size:12px;font-weight:700;}
+.hdr-menu-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:white;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer;}
+.hdr-menu-btn:hover{background:rgba(255,255,255,.15);}
+
+/* ─── ACCOUNT MENU ─── */
+.acct-menu{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:flex-end;}
+.acct-sheet{background:white;border-radius:16px 16px 0 0;padding:1.5rem;width:100%;max-width:480px;margin:0 auto;}
+.acct-hdr{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;}
+.acct-avatar{width:44px;height:44px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:700;}
+.acct-name{font-size:15px;font-weight:600;}
+.acct-id{font-size:12px;color:var(--gray);}
+.acct-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.acct-item:last-of-type{border-bottom:none;}
+.acct-item:hover .acct-label{color:var(--blue);}
+.acct-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.acct-label{font-size:14px;font-weight:500;}
+.acct-sub{font-size:12px;color:var(--gray);}
+.acct-item.danger .acct-label{color:var(--red);}
+.acct-item.danger .acct-icon{background:var(--red-lt);}
+
+/* ─── TYPE + SEARCH ─── */
+.type-bar{background:white;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.toggle-wrap{display:flex;background:#f2f4f8;border-radius:8px;padding:3px;}
+.t-btn{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--gray);}
+.t-btn.on-normal{background:var(--blue);color:white;}
+.t-btn.on-staff{background:var(--teal);color:white;}
+.spend-info{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--gray);}
+.prog{width:80px;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width .3s;}
+.pf-safe{background:var(--teal);}
+.pf-warn{background:#d97706;}
+.pf-over{background:var(--red);}
+.search-bar{background:white;border-bottom:1px solid var(--border);padding:10px 16px;}
+.search-bar input{width:100%;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;}
+.search-bar input:focus{border-color:var(--blue);}
+.cat-scroll{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:white;border-bottom:1px solid var(--border);}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-btn{white-space:nowrap;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--gray);}
+.cat-btn.active{background:var(--blue);color:white;border-color:var(--blue);}
+
+/* ─── PRODUCTS ─── */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;padding:14px 16px 30px;}
+.pc{background:var(--card);border-radius:10px;border:1.5px solid var(--border);padding:12px;}
+.pc.inc{border-color:var(--teal);background:#f5fbf9;}
+.pc-ico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;margin-bottom:7px;}
+.pc-name{font-size:12px;font-weight:500;color:#1a1a2e;line-height:1.35;}
+.pc-var{font-size:10px;color:var(--gray);margin-top:2px;}
+.pc-price{font-size:15px;font-weight:700;margin-top:6px;}
+.pp-normal{color:var(--blue);}
+.pp-staff{color:var(--teal);}
+.pc-price small{font-size:9px;font-weight:400;color:var(--gray);}
+.no-staff-tag{font-size:9px;color:var(--amber);background:var(--amber-lt);padding:2px 6px;border-radius:9px;display:inline-block;margin-top:4px;}
+.qty-row{display:flex;align-items:center;gap:5px;margin-top:7px;}
+.qb{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:white;cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);display:flex;align-items:center;justify-content:center;}
+.qb:hover{background:var(--blue);color:white;border-color:var(--blue);}
+.qb:disabled{opacity:.3;cursor:not-allowed;}
+.qn{font-size:12px;font-weight:600;min-width:18px;text-align:center;}
+.no-items{text-align:center;padding:3rem 1rem;color:var(--gray);grid-column:1/-1;}
+
+/* ─── CART ─── */
+.page-top{background:white;border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;}
+.back-btn{background:none;border:none;color:var(--blue);font-size:14px;font-weight:600;cursor:pointer;padding:0;}
+.page-top h2{font-size:17px;font-weight:600;}
+.cart-list{padding:14px 16px;}
+.ci{background:white;border-radius:10px;border:1px solid var(--border);padding:12px 13px;margin-bottom:9px;display:flex;align-items:center;gap:10px;}
+.ci-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.ci-info{flex:1;}
+.ci-name{font-size:13px;font-weight:500;line-height:1.3;}
+.ci-det{font-size:11px;color:var(--gray);margin-top:1px;}
+.ci-tag{font-size:10px;padding:2px 7px;border-radius:9px;margin-top:3px;display:inline-block;}
+.tag-normal{background:var(--blue-lt);color:var(--blue);}
+.tag-staff{background:var(--teal-lt);color:var(--teal);}
+.ci-sub{font-size:14px;font-weight:700;color:var(--blue);}
+.cart-empty{text-align:center;padding:3rem 1rem;color:var(--gray);}
+.lbox{margin:0 16px 14px;padding:12px 14px;border-radius:8px;font-size:12.5px;line-height:1.6;}
+.lbox.ok{background:var(--teal-lt);color:var(--teal);border:1px solid rgba(15,110,86,.2);}
+.lbox.warn{background:var(--amber-lt);color:var(--amber);border:1px solid rgba(133,80,11,.2);}
+.lbox.over{background:var(--red-lt);color:var(--red);border:1px solid rgba(163,45,45,.25);}
+.lbox h4{font-size:13px;font-weight:600;margin-bottom:4px;}
+.cart-sum{background:white;border-radius:10px;border:1px solid var(--border);padding:14px;margin:0 16px 14px;}
+.sr{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;}
+.sr.muted{color:var(--gray);font-size:12.5px;}
+.sr.tot{border-top:1px solid var(--border);margin-top:6px;padding-top:12px;font-size:18px;font-weight:700;}
+.sr.tot .val{color:var(--blue);}
+.co-btn{display:block;width:calc(100% - 32px);margin:0 16px 24px;padding:13px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;}
+.co-btn:hover:not(:disabled){background:#0a5442;}
+.co-btn:disabled{background:#9ca3af;cursor:not-allowed;}
+.pay-box{margin:0 16px 14px;padding:14px;background:white;border-radius:10px;border:1px solid var(--border);}
+.pay-box label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.pay-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pay-opt{padding:13px;border:2px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;background:white;}
+.pay-opt .pay-icon{font-size:22px;display:block;margin-bottom:4px;}
+.pay-opt .pay-label{font-size:13px;font-weight:600;color:var(--gray);}
+.pay-opt.selected-cash{border-color:var(--teal);background:var(--teal-lt);}
+.pay-opt.selected-cash .pay-label{color:var(--teal);}
+.pay-opt.selected-tab{border-color:var(--blue);background:var(--blue-lt);}
+.pay-opt.selected-tab .pay-label{color:var(--blue);}
+.pay-req{font-size:11px;color:var(--red);margin:6px 16px 0;display:none;}
+.pay-req.show{display:block;}
+
+/* ─── CONFIRM ─── */
+.cnf{background:var(--bg);padding:1.5rem 1rem;min-height:100vh;}
+.cnf-card{background:white;border-radius:14px;border:1px solid var(--border);padding:1.75rem;max-width:480px;margin:0 auto;}
+.cnf-ok{width:52px;height:52px;border-radius:50%;background:var(--teal-lt);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;}
+.cnf-title{text-align:center;font-size:20px;font-weight:700;color:var(--teal);margin-bottom:5px;}
+.cnf-sub{text-align:center;font-size:13px;color:var(--gray);margin-bottom:18px;line-height:1.5;}
+.ep{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.ep-hdr{background:var(--blue);color:white;padding:11px 14px;}
+.ep-to{font-size:11px;opacity:.8;}
+.ep-subj{font-size:13px;font-weight:600;margin-top:3px;}
+.ep-body{padding:14px;font-size:12px;line-height:1.7;color:#1a1a2e;}
+.ep-tbl{width:100%;border-collapse:collapse;margin:8px 0;}
+.ep-tbl td{padding:5px 4px;border-bottom:1px solid #f0f0f0;font-size:11.5px;vertical-align:top;}
+.ep-tbl td:last-child{text-align:right;font-weight:600;white-space:nowrap;}
+.ep-totals{background:var(--blue-lt);border-radius:8px;padding:10px 12px;margin-top:8px;}
+.ep-totals td{border:none!important;font-size:12px;font-weight:500;}
+.ep-totals td:last-child{color:var(--blue);text-align:right;}
+.copy-btn{width:100%;padding:10px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;margin-bottom:10px;}
+.copy-btn:hover{background:var(--blue-lt);color:var(--blue);border-color:var(--blue);}
+.new-btn{width:100%;padding:13px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;}
+.new-btn:hover{background:var(--blue-dk);}
+
+/* ─── HISTORY ─── */
+.hist-sum{margin:0 0 14px;padding:13px 14px;background:var(--teal-lt);border-radius:10px;border:1px solid rgba(15,110,86,.2);font-size:13px;color:var(--teal);line-height:1.6;}
+.hist-item{background:white;border-radius:10px;border:1px solid var(--border);padding:12px 14px;margin-bottom:9px;}
+.hist-meta{display:flex;justify-content:space-between;align-items:flex-start;}
+.hist-date{font-size:12px;font-weight:500;color:#1a1a2e;}
+.hist-total{font-size:15px;font-weight:700;color:var(--blue);}
+.hist-items{font-size:11.5px;color:var(--gray);margin-top:6px;line-height:1.6;}
+
+/* ─── LOADING ─── */
+.loading-overlay{position:fixed;inset:0;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;gap:16px;z-index:100;}
+.lg-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
+</style>
+</head>
+<body>
+
+<script>
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzpfT_es96QFAXgPwgJaiR1ADBncFJw75kJgVZKHipM8EPr8CZQgIylxYumbKK8Wc6a-w/exec',
+  ADMIN_EMAIL: 'kobar@africanoriginals.com',
+  WEEKLY_LIMIT: 2000,
+  CLIENT_SECRET: 'KO@AO#2026$POS!xK9mZ',
+};
+</script>
+
+<div id="app">
+
+<!-- LOADING -->
+<div id="s-loading" class="loading-overlay">
+  <div class="lg-spinner"></div>
+  <p style="font-size:14px;opacity:.8">Loading...</p>
+</div>
+
+<!-- LOGIN -->
+<div id="s-login" class="hidden">
+  <div class="page-wrap">
+    <div class="modal-card">
+      <div class="brand">
+        <div class="brand-logo">KO</div>
+        <h1>Staff POS</h1>
+        <p>African Originals · Internal Orders</p>
+      </div>
+      <div class="fld"><label>Email Address</label><input type="email" id="li-email" placeholder="you@africanoriginals.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fld"><label>Staff ID</label><input type="text" id="li-sid" placeholder="e.g. AO001" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fld"><label>PIN</label><input type="password" id="li-pin" placeholder="4-digit PIN" maxlength="4" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
+      <div id="li-err" class="err hidden"></div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn-ghost" onclick="goForgotPin()">Forgot PIN?</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PIN — request OTP -->
+<div id="s-reset" class="hidden">
+  <div class="page-wrap">
+    <div class="modal-card">
+      <div class="brand-sm">
+        <div class="logo-sm">KO</div>
+        <div><h2>Reset PIN</h2><p>We'll email you a 6-digit code</p></div>
+      </div>
+      <div class="fld"><label>Email Address</label><input type="email" id="rs-email" placeholder="you@africanoriginals.com" onkeydown="if(event.key==='Enter')doRequestReset()"></div>
+      <div class="fld"><label>Staff ID</label><input type="text" id="rs-sid" placeholder="e.g. AO001" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')doRequestReset()"></div>
+      <button class="btn-primary" id="rs-btn" onclick="doRequestReset()">Send Reset Code</button>
+      <div id="rs-err" class="err hidden"></div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn-ghost" onclick="show('s-login')">Back to login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PIN — enter OTP -->
+<div id="s-verify" class="hidden">
+  <div class="page-wrap">
+    <div class="modal-card">
+      <div class="brand-sm">
+        <div class="logo-sm">KO</div>
+        <div><h2>Enter Reset Code</h2><p id="vf-hint">Check your email</p></div>
+      </div>
+      <div class="info-box">
+        <strong>Code sent!</strong>
+        Enter the 6-digit code from your email. It expires in 15 minutes.
+      </div>
+      <div class="fld"><label>6-Digit Code</label><input type="text" id="vf-otp" placeholder="123456" maxlength="6" inputmode="numeric" onkeydown="if(event.key==='Enter')doVerifyReset()"></div>
+      <button class="btn-primary" id="vf-btn" onclick="doVerifyReset()">Verify Code</button>
+      <div id="vf-err" class="err hidden"></div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn-ghost" onclick="goForgotPin()">Resend code</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SET PIN (first login) -->
+<div id="s-setpin" class="hidden">
+  <div class="page-wrap">
+    <div class="modal-card">
+      <div class="brand-sm">
+        <div class="logo-sm">KO</div>
+        <div><h2>Create Your PIN</h2><p id="setpin-name">Welcome!</p></div>
+      </div>
+      <div class="info-box">
+        <strong>First time here?</strong>
+        Choose a 4-digit PIN you will use every time you log in. Keep it private.
+      </div>
+      <div style="text-align:center;font-size:13px;color:var(--gray);margin-bottom:4px;" id="setpin-label">Enter new PIN</div>
+      <div class="pin-dots" id="setpin-dots">
+        <div class="pin-dot" id="sd0"></div>
+        <div class="pin-dot" id="sd1"></div>
+        <div class="pin-dot" id="sd2"></div>
+        <div class="pin-dot" id="sd3"></div>
+      </div>
+      <div class="pin-keypad" id="setpin-keypad"></div>
+      <div id="setpin-err" class="err hidden"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PIN -->
+<div id="s-changepin" class="hidden">
+  <div class="page-wrap">
+    <div class="modal-card">
+      <div class="brand-sm">
+        <div class="logo-sm">KO</div>
+        <div><h2>Change PIN</h2><p id="chpin-name"></p></div>
+      </div>
+      <div style="text-align:center;font-size:13px;color:var(--gray);margin-bottom:4px;" id="chpin-label">Enter current PIN</div>
+      <div class="pin-dots" id="chpin-dots">
+        <div class="pin-dot" id="cd0"></div>
+        <div class="pin-dot" id="cd1"></div>
+        <div class="pin-dot" id="cd2"></div>
+        <div class="pin-dot" id="cd3"></div>
+      </div>
+      <div class="pin-keypad" id="chpin-keypad"></div>
+      <div id="chpin-err" class="err hidden"></div>
+      <div id="chpin-suc" class="suc hidden"></div>
+      <button class="btn-secondary" onclick="closeChangePIN()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div id="s-shop" class="hidden">
+  <div class="shop-hdr">
+    <div><div class="hdr-name" id="sh-name"></div><div class="hdr-id" id="sh-id"></div></div>
+    <div class="hdr-right">
+      <button class="cart-pill" onclick="goCart()">Cart <span class="badge" id="cart-cnt">0</span></button>
+      <button class="hdr-menu-btn" onclick="openAcctMenu()">&#9776;</button>
+    </div>
+  </div>
+  <div class="type-bar">
+    <div class="toggle-wrap">
+      <button class="t-btn on-normal" id="tn" onclick="setPT('normal')">Normal Price</button>
+      <button class="t-btn" id="ts" onclick="setPT('staff')">Staff Price</button>
+    </div>
+    <div class="spend-info" id="sp-info" style="display:none">
+      <span id="sp-txt"></span>
+      <div class="prog"><div class="prog-fill" id="sp-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="search-bar"><input type="text" id="search-inp" placeholder="Search products..." oninput="renderProds()"></div>
+  <div class="cat-scroll" id="cat-bar"></div>
+  <div class="prod-grid" id="prod-grid"></div>
+</div>
+
+<!-- ACCOUNT MENU (bottom sheet) -->
+<div id="acct-overlay" class="acct-menu hidden" onclick="if(event.target===this)closeAcctMenu()">
+  <div class="acct-sheet">
+    <div class="acct-hdr">
+      <div class="acct-avatar" id="acct-avatar">?</div>
+      <div><div class="acct-name" id="acct-name-m"></div><div class="acct-id" id="acct-id-m"></div></div>
+    </div>
+    <div class="acct-item" onclick="closeAcctMenu();goHistory()">
+      <div class="acct-icon" style="background:var(--blue-lt)">&#128203;</div>
+      <div><div class="acct-label">Order History</div><div class="acct-sub">View your past orders</div></div>
+    </div>
+    <div class="acct-item" onclick="closeAcctMenu();openChangePIN()">
+      <div class="acct-icon" style="background:var(--teal-lt)">&#128274;</div>
+      <div><div class="acct-label">Change PIN</div><div class="acct-sub">Update your login PIN</div></div>
+    </div>
+    <div class="acct-item danger" onclick="doLogout()">
+      <div class="acct-icon">&#128682;</div>
+      <div><div class="acct-label">Logout</div><div class="acct-sub">Sign out of this device</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CART -->
+<div id="s-cart" class="hidden">
+  <div class="page-top">
+    <button class="back-btn" onclick="goShop()">&#8592; Back</button>
+    <h2>Review Order</h2>
+  </div>
+  <div id="cart-body"></div>
+</div>
+
+<!-- CONFIRM -->
+<div id="s-conf" class="hidden">
+  <div class="cnf">
+    <div class="cnf-card">
+      <div class="cnf-ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0f6e56" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="cnf-title">Order Confirmed</div>
+      <div class="cnf-sub" id="cnf-sub"></div>
+      <div id="cnf-email"></div>
+      <button class="copy-btn" onclick="copyEmail()">Copy Email Text</button>
+      <button class="new-btn" onclick="newOrder()">Place Another Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="s-hist" class="hidden">
+  <div class="page-top">
+    <button class="back-btn" onclick="goShop()">&#8592; Back</button>
+    <h2>My Orders</h2>
+  </div>
+  <div id="hist-body" style="padding:14px 16px;"></div>
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let user=null, pt='normal', cart={}, lastEmail='', PRODUCTS=[], selectedCat='All', payMethod=null;
+
+// PIN state machine
+let pinState = {
+  mode: null,       // 'set-new' | 'set-confirm' | 'change-current' | 'change-new' | 'change-confirm'
+  buffer: '',
+  newPin: '',
+};
+
+const qs = id => document.getElementById(id);
+function show(id){['s-loading','s-login','s-setpin','s-changepin','s-reset','s-verify','s-shop','s-cart','s-conf','s-hist'].forEach(s=>qs(s).classList.toggle('hidden',s!==id));}
+function fmt(n){return Number(n).toLocaleString('en-KE',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function weekKey(){const d=new Date();const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);const jan1=new Date(mon.getFullYear(),0,1);const wk=Math.ceil(((mon-jan1)/86400000+1)/7);return mon.getFullYear()+'-W'+String(wk).padStart(2,'0');}
+function monthKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function getWeekRange(){const d=new Date();const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);const sun=new Date(mon);sun.setDate(mon.getDate()+6);const f=dt=>dt.toLocaleDateString('en-KE',{day:'numeric',month:'short'});return f(mon)+' – '+f(sun);}
+function getLocalOrders(){try{return JSON.parse(localStorage.getItem('ko_v3')||'[]');}catch{return[];}}
+function saveLocalOrder(o){const a=getLocalOrders();a.push(o);localStorage.setItem('ko_v3',JSON.stringify(a));}
+function weeklySpend(email){const wk=weekKey();return getLocalOrders().filter(o=>o.email===email&&o.pt==='staff'&&o.weekKey===wk).reduce((s,o)=>s+o.total,0);}
+function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+// Returns this user's personal weekly limit, falling back to the global CONFIG default
+function getUserLimit(){return(user&&user.weeklyLimit&&user.weeklyLimit>0)?user.weeklyLimit:CONFIG.WEEKLY_LIMIT;}
+
+// ═══════════════════════════════════════
+// API
+// ═══════════════════════════════════════
+async function apiFetch(params){
+  const r=await fetch(CONFIG.SCRIPT_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({...params,clientSecret:CONFIG.CLIENT_SECRET}),
+  });
+  return r.json();
+}
+const isDemo=()=>CONFIG.SCRIPT_URL==='YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+// ── PIN hashing: SHA-256(email:staffId:pin) so same PIN = different hash per user ──
+async function hashPin(email,staffId,pin){
+  const raw=email.toLowerCase()+':'+staffId.toUpperCase()+':'+pin;
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── Login lockout: 5 failed attempts → 15 min lock ──
+const LOCK_MAX=5,LOCK_MS=15*60*1000;
+function lockKey(em,sid){return'ko_lk_'+btoa(em+'|'+sid);}
+function checkLock(em,sid){
+  try{
+    const d=JSON.parse(localStorage.getItem(lockKey(em,sid))||'{}');
+    if(d.until&&Date.now()<d.until)return{locked:true,mins:Math.ceil((d.until-Date.now())/60000)};
+    return{locked:false,attempts:d.attempts||0};
+  }catch{return{locked:false,attempts:0};}
+}
+function recordFail(em,sid){
+  const k=lockKey(em,sid);
+  const d=JSON.parse(localStorage.getItem(k)||'{}');
+  const a=(d.attempts||0)+1;
+  localStorage.setItem(k,JSON.stringify(a>=LOCK_MAX?{until:Date.now()+LOCK_MS,attempts:0}:{attempts:a}));
+  return a;
+}
+function clearLock(em,sid){localStorage.removeItem(lockKey(em,sid));}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+async function init(){
+  show('s-loading');
+  if(isDemo()){PRODUCTS=BUNDLED_PRODUCTS;}
+  else{try{const d=await apiFetch({action:'getProducts'});PRODUCTS=d.products||BUNDLED_PRODUCTS;}catch{PRODUCTS=BUNDLED_PRODUCTS;}}
+  buildCatBar();show('s-login');
+}
+
+// ═══════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════
+async function doLogin(){
+  const em=qs('li-email').value.trim().toLowerCase();
+  const sid=qs('li-sid').value.trim().toUpperCase();
+  const pin=qs('li-pin').value.trim();
+  const errEl=qs('li-err');const btn=qs('login-btn');
+  if(!em||!sid){errEl.textContent='Please enter your email and Staff ID.';errEl.classList.remove('hidden');return;}
+  // Lockout check before attempting anything
+  const lk=checkLock(em,sid);
+  if(lk.locked){errEl.textContent=`Too many failed attempts. Try again in ${lk.mins} min.`;errEl.classList.remove('hidden');return;}
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Verifying...';errEl.classList.add('hidden');
+  try{
+    const pinHash=pin?await hashPin(em,sid,pin):'';
+    if(isDemo()){
+      const u=BUNDLED_USERS.find(x=>x.email===em&&x.staffId===sid);
+      if(!u){errEl.textContent='Staff ID or email not found.';errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;}
+      if(!u.pin){
+        user={email:em,staffId:sid,name:u.name,noPin:true};
+        openSetPIN();btn.disabled=false;btn.innerHTML='Sign In';return;
+      }
+      if(u.pin!==pinHash){
+        const a=recordFail(em,sid);const left=LOCK_MAX-a;
+        errEl.textContent=left>0?`Incorrect PIN. ${left} attempt${left!==1?'s':''} left.`:'Too many failed attempts. Locked for 15 min.';
+        errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;
+      }
+      clearLock(em,sid);enterShop(u.name,sid);
+    }else{
+      const d=await apiFetch({action:'checkUser',email:em,staffId:sid});
+      if(!d.found){errEl.textContent='Email or Staff ID not found.';errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;}
+      if(!d.hasPin){
+        user={email:em,staffId:sid,name:d.name,noPin:true,weeklyLimit:d.weeklyLimit||CONFIG.WEEKLY_LIMIT};
+        openSetPIN();btn.disabled=false;btn.innerHTML='Sign In';return;
+      }
+      const v=await apiFetch({action:'verifyPin',email:em,staffId:sid,pinHash});
+      if(!v.success){
+        const a=recordFail(em,sid);const left=LOCK_MAX-a;
+        errEl.textContent=left>0?`Incorrect PIN. ${left} attempt${left!==1?'s':''} left.`:'Too many failed attempts. Locked for 15 min.';
+        errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;
+      }
+      user={email:em,staffId:sid,name:d.name,weeklyLimit:d.weeklyLimit||CONFIG.WEEKLY_LIMIT};clearLock(em,sid);enterShop(d.name,sid);
+    }
+  }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.remove('hidden');}
+  btn.disabled=false;btn.innerHTML='Sign In';
+}
+
+function enterShop(name,sid){
+  user={...user,name,staffId:sid};
+  cart={};pt='normal';
+  qs('sh-name').textContent=name;
+  qs('sh-id').textContent=sid;
+  qs('acct-name-m').textContent=name;
+  qs('acct-id-m').textContent=sid;
+  qs('acct-avatar').textContent=initials(name);
+  renderProds();updSpend();show('s-shop');
+}
+
+function doLogout(){
+  user=null;cart={};
+  ['li-email','li-sid','li-pin'].forEach(id=>qs(id).value='');
+  qs('li-err').classList.add('hidden');
+  closeAcctMenu();show('s-login');
+}
+
+// ── FORGOT PIN FLOW ──────────────────────────────────────
+let resetEmail='', resetSid='';
+
+function goForgotPin(){
+  ['rs-email','rs-sid'].forEach(id=>qs(id).value='');
+  qs('rs-err').classList.add('hidden');
+  // Pre-fill from login fields if already entered
+  const em=qs('li-email').value.trim();
+  const sid=qs('li-sid').value.trim();
+  if(em)qs('rs-email').value=em;
+  if(sid)qs('rs-sid').value=sid;
+  show('s-reset');
+}
+
+async function doRequestReset(){
+  const em=qs('rs-email').value.trim().toLowerCase();
+  const sid=qs('rs-sid').value.trim().toUpperCase();
+  const errEl=qs('rs-err');const btn=qs('rs-btn');
+  if(!em||!sid){errEl.textContent='Please enter your email and Staff ID.';errEl.classList.remove('hidden');return;}
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Sending...';errEl.classList.add('hidden');
+  try{
+    if(isDemo()){
+      // Demo mode — skip server, go straight to verify
+      resetEmail=em;resetSid=sid;
+      qs('vf-hint').textContent='Demo mode — use code 123456';
+      qs('vf-otp').value='';qs('vf-err').classList.add('hidden');
+      show('s-verify');
+    }else{
+      const d=await apiFetch({action:'requestReset',email:em,staffId:sid});
+      if(d.error){errEl.textContent=d.error;errEl.classList.remove('hidden');}
+      else{
+        resetEmail=em;resetSid=sid;
+        qs('vf-hint').textContent='Code sent to '+em;
+        qs('vf-otp').value='';qs('vf-err').classList.add('hidden');
+        show('s-verify');
+      }
+    }
+  }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.remove('hidden');}
+  btn.disabled=false;btn.innerHTML='Send Reset Code';
+}
+
+async function doVerifyReset(){
+  const otp=qs('vf-otp').value.trim();
+  const errEl=qs('vf-err');const btn=qs('vf-btn');
+  if(!otp||otp.length!==6){errEl.textContent='Please enter the 6-digit code.';errEl.classList.remove('hidden');return;}
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Verifying...';errEl.classList.add('hidden');
+  try{
+    let valid=false;
+    if(isDemo()){valid=(otp==='123456');}
+    else{
+      const d=await apiFetch({action:'verifyReset',email:resetEmail,staffId:resetSid,otp});
+      if(d.success){valid=true;}
+      else{errEl.textContent=d.error||'Incorrect or expired code.';errEl.classList.remove('hidden');}
+    }
+    if(valid){
+      // OTP verified — take them to set a new PIN
+      user={email:resetEmail,staffId:resetSid,name:'',noPin:true};
+      pinState={mode:'set-new',buffer:'',newPin:''};
+      qs('setpin-name').textContent='Choose your new PIN';
+      qs('setpin-label').textContent='Enter new PIN';
+      qs('setpin-err').classList.add('hidden');
+      updateDots('sd',0);
+      buildKeypad('setpin-keypad','set');
+      show('s-setpin');
+    }
+  }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.remove('hidden');}
+  btn.disabled=false;btn.innerHTML='Verify Code';
+}
+
+// ═══════════════════════════════════════
+// PIN KEYPAD BUILDER
+// ═══════════════════════════════════════
+let activeKeypad='set';
+function buildKeypad(containerId,mode){
+  activeKeypad=mode;
+  const el=qs(containerId);
+  const digits=['1','2','3','4','5','6','7','8','9','','0','del'];
+  el.innerHTML=digits.map(d=>{
+    if(d==='')return`<button class="pk empty" disabled></button>`;
+    if(d==='del')return`<button class="pk del" onclick="kpDelete()">&#9003;</button>`;
+    return`<button class="pk" onclick="kpDigit('${d}')">${d}</button>`;
+  }).join('');
+}
+function kpDigit(d){if(activeKeypad==='set')setPinDigit(d);else chPinDigit(d);}
+function kpDelete(){if(activeKeypad==='set')setPinDelete();else chPinDelete();}
+function updateDots(prefix,count){
+  for(let i=0;i<4;i++){const d=document.getElementById(prefix+i);if(d)d.classList.toggle('filled',i<count);}
+}
+
+// ═══════════════════════════════════════
+// SET PIN (first login)
+// ═══════════════════════════════════════
+function openSetPIN(){
+  pinState={mode:'set-new',buffer:'',newPin:''};
+  qs('setpin-name').textContent='Welcome, '+user.name+'!';
+  qs('setpin-label').textContent='Choose a 4-digit PIN';
+  qs('setpin-err').classList.add('hidden');
+  updateDots('sd',0);
+  buildKeypad('setpin-keypad','set');
+  show('s-setpin');
+}
+
+function setPinDigit(d){
+  if(pinState.buffer.length>=4)return;
+  pinState.buffer+=d;
+  updateDots('sd',pinState.buffer.length);
+  if(pinState.buffer.length===4){
+    setTimeout(()=>{
+      if(pinState.mode==='set-new'){
+        pinState.newPin=pinState.buffer;
+        pinState.buffer='';
+        pinState.mode='set-confirm';
+        qs('setpin-label').textContent='Confirm your PIN';
+        qs('setpin-err').classList.add('hidden');
+        updateDots('sd',0);
+      }else if(pinState.mode==='set-confirm'){
+        if(pinState.buffer!==pinState.newPin){
+          qs('setpin-err').textContent='PINs do not match — try again.';
+          qs('setpin-err').classList.remove('hidden');
+          pinState.buffer='';pinState.newPin='';pinState.mode='set-new';
+          qs('setpin-label').textContent='Choose a 4-digit PIN';
+          updateDots('sd',0);
+        }else{
+          savePIN(pinState.newPin,'set');
+        }
+      }
+    },150);
+  }
+}
+function setPinDelete(){if(pinState.buffer.length>0){pinState.buffer=pinState.buffer.slice(0,-1);updateDots('sd',pinState.buffer.length);}}
+
+async function savePIN(pin,mode){
+  qs('setpin-err').classList.add('hidden');
+  const pinHash=await hashPin(user.email,user.staffId,pin);
+  if(!isDemo()){
+    try{await apiFetch({action:'setPin',email:user.email,staffId:user.staffId,pinHash});}
+    catch(e){qs('setpin-err').textContent='Could not save PIN. Please try again.';qs('setpin-err').classList.remove('hidden');pinState.buffer='';pinState.newPin='';pinState.mode='set-new';updateDots('sd',4,0);return;}
+  }
+  if(isDemo()){const u=BUNDLED_USERS.find(x=>x.email===user.email);if(u)u.pin=pinHash;}
+  enterShop(user.name,user.staffId);
+}
+
+// ═══════════════════════════════════════
+// CHANGE PIN (from account menu)
+// ═══════════════════════════════════════
+function openChangePIN(){
+  pinState={mode:'change-current',buffer:'',newPin:''};
+  qs('chpin-name').textContent=user.name;
+  qs('chpin-label').textContent='Enter your current PIN';
+  qs('chpin-err').classList.add('hidden');
+  qs('chpin-suc').classList.add('hidden');
+  updateDots('cd',0);
+  buildKeypad('chpin-keypad','change');
+  show('s-changepin');
+}
+
+function closeChangePIN(){show('s-shop');}
+
+function chPinDigit(d){
+  if(pinState.buffer.length>=4)return;
+  pinState.buffer+=d;
+  updateDots('cd',pinState.buffer.length);
+  if(pinState.buffer.length===4){
+    setTimeout(async()=>{
+      if(pinState.mode==='change-current'){
+        let valid=false;
+        const ph=await hashPin(user.email,user.staffId,pinState.buffer);
+        if(isDemo()){const u=BUNDLED_USERS.find(x=>x.email===user.email);valid=u&&u.pin===ph;}
+        else{try{const v=await apiFetch({action:'verifyPin',email:user.email,staffId:user.staffId,pinHash:ph});valid=v.success;}catch{}}
+        if(!valid){
+          qs('chpin-err').textContent='Incorrect PIN — try again.';
+          qs('chpin-err').classList.remove('hidden');
+          pinState.buffer='';updateDots('cd',0);
+        }else{
+          pinState.mode='change-new';pinState.buffer='';
+          qs('chpin-label').textContent='Enter your new PIN';
+          qs('chpin-err').classList.add('hidden');
+          updateDots('cd',0);
+        }
+      }else if(pinState.mode==='change-new'){
+        pinState.newPin=pinState.buffer;pinState.buffer='';
+        pinState.mode='change-confirm';
+        qs('chpin-label').textContent='Confirm your new PIN';
+        updateDots('cd',0);
+      }else if(pinState.mode==='change-confirm'){
+        if(pinState.buffer!==pinState.newPin){
+          qs('chpin-err').textContent='PINs do not match — try again.';
+          qs('chpin-err').classList.remove('hidden');
+          pinState.buffer='';pinState.newPin='';pinState.mode='change-new';
+          qs('chpin-label').textContent='Enter your new PIN';
+          updateDots('cd',0);
+        }else{
+          await changePin(pinState.newPin);
+        }
+      }
+    },150);
+  }
+}
+function chPinDelete(){if(pinState.buffer.length>0){pinState.buffer=pinState.buffer.slice(0,-1);updateDots('cd',pinState.buffer.length);}}
+
+async function changePin(pin){
+  const pinHash=await hashPin(user.email,user.staffId,pin);
+  if(!isDemo()){
+    try{await apiFetch({action:'setPin',email:user.email,staffId:user.staffId,pinHash});}
+    catch(e){qs('chpin-err').textContent='Could not save. Try again.';qs('chpin-err').classList.remove('hidden');pinState.buffer='';pinState.newPin='';pinState.mode='change-current';updateDots('cd',4,0);return;}
+  }
+  if(isDemo()){const u=BUNDLED_USERS.find(x=>x.email===user.email);if(u)u.pin=pinHash;}
+  qs('chpin-suc').textContent='PIN changed successfully!';
+  qs('chpin-suc').classList.remove('hidden');
+  qs('chpin-err').classList.add('hidden');
+  setTimeout(()=>show('s-shop'),1500);
+}
+
+// ═══════════════════════════════════════
+// ACCOUNT MENU
+// ═══════════════════════════════════════
+function openAcctMenu(){qs('acct-overlay').classList.remove('hidden');}
+function closeAcctMenu(){qs('acct-overlay').classList.add('hidden');}
+
+// ═══════════════════════════════════════
+// SHOP
+// ═══════════════════════════════════════
+function buildCatBar(){
+  const cats=['All',...new Set(PRODUCTS.map(p=>p.cat).filter(Boolean))];
+  qs('cat-bar').innerHTML=cats.map(c=>`<button class="cat-btn${c==='All'?' active':''}" onclick="setcat('${c}')">${c}</button>`).join('');
+}
+function setcat(c){selectedCat=c;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.textContent===c));renderProds();}
+function setPT(t){pt=t;qs('tn').className='t-btn'+(t==='normal'?' on-normal':'');qs('ts').className='t-btn'+(t==='staff'?' on-staff':'');updSpend();renderProds();}
+function updSpend(){
+  const el=qs('sp-info');
+  if(pt!=='staff'){el.style.display='none';return;}
+  el.style.display='flex';
+  const sp=weeklySpend(user.email);const pct=Math.min(100,(sp/getUserLimit())*100);
+  qs('sp-txt').textContent='KES '+fmt(sp)+' / '+fmt(getUserLimit())+' this week';
+  const f=qs('sp-fill');f.style.width=pct+'%';
+  f.className='prog-fill '+(pct>=100?'pf-over':pct>=70?'pf-warn':'pf-safe');
+}
+function cartStaffTotal(){return Object.entries(cart).reduce((s,[id,q])=>{const p=PRODUCTS.find(x=>x.id==id);return s+(p&&p.sp>0&&pt==='staff'?p.sp*q:0);},0);}
+function cartTotal(){return Object.entries(cart).reduce((s,[id,q])=>{const p=PRODUCTS.find(x=>x.id==id);if(!p)return s;return s+(pt==='staff'&&p.sp>0?p.sp:p.np)*q;},0);}
+function updCount(){qs('cart-cnt').textContent=Object.values(cart).reduce((s,q)=>s+q,0);}
+
+function renderProds(){
+  const search=(qs('search-inp').value||'').toLowerCase();
+  const remain=pt==='staff'?(getUserLimit()-weeklySpend(user.email)):Infinity;
+  const cst=cartStaffTotal();
+  const visible=PRODUCTS.filter(p=>{
+    const matchCat=selectedCat==='All'||p.cat===selectedCat;
+    const matchSearch=!search||p.name.toLowerCase().includes(search)||p.var.toLowerCase().includes(search)||(p.cat||'').toLowerCase().includes(search);
+    return matchCat&&matchSearch;
+  });
+  if(!visible.length){qs('prod-grid').innerHTML='<div class="no-items">No products found</div>';return;}
+  qs('prod-grid').innerHTML=visible.map(p=>{
+    const isStaffAvail=p.sp>0;const price=pt==='staff'&&isStaffAvail?p.sp:p.np;const qty=cart[p.id]||0;
+    const staffFull=pt==='staff'&&isStaffAvail&&(remain-cst)<p.sp&&qty===0;
+    return`<div class="pc${qty>0?' inc':''}" id="pc${p.id}">
+      <div class="pc-ico" style="background:${p.clr||'#1a4a8a'}">${p.ltr||p.name[0]}</div>
+      <div class="pc-name">${p.name}</div><div class="pc-var">${p.var}${p.cat?' · '+p.cat:''}</div>
+      ${!isStaffAvail&&pt==='staff'?'<span class="no-staff-tag">Normal price only</span>':''}
+      <div class="pc-price pp-${pt==='staff'&&isStaffAvail?'staff':'normal'}">KES ${fmt(price)} <small>/unit</small></div>
+      <div class="qty-row">
+        <button class="qb" onclick="updQ(${p.id},-1)" ${qty===0?'disabled':''}>&#8722;</button>
+        <span class="qn" id="qn${p.id}">${qty}</span>
+        <button class="qb" onclick="updQ(${p.id},1)" ${staffFull?'disabled':''} title="${staffFull?'Weekly limit reached':''}">+</button>
+      </div></div>`;
+  }).join('');
+  updCount();
+}
+
+function updQ(pid,d){
+  const p=PRODUCTS.find(x=>x.id===pid);if(!p)return;
+  if(d>0&&pt==='staff'&&p.sp>0&&cartStaffTotal()+p.sp>(getUserLimit()-weeklySpend(user.email)))return;
+  const nq=Math.max(0,(cart[pid]||0)+d);
+  if(nq===0)delete cart[pid];else cart[pid]=nq;
+  const card=document.getElementById('pc'+pid);
+  if(card){card.classList.toggle('inc',nq>0);document.getElementById('qn'+pid).textContent=nq;const[db]=card.querySelectorAll('.qb');db.disabled=nq===0;}
+  updCount();updSpend();
+}
+
+// ═══════════════════════════════════════
+// CART + ORDER
+// ═══════════════════════════════════════
+function goCart(){renderCart();show('s-cart');}
+function goShop(){show('s-shop');}
+function goHistory(){renderHistory();show('s-hist');}
+
+function renderCart(){
+  const items=Object.entries(cart).filter(([,q])=>q>0);
+  const el=qs('cart-body');
+  if(!items.length){el.innerHTML='<div class="cart-empty"><p style="font-size:30px;margin-bottom:10px">🛒</p><p style="font-size:14px;color:var(--gray)">Cart is empty.</p></div>';return;}
+  const spent=pt==='staff'?weeklySpend(user.email):0;
+  const cst=cartStaffTotal();const ct=cartTotal();const newTot=spent+cst;const remain=getUserLimit()-newTot;
+  const listHTML=items.map(([id,q])=>{
+    const p=PRODUCTS.find(x=>x.id==id);const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
+    return`<div class="ci"><div class="ci-ico" style="background:${p.clr||'#1a4a8a'}">${p.ltr||p.name[0]}</div>
+      <div class="ci-info"><div class="ci-name">${p.name} ${p.var}</div><div class="ci-det">Qty: ${q} × KES ${fmt(pr)}</div>
+      <span class="ci-tag tag-${isS?'staff':'normal'}">${isS?'Staff Price':'Normal Price'}</span></div>
+      <div class="ci-sub">KES ${fmt(pr*q)}</div></div>`;
+  }).join('');
+  let limitHTML='';
+  if(pt==='staff'&&cst>0){
+    const cls=remain<0?'over':remain<400?'warn':'ok';
+    limitHTML=`<div class="lbox ${cls}"><h4>${remain<0?'Weekly limit exceeded':'Staff weekly limit status'}</h4>
+      Week: ${getWeekRange()}<br>Previous spend: <strong>KES ${fmt(spent)}</strong><br>
+      This order: <strong>KES ${fmt(cst)}</strong><br>Combined: <strong>KES ${fmt(newTot)} / KES ${fmt(getUserLimit())}</strong><br>
+      ${remain>=0?'Remaining: <strong>KES '+fmt(remain)+'</strong>':'<strong>Over by KES '+fmt(Math.abs(remain))+'</strong> — remove items'}
+    </div>`;
+  }
+  const ok=pt!=='staff'||remain>=0;
+  payMethod=null;
+  el.innerHTML=`<div class="cart-list">${listHTML}</div>${limitHTML}
+  <div class="cart-sum">
+    <div class="sr muted"><span>Items</span><span>${Object.values(cart).reduce((s,q)=>s+q,0)}</span></div>
+    <div class="sr muted"><span>Pricing</span><span>${pt==='staff'?'Staff discount applied':'Normal price'}</span></div>
+    <div class="sr tot"><span>Total</span><span class="val">KES ${fmt(ct)}</span></div>
+  </div>
+  <div class="pay-box">
+    <label>Payment Method</label>
+    <div class="pay-opts">
+      <div class="pay-opt" id="pay-cash" onclick="selectPay('cash')">
+        <span class="pay-icon">💵</span>
+        <span class="pay-label">Cash</span>
+      </div>
+      <div class="pay-opt" id="pay-tab" onclick="selectPay('tab')">
+        <span class="pay-icon">📋</span>
+        <span class="pay-label">Tab</span>
+      </div>
+    </div>
+  </div>
+  <p class="pay-req" id="pay-req">Please select a payment method</p>
+  <button class="co-btn" onclick="placeOrder()" ${!ok?'disabled':''}>${!ok?'Limit exceeded — reduce order':'Confirm &amp; Place Order'}</button>`;
+}
+
+function selectPay(method){
+  payMethod=method;
+  document.getElementById('pay-cash').className='pay-opt'+(method==='cash'?' selected-cash':'');
+  document.getElementById('pay-tab').className='pay-opt'+(method==='tab'?' selected-tab':'');
+  qs('pay-req').classList.remove('show');
+}
+
+async function placeOrder(){
+  if(!payMethod){qs('pay-req').classList.add('show');return;}
+
+  // Disable button immediately to prevent double-tap
+  const btn=document.querySelector('.co-btn');
+  if(btn){btn.disabled=true;btn.textContent='Placing order…';}
+
+  const items=Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
+    const p=PRODUCTS.find(x=>x.id==id);const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
+    return{id:p.id,name:p.name,var:p.var,cat:p.cat,q,pr,sub:pr*q,isStaff:isS};
+  });
+  const total=items.reduce((s,i)=>s+i.sub,0);
+  const ord={email:user.email,name:user.name,sid:user.staffId,pt,payMethod,items,total,mk:monthKey(),weekKey:weekKey(),date:new Date().toISOString(),weeklyLimit:getUserLimit()};
+  saveLocalOrder(ord);
+
+  let emailSent=false;
+  if(!isDemo()){
+    try{
+      const res=await apiFetch({action:'saveOrder',order:ord});
+      emailSent=res&&res.success===true;
+    }catch(e){
+      console.warn('Sync failed',e);
+      emailSent=false;
+    }
+  }
+
+  const spent=pt==='staff'?weeklySpend(user.email):0;
+  buildConfirm(ord,spent,getUserLimit()-spent,emailSent);
+  cart={};updCount();
+}
+
+function buildConfirm(ord,totalSpent,remaining,emailSent=false){
+  const d=new Date(ord.date);
+  const ds=d.toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+  const ts=d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+  const isS=ord.pt==='staff';const wkr=getWeekRange();
+  const payLabel=ord.payMethod==='tab'?'Tab':'Cash';
+  const subj=isS?`[KO Staff Order] ${ord.name} · KES ${fmt(ord.total)} · ${payLabel} · Week ${wkr}`:`[KO Normal Order] ${ord.name} · KES ${fmt(ord.total)} · ${payLabel} · ${ds}`;
+  const statusMsg=isDemo()
+    ?'Demo mode — emails not sent'
+    :emailSent
+      ?'✅ Confirmation emailed to you and '+CONFIG.ADMIN_EMAIL
+      :'⚠️ Order saved but email failed — show this screen to the bartender';
+  qs('cnf-sub').textContent=statusMsg;
+  qs('cnf-sub').style.color=(!isDemo()&&!emailSent)?'var(--red)':'var(--gray)';
+  const rows=ord.items.map(i=>`<tr><td>${i.name} ${i.var} ×${i.q}</td><td>KES ${fmt(i.sub)}</td></tr>`).join('');
+  const totSec=isS
+    ?`<div class="ep-totals"><table class="ep-tbl"><tr><td>This order</td><td>KES ${fmt(ord.total)}</td></tr><tr><td>Payment</td><td>${payLabel}</td></tr><tr><td>Week (${wkr}) spend</td><td>KES ${fmt(totalSpent)} / KES ${fmt(getUserLimit())}</td></tr><tr><td><strong>Remaining this week</strong></td><td><strong>KES ${fmt(remaining)}</strong></td></tr></table></div>`
+    :`<div class="ep-totals"><table class="ep-tbl"><tr><td><strong>Order total</strong></td><td><strong>KES ${fmt(ord.total)}</strong></td></tr><tr><td>Payment</td><td>${payLabel}</td></tr></table></div>`;
+  qs('cnf-email').innerHTML=`<div class="ep"><div class="ep-hdr">
+    <div class="ep-to">To: ${ord.email} &amp; ${CONFIG.ADMIN_EMAIL}</div>
+    <div class="ep-subj">${subj}</div></div>
+    <div class="ep-body">Hi ${ord.name},<br><br>Your order has been placed on ${ds} at ${ts}.<br><br>
+    <table class="ep-tbl"><tr style="border-bottom:1.5px solid #e5e7eb"><td><strong>Item</strong></td><td style="text-align:right"><strong>Total</strong></td></tr>${rows}</table>${totSec}</div></div>`;
+  lastEmail=[`To: ${CONFIG.ADMIN_EMAIL}`,`Subject: ${subj}`,``,`Hi Peter,`,``,
+    `${ord.name} (${ord.sid}) placed a${isS?' staff price':''} order on ${ds} at ${ts}.`,``,`ORDER DETAILS:`,
+    ...ord.items.map(i=>`  ${i.name} ${i.var} x${i.q} @ KES ${fmt(i.pr)} = KES ${fmt(i.sub)}`),``,
+    `Order Total: KES ${fmt(ord.total)}`,
+    `Payment Method: ${payLabel}`,
+    ...(isS?[`Week (${wkr}) staff spend: KES ${fmt(totalSpent)} / KES ${fmt(getUserLimit())}`,`Remaining this week: KES ${fmt(remaining)}`]:[]),
+    ``,`---`,`KO Staff POS`].join('\n');
+  show('s-conf');
+}
+
+function copyEmail(){
+  const btn=document.querySelector('.copy-btn');
+  navigator.clipboard.writeText(lastEmail).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Email Text',2500);})
+  .catch(()=>{const ta=document.createElement('textarea');ta.value=lastEmail;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Email Text',2500);});
+}
+function newOrder(){renderProds();updSpend();show('s-shop');}
+
+function renderHistory(){
+  const all=getLocalOrders().filter(o=>o.email===user.email).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const wkSpend=weeklySpend(user.email);const remain=getUserLimit()-wkSpend;
+  qs('hist-body').innerHTML=`<div class="hist-sum"><strong>This week — staff budget</strong><br>
+    KES ${fmt(wkSpend)} used of KES ${fmt(getUserLimit())} · <strong>KES ${fmt(Math.max(0,remain))} remaining</strong><br>
+    <span style="font-size:11px;opacity:.8">Week: ${getWeekRange()}</span>
+  </div>`+(all.length?all.map(o=>{
+    const d=new Date(o.date);
+    const ds=d.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'});
+    const ts=d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+    return`<div class="hist-item"><div class="hist-meta"><div><div class="hist-date">${ds} at ${ts}</div>
+      <span class="ci-tag tag-${o.pt}" style="margin-top:4px;display:inline-block">${o.pt==='staff'?'Staff Price':'Normal Price'}</span></div>
+      <div class="hist-total">KES ${fmt(o.total)}</div></div>
+      <div class="hist-items">${o.items.map(i=>`${i.name} ${i.var} ×${i.q}`).join(', ')}</div></div>`;
+  }).join(''):'<p style="text-align:center;color:var(--gray);font-size:14px;padding:2rem 0">No orders yet.</p>');
+}
+
+// ═══════════════════════════════════════
+// BUNDLED DATA
+// ═══════════════════════════════════════
+const BUNDLED_USERS=[
+  {email:'demo@africanoriginals.com',staffId:'DEMO01',pin:null,name:'Demo User'},
+];
+const BUNDLED_PRODUCTS=[
+  {id:1,name:'KO Pineapple and Mint',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:2,name:'KO Passion Fruit and Lime',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:3,name:'KO Lime and Ginger',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:4,name:'KO Mango and Chilli',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:5,name:'KO Honey and Lemon',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:6,name:'KO Apple and Lime',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:7,name:'KO Tropical Mix',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:8,name:'KO Hibiscus and Lime',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:9,name:'KO Dry Cider',var:'330ml Bottle',cat:'Cider',np:162,sp:110,clr:'#0f6e56',ltr:'C'},
+  {id:10,name:'KO Pineapple and Mint',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:11,name:'KO Passion Fruit and Lime',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:12,name:'KO Lime and Ginger',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:13,name:'KO Mango and Chilli',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:14,name:'KO Honey and Lemon',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:15,name:'KO Apple and Lime',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:16,name:'KO Tropical Mix',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:17,name:'KO Hibiscus and Lime',var:'330ml Can',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:18,name:'KO Dry Cider',var:'500ml Can',cat:'Cider',np:205,sp:160,clr:'#0f6e56',ltr:'C'},
+  {id:19,name:'58 Classic Gin',var:'750ml',cat:'Gin',np:1220,sp:905,clr:'#85500b',ltr:'G'},
+  {id:20,name:'58 Spiced Orange Gin',var:'750ml',cat:'Gin',np:1220,sp:905,clr:'#85500b',ltr:'G'},
+  {id:21,name:'58 Classic Gin',var:'350ml',cat:'Gin',np:580,sp:500,clr:'#85500b',ltr:'G'},
+  {id:22,name:'58 Spiced Orange Gin',var:'350ml',cat:'Gin',np:580,sp:500,clr:'#85500b',ltr:'G'},
+  {id:23,name:'Mara Gin',var:'750ml',cat:'Gin',np:7686,sp:4650,clr:'#85500b',ltr:'G'},
+  {id:24,name:'Purple Haze',var:'750ml',cat:'Gin',np:4540,sp:1875,clr:'#533aab',ltr:'P'},
+  {id:25,name:'KO Blush',var:'750ml',cat:'Gin',np:2184,sp:1310,clr:'#85500b',ltr:'G'},
+  {id:26,name:'KO Classic',var:'750ml',cat:'Gin',np:2184,sp:1310,clr:'#85500b',ltr:'G'},
+  {id:27,name:'58 Classic G&T 8%',var:'330ml Can',cat:'G&T',np:218,sp:150,clr:'#1a4a8a',ltr:'T'},
+  {id:28,name:'58 Spiced Orange G&T 8%',var:'330ml Can',cat:'G&T',np:218,sp:150,clr:'#1a4a8a',ltr:'T'},
+  {id:29,name:'58 Very Berry G&T 8%',var:'330ml Can',cat:'G&T',np:218,sp:150,clr:'#1a4a8a',ltr:'T'},
+  {id:30,name:'KO Tropical African Ice Tea',var:'330ml Can',cat:'Ice Tea',np:145,sp:115,clr:'#d97706',ltr:'I'},
+  {id:31,name:'KO Hibiscus and Lime Ice Tea',var:'330ml Can',cat:'Ice Tea',np:145,sp:115,clr:'#d97706',ltr:'I'},
+  {id:32,name:'KO Passion Fruit Ice Tea',var:'330ml Can',cat:'Ice Tea',np:145,sp:115,clr:'#d97706',ltr:'I'},
+  {id:33,name:'KO Classic Tonic',var:'200ml Can',cat:'Tonic',np:100,sp:85,clr:'#1a4a8a',ltr:'T'},
+  {id:34,name:'KO Rose and Cucumber Tonic',var:'200ml Can',cat:'Tonic',np:100,sp:85,clr:'#1a4a8a',ltr:'T'},
+  {id:35,name:'KO Light Tonic',var:'200ml Can',cat:'Tonic',np:100,sp:85,clr:'#1a4a8a',ltr:'T'},
+  {id:36,name:'KO Turmeric and Chilli Tonic',var:'200ml Can',cat:'Tonic',np:100,sp:85,clr:'#1a4a8a',ltr:'T'},
+  {id:37,name:'KO Lemon Cello 10% Cocktail',var:'330ml Can',cat:'Cocktail',np:300,sp:180,clr:'#d97706',ltr:'K'},
+  {id:38,name:'KO Mukhombero 10% Cocktail',var:'330ml Can',cat:'Cocktail',np:300,sp:180,clr:'#d97706',ltr:'K'},
+  {id:39,name:'Ember Pine Poa',var:'250ml',cat:'Cocktail',np:270,sp:200,clr:'#d97706',ltr:'E'},
+  {id:40,name:'Ember Pine Poa',var:'750ml',cat:'Cocktail',np:899,sp:584,clr:'#d97706',ltr:'E'},
+  {id:41,name:'K Jug',var:'',cat:'Merchandise',np:800,sp:0,clr:'#6b7280',ltr:'M'},
+  {id:42,name:'K Tumbler',var:'',cat:'Merchandise',np:200,sp:0,clr:'#6b7280',ltr:'M'},
+  {id:43,name:'SE Jug',var:'',cat:'Merchandise',np:250,sp:0,clr:'#6b7280',ltr:'M'},
+  {id:44,name:'SE Keg Tumbler',var:'',cat:'Merchandise',np:75,sp:0,clr:'#6b7280',ltr:'M'},
+  {id:45,name:'KO Double Shot',var:'',cat:'Shots',np:200,sp:0,clr:'#1a4a8a',ltr:'S'},
+  {id:46,name:'KO Single Shot',var:'',cat:'Shots',np:100,sp:0,clr:'#1a4a8a',ltr:'S'},
+  {id:47,name:'58 Double Shot',var:'',cat:'Shots',np:150,sp:0,clr:'#85500b',ltr:'S'},
+  {id:48,name:'58 Single Shot',var:'',cat:'Shots',np:100,sp:0,clr:'#85500b',ltr:'S'},
+];
+
+init();
+</script>
+</body>
+</html>
