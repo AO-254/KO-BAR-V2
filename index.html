@@ -237,6 +237,100 @@ input,button{font-family:inherit;}
 .st-qty-inp{width:68px;padding:7px 8px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;text-align:center;outline:none;}
 .st-qty-inp:focus{border-color:var(--mod);}
 
+/* ─── REIMBURSEMENT ─── */
+.mc-reimb{border-color:rgba(15,110,86,.25);}.mc-reimb .mc-label{color:#0f6e56;}
+.reimb-notify{background:var(--amber-lt);border:1.5px solid rgba(133,80,11,.25);border-radius:10px;padding:12px 14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:opacity .15s;}
+.reimb-notify:hover{opacity:.88;}
+.reimb-notify-lbl{font-size:13px;font-weight:700;color:var(--amber);}
+.reimb-notify-sub{font-size:11px;color:var(--gray);margin-top:1px;}
+.reimb-notify-badge{background:var(--red);color:white;border-radius:12px;padding:2px 8px;font-size:12px;font-weight:700;margin-left:8px;}
+.reimb-fin-notify{background:var(--teal-lt);border:1.5px solid rgba(15,110,86,.25);}
+.reimb-fin-notify .reimb-notify-lbl{color:var(--teal);}
+.page-top-action{margin-left:auto;background:none;border:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;padding:5px 9px;border-radius:6px;display:flex;align-items:center;gap:4px;}
+.page-top-action:hover{background:var(--blue-lt);}
+.reimb-form{padding:14px 16px 30px;}
+.reimb-card{background:white;border-radius:12px;border:1px solid var(--border);padding:18px;margin-bottom:12px;}
+.reimb-card h3{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.pay-method-grp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.pm-btn{padding:12px 8px;border:2px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;background:white;font-size:12px;font-weight:600;color:var(--gray);transition:all .15s;}
+.pm-btn:hover{border-color:var(--blue);color:var(--blue);}
+.pm-btn.active{border-color:var(--blue);background:var(--blue-lt);color:var(--blue);}
+.pm-btn .pm-icon{font-size:20px;display:block;margin-bottom:3px;}
+.pay-detail-field{margin-top:12px;animation:fdIn .2s ease;}
+@keyframes fdIn{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:none;}}
+.attach-zone{border:2px dashed #e5e7eb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;}
+.attach-zone:hover{border-color:var(--blue);}
+.attach-zone.has-file{border-color:var(--teal);background:var(--teal-lt);}
+.attach-info{font-size:11px;color:var(--gray);line-height:1.6;margin-top:4px;}
+.attach-remove{font-size:11px;color:var(--red);cursor:pointer;background:none;border:none;margin-top:4px;}
+.lm-info-box{background:var(--blue-lt);border:1.5px solid rgba(26,74,138,.2);border-radius:8px;padding:11px 13px;font-size:13px;color:var(--blue-dk);}
+.lm-info-box .lm-name{font-weight:600;font-size:14px;}
+.lm-info-box .lm-email{font-size:12px;color:var(--gray);margin-top:2px;}
+.backdate-warn{background:var(--amber-lt);border:1.5px solid rgba(133,80,11,.25);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--amber);margin-top:6px;line-height:1.6;}
+.reimb-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.rs-card{background:white;border-radius:10px;border:1px solid var(--border);padding:10px;text-align:center;}
+.rs-val{font-size:15px;font-weight:700;color:var(--blue);}
+.rs-lbl{font-size:10px;color:var(--gray);margin-top:2px;text-transform:uppercase;letter-spacing:.3px;}
+.status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:capitalize;}
+.sb-submitted{background:var(--blue-lt);color:var(--blue);}
+.sb-approved{background:var(--teal-lt);color:var(--teal);}
+.sb-rejected{background:var(--red-lt);color:var(--red);}
+.sb-paid{background:#fef3c7;color:#92400e;}
+.hc{background:white;border-radius:12px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden;}
+.hc-header{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.hc-amount{font-size:22px;font-weight:700;color:var(--blue);}
+.hc-id{font-size:11px;color:var(--gray);margin-top:3px;font-family:monospace;letter-spacing:.3px;}
+.hc-section{padding:12px 16px;border-bottom:1px solid var(--border);}
+.hc-section:last-child{border-bottom:none;}
+.hc-section-lbl{font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+.hc-row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:4px 0;}
+.hc-row+.hc-row{border-top:1px solid #f5f5f5;}
+.hc-lbl{color:var(--gray);flex-shrink:0;padding-right:10px;}
+.hc-val{font-weight:500;text-align:right;word-break:break-word;max-width:65%;}
+.st-timeline{display:flex;align-items:flex-start;padding:14px 16px 10px;}
+.st-step{flex:1;text-align:center;position:relative;}
+.st-step:not(:last-child)::after{content:'';position:absolute;top:10px;left:50%;width:100%;height:2px;background:#e5e7eb;z-index:0;}
+.st-step.st-done:not(:last-child)::after{background:var(--teal);}
+.st-step.st-rejected:not(:last-child)::after{background:var(--red);}
+.st-dot{width:22px;height:22px;border-radius:50%;border:2px solid #e5e7eb;background:white;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:10px;position:relative;z-index:1;font-weight:700;}
+.st-step.st-done .st-dot{background:var(--teal);border-color:var(--teal);color:white;}
+.st-step.st-rejected .st-dot{background:var(--red);border-color:var(--red);color:white;}
+.st-step.st-current .st-dot{border-color:var(--blue);background:var(--blue-lt);color:var(--blue);}
+.st-lbl{font-size:10px;font-weight:600;color:var(--gray);line-height:1.3;}
+.st-step.st-done .st-lbl{color:var(--teal);}
+.st-step.st-rejected .st-lbl{color:var(--red);}
+.st-step.st-current .st-lbl{color:var(--blue);}
+.st-date{font-size:9px;color:var(--gray);margin-top:2px;line-height:1.4;}
+.pending-item{background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s;}
+.pending-item:hover{box-shadow:0 3px 14px rgba(0,0,0,.1);border-color:var(--blue);}
+.pending-item-hdr{display:flex;justify-content:space-between;align-items:flex-start;}
+.pending-item-name{font-size:14px;font-weight:700;color:#1a1a2e;}
+.pending-item-amt{font-size:16px;font-weight:700;color:var(--blue);}
+.pending-item-meta{font-size:12px;color:var(--gray);margin-top:5px;line-height:1.6;}
+.pending-item-desc{font-size:12px;color:#374151;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:flex;align-items:flex-end;}
+.modal-sheet{background:white;border-radius:16px 16px 0 0;padding:1.5rem 1.5rem 2rem;width:100%;max-width:480px;margin:0 auto;max-height:88vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:16px;}
+.modal-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);}
+.modal-row:last-of-type{border-bottom:none;}
+.modal-lbl{color:var(--gray);flex-shrink:0;padding-right:12px;}
+.modal-val{font-weight:500;text-align:right;word-break:break-word;max-width:65%;}
+.modal-comment label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;margin-top:16px;}
+.modal-comment textarea{width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;resize:none;height:72px;outline:none;}
+.modal-comment textarea:focus{border-color:var(--blue);}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.btn-approve{padding:13px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-approve:hover{background:#0a5442;}
+.btn-approve:disabled,.btn-reject:disabled{opacity:.5;cursor:not-allowed;}
+.btn-reject{padding:13px;background:white;color:var(--red);border:1.5px solid var(--red);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-reject:hover{background:var(--red-lt);}
+.reimb-item{background:white;border-radius:10px;border:1px solid var(--border);padding:13px 14px;margin-bottom:9px;}
+.reimb-item-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.reimb-item-amt{font-size:17px;font-weight:700;color:var(--blue);}
+.reimb-item-date{font-size:11px;color:var(--gray);margin-top:2px;}
+.reimb-item-dept{font-size:12px;font-weight:600;color:#1a1a2e;}
+.reimb-item-desc{font-size:12px;color:var(--gray);margin-top:5px;line-height:1.5;}
+
 /* ─── ORDER QUEUE ─── */
 .oq-hdr{background:var(--blue);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
 .oq-hdr-left{display:flex;flex-direction:column;}
@@ -273,9 +367,12 @@ input,button{font-family:inherit;}
 <script>
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz3VlRsj6-u6zcwgtaKUGR0PMy2DuHdtULv-9107rsIescWZmEe4KodsNs_BomRs8xR/exec',
-  ADMIN_EMAIL: 'kobar@africanoriginals.com',
+  ADMIN_EMAIL: 'wayoyipeter@africanoriginals.com',
   WEEKLY_LIMIT: 2000,
   CLIENT_SECRET: 'KO@AO#2026$POS!xK9mZ',
+  REIMB_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxNmc-9OFjtan1TO3zPtWQ_MBWTreOmIgsciRxiwTvF_mthTnpcpfX8oTj8qNLBzslN/exec',
+  REIMB_CLIENT_SECRET: 'KO@AO#2026$REIMB!yM7nX',
+  REIMB_DEPARTMENTS: ['Commercial','Marketing','Ops & Production','People'],
 };
 </script>
 
@@ -543,6 +640,167 @@ const CONFIG = {
   </div>
 </div>
 
+<!-- REIMBURSEMENT HOME -->
+<div id="s-reimb" class="hidden">
+  <div class="home-hdr" style="background:var(--teal)">
+    <div class="home-hdr-left">
+      <button onclick="goHome()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:white;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">&#8592; Home</button>
+      <div>
+        <div class="home-name">Reimbursement</div>
+        <div class="home-id" id="reimb-hdr-sub"></div>
+      </div>
+    </div>
+  </div>
+  <div class="home-body">
+    <div class="reimb-stats-row" id="reimb-dash-stats">
+      <div class="rs-card"><div class="rs-val" id="rds-total">—</div><div class="rs-lbl">Total</div></div>
+      <div class="rs-card"><div class="rs-val" id="rds-pending" style="color:var(--red)">—</div><div class="rs-lbl">Pending</div></div>
+      <div class="rs-card"><div class="rs-val" id="rds-approved" style="color:var(--teal)">—</div><div class="rs-lbl">Approved</div></div>
+      <div class="rs-card"><div class="rs-val" id="rds-paid" style="color:#92400e">—</div><div class="rs-lbl">Paid</div></div>
+    </div>
+    <div id="reimb-lm-banner" class="reimb-notify hidden" onclick="goApprovals()">
+      <div>
+        <div class="reimb-notify-lbl">&#9203; Pending Approvals <span id="reimb-lm-badge" class="reimb-notify-badge" style="display:none">0</span></div>
+        <div class="reimb-notify-sub">Claims from your team waiting for review</div>
+      </div>
+      <span style="font-size:18px;color:var(--gray)">&#8250;</span>
+    </div>
+    <div id="reimb-fin-banner" class="reimb-notify reimb-fin-notify hidden" onclick="goFinancePending()">
+      <div>
+        <div class="reimb-notify-lbl">&#128176; Ready for Payment <span id="reimb-fin-badge" class="reimb-notify-badge" style="display:none">0</span></div>
+        <div class="reimb-notify-sub">Approved claims awaiting payment processing</div>
+      </div>
+      <span style="font-size:18px;color:var(--gray)">&#8250;</span>
+    </div>
+    <div class="home-sec-lbl">Quick Actions</div>
+    <div class="module-grid">
+      <div class="mc-card mc-staff" onclick="goNewClaim()">
+        <div class="mc-icon">&#128221;</div>
+        <div class="mc-label">New Claim</div>
+        <div class="mc-sub">Submit an expense reimbursement</div>
+      </div>
+      <div class="mc-card mc-orders" onclick="goReimbHistory()">
+        <div class="mc-icon">&#128203;</div>
+        <div class="mc-label">My Claims</div>
+        <div class="mc-sub">View all your submissions</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REIMBURSEMENT — NEW CLAIM FORM -->
+<div id="s-form" class="hidden">
+  <div class="page-top" style="background:var(--teal)">
+    <button class="back-btn" onclick="show('s-reimb')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">New Expense Claim</h2>
+  </div>
+  <div class="reimb-form">
+    <div class="reimb-card">
+      <h3>&#128203; Claim Details</h3>
+      <div class="fld">
+        <label>Expense Date</label>
+        <input type="date" id="rb-date" onchange="checkBackdate()">
+        <div id="backdate-warn" class="backdate-warn hidden"></div>
+      </div>
+      <div class="fld">
+        <label>Department</label>
+        <select id="rb-dept">
+          <option value="">— Select department —</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Line Manager (Approver)</label>
+        <div class="lm-info-box" id="lm-info-box">
+          <div class="lm-name" id="lm-info-name">—</div>
+          <div class="lm-email" id="lm-info-email"></div>
+        </div>
+      </div>
+      <div class="fld">
+        <label>Requested Amount (KES)</label>
+        <input type="number" id="rb-amount" placeholder="0.00" min="1" step="0.01">
+      </div>
+      <div class="fld">
+        <label>Description of Expense</label>
+        <textarea id="rb-desc" rows="3" placeholder="Describe what this expense was for..." style="width:100%;padding:11px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;resize:none;font-family:inherit;"></textarea>
+      </div>
+    </div>
+    <div class="reimb-card">
+      <h3>&#128179; Payment Details</h3>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">How should we pay you back?</p>
+      <div class="pay-method-grp">
+        <button class="pm-btn" id="pm-account" onclick="selectPayMethod('account')"><span class="pm-icon">&#127970;</span>Bank Account</button>
+        <button class="pm-btn" id="pm-paybill" onclick="selectPayMethod('paybill')"><span class="pm-icon">&#128242;</span>Paybill</button>
+        <button class="pm-btn" id="pm-mpesa"   onclick="selectPayMethod('mpesa')"><span class="pm-icon">&#128241;</span>M-Pesa</button>
+        <button class="pm-btn" id="pm-till"    onclick="selectPayMethod('till')"><span class="pm-icon">&#127978;</span>Till Number</button>
+      </div>
+      <div id="pd-account" class="pay-detail-field hidden">
+        <div class="fld"><label>Bank Name</label><input type="text" id="pd-bank" placeholder="e.g. Equity Bank"></div>
+        <div class="fld"><label>Account Number</label><input type="text" id="pd-accnum" placeholder="Account number" inputmode="numeric"></div>
+      </div>
+      <div id="pd-paybill" class="pay-detail-field hidden">
+        <div class="fld"><label>Paybill Number</label><input type="text" id="pd-pbnum" placeholder="e.g. 247247" inputmode="numeric"></div>
+        <div class="fld"><label>Account Reference</label><input type="text" id="pd-pbref" placeholder="Account reference / name"></div>
+      </div>
+      <div id="pd-mpesa" class="pay-detail-field hidden">
+        <div class="fld"><label>M-Pesa Number</label><input type="tel" id="pd-mpnum" placeholder="e.g. 0712 345 678" inputmode="numeric"></div>
+      </div>
+      <div id="pd-till" class="pay-detail-field hidden">
+        <div class="fld"><label>Till Number</label><input type="text" id="pd-tillnum" placeholder="e.g. 123456" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div class="reimb-card">
+      <h3>&#128206; Supporting Document <span style="font-size:12px;font-weight:400;color:var(--gray)">(Optional)</span></h3>
+      <div class="attach-zone" id="attach-zone" onclick="qs('rb-file').click()">
+        <div style="font-size:28px;margin-bottom:6px">&#128196;</div>
+        <div id="attach-info" class="attach-info">Tap to attach receipt or supporting document<br>Photos, PDF, Excel, Word — max 5 MB</div>
+        <button id="attach-remove-btn" class="attach-remove hidden" onclick="event.stopPropagation();removeAttach()">&#10005; Remove</button>
+      </div>
+      <input type="file" id="rb-file" style="display:none" accept="image/*,.pdf,.xlsx,.xls,.csv,.doc,.docx,.txt" onchange="handleFileSelect(this)">
+    </div>
+    <div id="form-err" class="err hidden"></div>
+    <div id="form-suc" class="suc hidden"></div>
+    <button class="btn-primary" id="submit-btn" onclick="submitClaim()" style="background:var(--teal);">Submit Claim</button>
+    <button class="btn-secondary" onclick="show('s-reimb')" style="margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<!-- REIMBURSEMENT — MY CLAIMS HISTORY -->
+<div id="s-reimb-hist" class="hidden">
+  <div class="page-top" style="background:var(--teal)">
+    <button class="back-btn" onclick="show('s-reimb')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">My Claims</h2>
+    <button class="page-top-action" style="color:white;" onclick="loadReimbHistory()">&#8635; Refresh</button>
+  </div>
+  <div style="padding:14px 16px 30px;" id="reimb-hist-body"></div>
+</div>
+
+<!-- REIMBURSEMENT — PENDING APPROVALS (LM) -->
+<div id="s-approve" class="hidden">
+  <div class="page-top" style="background:var(--teal)">
+    <button class="back-btn" onclick="show('s-reimb')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">Team Approvals</h2>
+    <button class="page-top-action" style="color:white;" onclick="loadApprovals()">&#8635; Refresh</button>
+  </div>
+  <div style="padding:14px 16px 30px;" id="approve-body"></div>
+</div>
+
+<!-- REIMBURSEMENT — FINANCE PAYMENTS -->
+<div id="s-finance" class="hidden">
+  <div class="page-top" style="background:var(--teal)">
+    <button class="back-btn" onclick="show('s-reimb')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">Process Payments</h2>
+    <button class="page-top-action" style="color:white;" onclick="loadFinancePending()">&#8635; Refresh</button>
+  </div>
+  <div style="padding:14px 16px 30px;" id="finance-body"></div>
+</div>
+
+<!-- REIMBURSEMENT — REVIEW MODAL -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal-sheet">
+    <div id="modal-content"></div>
+  </div>
+</div>
+
 </div><!-- #app -->
 
 <script>
@@ -555,13 +813,14 @@ const ALL_MODULES=[
   {id:'stock',   label:'Opening Stock', icon:'📦', sub:'Daily stock count at bar open',           cls:'mc-stock'},
   {id:'receive', label:'Receive Stock', icon:'📥', sub:'Record incoming stock from warehouse',    cls:'mc-receive'},
   {id:'orders',  label:'Order Queue',   icon:'📋', sub:"View and track today's bar orders",      cls:'mc-orders'},
+  {id:'reimb',   label:'Reimbursement', icon:'💸', sub:'Submit & track expense claims',           cls:'mc-reimb'},
 ];
 const ROLE_MODULES={
   staff:  ['staff'],
   barman: ['bar','stock','receive','orders'],
 };
 const MOD_COLOR={
-  staff:'#0f6e56', bar:'#1a4a8a', stock:'#85500b', receive:'#533aab', orders:'#1a4a8a',
+  staff:'#0f6e56', bar:'#1a4a8a', stock:'#85500b', receive:'#533aab', orders:'#1a4a8a', reimb:'#0f6e56',
 };
 
 // ═══════════════════════════════════════
@@ -569,6 +828,7 @@ const MOD_COLOR={
 // ═══════════════════════════════════════
 let user=null, pt='normal', cart={}, lastEmail='', PRODUCTS=[], selectedCat='All', payMethod=null;
 let module=null, oqTimer=null, sessionSpend=0, pinReturnScreen='s-shop';
+let pendingClaims=[], pendingCount=0, selectedPayMethod='', attachFile=null;
 
 let pinState={mode:null,buffer:'',newPin:''};
 
@@ -577,7 +837,8 @@ function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;
 
 function show(id){
   ['s-loading','s-login','s-setpin','s-changepin','s-reset','s-verify',
-   's-home','s-shop','s-cart','s-conf','s-hist','s-stock','s-orders']
+   's-home','s-shop','s-cart','s-conf','s-hist','s-stock','s-orders',
+   's-reimb','s-form','s-reimb-hist','s-approve','s-finance']
   .forEach(s=>qs(s).classList.toggle('hidden',s!==id));
 }
 
@@ -696,6 +957,7 @@ async function doLogin(){
 
 function doLogout(){
   user=null;cart={};module=null;sessionSpend=0;
+  pendingClaims=[];pendingCount=0;selectedPayMethod='';attachFile=null;
   clearInterval(oqTimer);oqTimer=null;
   ['li-email','li-sid','li-pin'].forEach(id=>qs(id).value='');
   qs('li-err').classList.add('hidden');
@@ -932,6 +1194,7 @@ function enterHome(){
     </div>`).join('');
   setModColor('#1a4a8a');
   show('s-home');
+  loadReimbUser();
 }
 
 function goHome(){clearInterval(oqTimer);oqTimer=null;enterHome();}
@@ -941,6 +1204,7 @@ function openModule(mod){
   setModColor(MOD_COLOR[mod]||'#1a4a8a');
   if(mod==='staff'||mod==='bar') openShop(mod);
   else if(mod==='orders') openOrderQueue();
+  else if(mod==='reimb') openReimb();
   else openStock(mod);
 }
 
@@ -1353,6 +1617,385 @@ const BUNDLED_PRODUCTS=[
   {id:47,name:'58 Double Shot',var:'',cat:'Shots',np:150,sp:0,clr:'#85500b',ltr:'S'},
   {id:48,name:'58 Single Shot',var:'',cat:'Shots',np:100,sp:0,clr:'#85500b',ltr:'S'},
 ];
+
+// ═══════════════════════════════════════
+// REIMBURSEMENT MODULE
+// ═══════════════════════════════════════
+const isReimbDemo=()=>CONFIG.REIMB_SCRIPT_URL==='YOUR_REIMBURSEMENT_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+async function reimbApiFetch(params){
+  const r=await fetch(CONFIG.REIMB_SCRIPT_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({...params,clientSecret:CONFIG.REIMB_CLIENT_SECRET}),
+  });
+  return r.json();
+}
+
+// ── Background check: is this user enrolled in Reimbursement? ──
+async function loadReimbUser(){
+  if(isDemo()||isReimbDemo()) return;
+  try{
+    const d=await reimbApiFetch({action:'checkReimbUser',email:user.email,staffId:user.staffId});
+    if(!d.found) return;
+    user.reimbRole=d.role;
+    user.department=d.department||'';
+    user.lmName=d.lmName||'';
+    user.lmEmail=d.lmEmail||'';
+    // Add reimb card to home grid if not already there
+    const grid=qs('home-module-grid');
+    if(grid&&!grid.querySelector('[data-reimb]')){
+      const div=document.createElement('div');
+      div.className='mc-card mc-reimb';
+      div.setAttribute('data-reimb','1');
+      div.onclick=()=>openModule('reimb');
+      div.innerHTML='<div class="mc-icon">💸</div><div class="mc-label">Reimbursement</div><div class="mc-sub">Submit &amp; track expense claims</div>';
+      grid.appendChild(div);
+    }
+  }catch(e){/* silently fail — POS works normally */}
+}
+
+function isApprover(){return['lm','manager'].includes(user.reimbRole);}
+function isFinance(){return user.reimbRole==='finance';}
+
+// ── Open Reimbursement landing screen ──
+function openReimb(){
+  // Populate department select
+  const deptSel=qs('rb-dept');
+  deptSel.innerHTML='<option value="">— Select department —</option>';
+  CONFIG.REIMB_DEPARTMENTS.forEach(d=>{
+    const o=document.createElement('option');o.value=d;o.textContent=d;deptSel.appendChild(o);
+  });
+  qs('reimb-hdr-sub').textContent=user.name+' · '+user.staffId;
+  qs('reimb-lm-banner').classList.toggle('hidden',!isApprover());
+  qs('reimb-fin-banner').classList.toggle('hidden',!isFinance());
+  show('s-reimb');
+  loadReimbDashStats();
+  if(isApprover()) loadPendingCount();
+  if(isFinance())  loadFinanceCount();
+}
+
+// ── Local storage ──
+function getLocalClaims(){try{return JSON.parse(localStorage.getItem('ko_reimb_v1')||'[]');}catch{return[];}}
+function saveLocalClaim(c){const a=getLocalClaims();a.push(c);localStorage.setItem('ko_reimb_v1',JSON.stringify(a));}
+function updateLocalClaim(claimId,upd){
+  const a=getLocalClaims().map(c=>c.claimId===claimId?{...c,...upd}:c);
+  localStorage.setItem('ko_reimb_v1',JSON.stringify(a));
+}
+
+// ── Dashboard stats ──
+async function loadReimbDashStats(){
+  const claims=getLocalClaims().filter(c=>c.email===user.email);
+  updateReimbStats(claims);
+  if(isReimbDemo()) return;
+  try{
+    const res=await reimbApiFetch({action:'getReimbursements',email:user.email});
+    (res.claims||[]).forEach(sc=>{
+      const lc=claims.find(c=>c.claimId===sc.claimId);
+      if(lc&&lc.status!==sc.status) updateLocalClaim(sc.claimId,{status:sc.status,lmComment:sc.lmComment,paidAt:sc.paidAt});
+    });
+    updateReimbStats(getLocalClaims().filter(c=>c.email===user.email));
+  }catch(e){}
+}
+
+function updateReimbStats(claims){
+  qs('rds-total').textContent=claims.length;
+  qs('rds-pending').textContent=claims.filter(c=>c.status==='submitted').length;
+  qs('rds-approved').textContent=claims.filter(c=>c.status==='approved').length;
+  qs('rds-paid').textContent=claims.filter(c=>c.status==='paid').length;
+}
+
+async function loadPendingCount(){
+  if(isReimbDemo()){pendingCount=1;updateApproveUI();return;}
+  try{
+    const res=await reimbApiFetch({action:'getPendingApprovals',email:user.email,staffId:user.staffId});
+    pendingCount=(res.claims||[]).length;pendingClaims=res.claims||[];updateApproveUI();
+  }catch(e){}
+}
+
+function updateApproveUI(){
+  const badge=qs('reimb-lm-badge');
+  if(badge){badge.textContent=pendingCount;badge.style.display=pendingCount>0?'inline-block':'none';}
+}
+
+async function loadFinanceCount(){
+  if(isReimbDemo()){updateFinanceUI(1);return;}
+  try{
+    const res=await reimbApiFetch({action:'getApprovedClaims',email:user.email,staffId:user.staffId});
+    updateFinanceUI((res.claims||[]).length);
+  }catch(e){}
+}
+
+function updateFinanceUI(count){
+  const badge=qs('reimb-fin-badge');
+  if(badge){badge.textContent=count;badge.style.display=count>0?'inline-block':'none';}
+}
+
+// ── Nav ──
+function goNewClaim(){resetForm();show('s-form');}
+function goReimbHistory(){loadReimbHistory();show('s-reimb-hist');}
+function goApprovals(){if(!isApprover())return;loadApprovals();show('s-approve');}
+function goFinancePending(){if(!isFinance())return;loadFinancePending();show('s-finance');}
+
+// ── Form ──
+function resetForm(){
+  qs('rb-date').value=new Date().toISOString().split('T')[0];
+  qs('rb-dept').value=user.department||'';
+  qs('rb-amount').value='';qs('rb-desc').value='';
+  selectPayMethod('');
+  attachFile=null;qs('rb-file').value='';updateAttachUI();
+  qs('form-err').classList.add('hidden');qs('form-suc').classList.add('hidden');
+  const btn=qs('submit-btn');btn.disabled=false;btn.innerHTML='Submit Claim';
+  qs('backdate-warn').classList.add('hidden');
+  qs('lm-info-name').textContent=user.lmName||'(No line manager assigned)';
+  qs('lm-info-email').textContent=user.lmEmail||'';
+}
+
+function checkBackdate(){
+  const dateVal=qs('rb-date').value;if(!dateVal)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const expDate=new Date(dateVal);expDate.setHours(0,0,0,0);
+  const daysLate=Math.floor((today-expDate)/86400000);
+  const warn=qs('backdate-warn');
+  if(daysLate>0){
+    warn.innerHTML=`&#9888;&#65039; <strong>Backdated claim</strong> — this expense is ${daysLate} day${daysLate!==1?'s':''} old. Your line manager will see this.`;
+    warn.classList.remove('hidden');
+  }else{warn.classList.add('hidden');}
+}
+
+function selectPayMethod(m){
+  selectedPayMethod=m;
+  ['account','paybill','mpesa','till'].forEach(k=>{
+    qs('pm-'+k).classList.toggle('active',k===m);
+    qs('pd-'+k).classList.toggle('hidden',k!==m);
+  });
+}
+
+function handleFileSelect(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){qs('form-err').textContent='File too large — maximum 5 MB.';qs('form-err').classList.remove('hidden');input.value='';return;}
+  attachFile=file;updateAttachUI();
+}
+
+function updateAttachUI(){
+  const zone=qs('attach-zone'),info=qs('attach-info'),rem=qs('attach-remove-btn');
+  if(attachFile){
+    zone.classList.add('has-file');
+    info.textContent=attachFile.name+' ('+(attachFile.size/1024).toFixed(1)+' KB)';
+    rem.classList.remove('hidden');
+  }else{
+    zone.classList.remove('has-file');
+    info.innerHTML='Tap to attach receipt or supporting document<br>Photos, PDF, Excel, Word — max 5 MB';
+    rem.classList.add('hidden');
+  }
+}
+
+function removeAttach(){attachFile=null;qs('rb-file').value='';updateAttachUI();}
+
+function fileToBase64(file){
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+}
+
+async function submitClaim(){
+  const date=qs('rb-date').value.trim();
+  const dept=qs('rb-dept').value;
+  const amount=parseFloat(qs('rb-amount').value);
+  const desc=qs('rb-desc').value.trim();
+  const errEl=qs('form-err'),sucEl=qs('form-suc');
+  errEl.classList.add('hidden');sucEl.classList.add('hidden');
+  if(!date)                 {errEl.textContent='Please select the expense date.';  errEl.classList.remove('hidden');return;}
+  if(!dept)                 {errEl.textContent='Please select your department.';   errEl.classList.remove('hidden');return;}
+  if(!user.lmEmail)         {errEl.textContent='No line manager assigned. Contact your admin.';errEl.classList.remove('hidden');return;}
+  if(!amount||amount<=0)    {errEl.textContent='Please enter a valid amount.';     errEl.classList.remove('hidden');return;}
+  if(!selectedPayMethod)    {errEl.textContent='Please select a payment method.';  errEl.classList.remove('hidden');return;}
+  if(!desc)                 {errEl.textContent='Please add a description.';        errEl.classList.remove('hidden');return;}
+  let payDetails={};
+  if(selectedPayMethod==='account'){
+    const bank=qs('pd-bank').value.trim(),acc=qs('pd-accnum').value.trim();
+    if(!bank||!acc){errEl.textContent='Please enter bank name and account number.';errEl.classList.remove('hidden');return;}
+    payDetails={bankName:bank,accountNumber:acc};
+  }else if(selectedPayMethod==='paybill'){
+    const pb=qs('pd-pbnum').value.trim(),ref=qs('pd-pbref').value.trim();
+    if(!pb||!ref){errEl.textContent='Please enter paybill number and account reference.';errEl.classList.remove('hidden');return;}
+    payDetails={paybillNumber:pb,accountRef:ref};
+  }else if(selectedPayMethod==='mpesa'){
+    const mp=qs('pd-mpnum').value.trim();
+    if(!mp){errEl.textContent='Please enter M-Pesa number.';errEl.classList.remove('hidden');return;}
+    payDetails={mpesaNumber:mp};
+  }else if(selectedPayMethod==='till'){
+    const tn=qs('pd-tillnum').value.trim();
+    if(!tn){errEl.textContent='Please enter till number.';errEl.classList.remove('hidden');return;}
+    payDetails={tillNumber:tn};
+  }
+  const today=new Date();today.setHours(0,0,0,0);
+  const expDate=new Date(date);expDate.setHours(0,0,0,0);
+  const daysLate=Math.max(0,Math.floor((today-expDate)/86400000));
+  const btn=qs('submit-btn');btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Submitting...';
+  let attachBase64=null,attachName=null,attachMime=null;
+  if(attachFile){
+    try{btn.innerHTML='<div class="spinner"></div> Uploading attachment...';attachBase64=await fileToBase64(attachFile);attachName=attachFile.name;attachMime=attachFile.type||'application/octet-stream';}
+    catch(e){console.warn('File read error',e);}
+  }
+  const claimId='RB-'+Date.now();
+  const claim={claimId,email:user.email,name:user.name,staffId:user.staffId,department:dept,lmName:user.lmName,lmEmail:user.lmEmail,amount,payMethod:selectedPayMethod,payDetails,description:desc,expenseDate:date,backdated:daysLate>0,daysLate,submittedAt:new Date().toISOString(),attachBase64,attachName,attachMime,status:'submitted'};
+  const localClaim={...claim};delete localClaim.attachBase64;
+  saveLocalClaim(localClaim);
+  if(!isReimbDemo()){
+    btn.innerHTML='<div class="spinner"></div> Saving...';
+    try{await reimbApiFetch({action:'saveReimbursement',...claim});}
+    catch(e){console.warn('Sync failed — saved locally',e);}
+  }
+  const payLabel={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'}[selectedPayMethod];
+  const bdNote=daysLate>0?`<br><span style="color:var(--amber);font-size:11px">⚠ Backdated by ${daysLate} day${daysLate!==1?'s':''}</span>`:'';
+  sucEl.innerHTML=`✅ <strong>Claim submitted!</strong> Ref: <strong>${claimId}</strong><br>KES ${fmt(amount)} · ${dept} · ${payLabel}${bdNote}<br><span style="font-size:11px;opacity:.85">${isReimbDemo()?'Demo mode — no email sent':'Your line manager '+escapeHtml(user.lmName)+' has been notified.'}</span>`;
+  sucEl.classList.remove('hidden');
+  btn.disabled=false;btn.textContent='Submit Another Claim';
+  attachFile=null;qs('rb-file').value='';updateAttachUI();
+  updateReimbStats(getLocalClaims().filter(c=>c.email===user.email));
+}
+
+// ── History ──
+async function loadReimbHistory(){
+  const body=qs('reimb-hist-body');
+  body.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gray)"><div class="lg-spinner" style="margin:0 auto 14px;border-top-color:var(--teal)"></div>Loading...</div>';
+  let claims=getLocalClaims().filter(c=>c.email===user.email).sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+  if(!isReimbDemo()){
+    try{
+      const res=await reimbApiFetch({action:'getReimbursements',email:user.email});
+      (res.claims||[]).forEach(s=>updateLocalClaim(s.claimId,{status:s.status,lmComment:s.lmComment,decidedAt:s.decidedAt,paidAt:s.paidAt,paidBy:s.paidBy,attachUrl:s.attachUrl,attachName:s.attachName}));
+      claims=getLocalClaims().filter(c=>c.email===user.email).sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+    }catch(e){}
+  }
+  updateReimbStats(claims);
+  const statsHtml=`<div class="reimb-stats-row"><div class="rs-card"><div class="rs-val">${claims.length}</div><div class="rs-lbl">Total</div></div><div class="rs-card"><div class="rs-val" style="color:var(--red)">${claims.filter(c=>c.status==='submitted').length}</div><div class="rs-lbl">Pending</div></div><div class="rs-card"><div class="rs-val" style="color:var(--teal)">${claims.filter(c=>c.status==='approved').length}</div><div class="rs-lbl">Approved</div></div><div class="rs-card"><div class="rs-val" style="color:#92400e">${claims.filter(c=>c.status==='paid').length}</div><div class="rs-lbl">Paid</div></div></div>`;
+  if(!claims.length){body.innerHTML=statsHtml+'<div style="text-align:center;padding:3rem 1rem;color:var(--gray)"><p style="font-size:28px;margin-bottom:10px">📋</p><p style="font-size:14px">No claims yet. Tap New Claim to submit your first expense.</p></div>';return;}
+  const statusClass={submitted:'sb-submitted',approved:'sb-approved',rejected:'sb-rejected',paid:'sb-paid'};
+  const statusLabel={submitted:'Pending Review',approved:'Approved',rejected:'Rejected',paid:'Paid'};
+  const payMethodLbl={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'};
+  const pdFieldLbl={bankName:'Bank',accountNumber:'Account No.',paybillNumber:'Paybill No.',accountRef:'Account Ref',mpesaNumber:'M-Pesa No.',tillNumber:'Till No.'};
+  const fmtDt=(iso,opts)=>iso?new Date(iso).toLocaleDateString('en-KE',opts):'';
+  const fmtTm=iso=>iso?new Date(iso).toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'}):'';
+  const shortDt=iso=>iso?fmtDt(iso,{day:'numeric',month:'short'}):'';
+  const cards=claims.map(c=>{
+    const sc=statusClass[c.status]||'sb-submitted',sl=statusLabel[c.status]||c.status,pm=payMethodLbl[c.payMethod]||c.payMethod;
+    const subFull=fmtDt(c.submittedAt,{weekday:'short',day:'numeric',month:'long',year:'numeric'})+' at '+fmtTm(c.submittedAt);
+    const decFull=c.decidedAt?fmtDt(c.decidedAt,{day:'numeric',month:'short',year:'numeric'})+' at '+fmtTm(c.decidedAt):'';
+    const paidFull=c.paidAt?fmtDt(c.paidAt,{day:'numeric',month:'short',year:'numeric'}):'';
+    const pd=c.payDetails||{};
+    const pdRows=Object.entries(pd).filter(([,v])=>v).map(([k,v])=>`<div class="hc-row"><span class="hc-lbl">${pdFieldLbl[k]||k}</span><span class="hc-val" style="font-family:monospace">${escapeHtml(v)}</span></div>`).join('');
+    const commentSection=c.lmComment?`<div class="hc-section" style="background:var(--red-lt)"><div class="hc-section-lbl" style="color:var(--red)">LM Feedback</div><p style="font-size:13px;color:var(--red);line-height:1.6;margin:0">${escapeHtml(c.lmComment)}</p></div>`:'';
+    const attachSection=c.attachUrl?`<div class="hc-section"><div class="hc-section-lbl">Supporting Document</div><a href="${c.attachUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--blue);text-decoration:none;border:1px solid var(--blue);border-radius:7px;padding:7px 12px;">📎 ${escapeHtml(c.attachName||'View attachment')}</a></div>`:'';
+    const bdNote=c.backdated?`<div class="hc-row"><span class="hc-lbl" style="color:var(--amber)">Backdated</span><span class="hc-val" style="color:var(--amber)">${c.daysLate} day${c.daysLate!==1?'s':''} late</span></div>`:'';
+    const isRej=c.status==='rejected';
+    const step2cls=isRej?'st-rejected':['approved','paid'].includes(c.status)?'st-done':'st-current';
+    const step3cls=c.status==='paid'?'st-done':(c.status==='approved'?'st-current':'');
+    const timeline=`<div class="hc-section" style="padding-bottom:4px"><div class="hc-section-lbl">Progress</div></div><div class="st-timeline"><div class="st-step st-done"><div class="st-dot">✓</div><div class="st-lbl">Submitted</div><div class="st-date">${shortDt(c.submittedAt)}<br>${fmtTm(c.submittedAt)}</div></div><div class="st-step ${step2cls}"><div class="st-dot">${isRej?'✕':['approved','paid'].includes(c.status)?'✓':'…'}</div><div class="st-lbl">${isRej?'Rejected':c.status==='submitted'?'Awaiting LM':'LM Approved'}</div><div class="st-date">${decFull||(c.status==='submitted'?'Pending':'')}</div></div><div class="st-step ${step3cls}"><div class="st-dot">${c.status==='paid'?'✓':'💳'}</div><div class="st-lbl">${c.status==='paid'?'Paid':'Payment'}</div><div class="st-date">${paidFull||(c.status==='approved'?'In progress':'—')}</div></div></div>`;
+    return`<div class="hc"><div class="hc-header"><div><div class="hc-amount">KES ${fmt(c.amount)}</div><div class="hc-id">${c.claimId}</div></div><span class="status-badge ${sc}">${sl}</span></div><div class="hc-section"><div class="hc-section-lbl">Claim Details</div><div class="hc-row"><span class="hc-lbl">Submitted</span><span class="hc-val">${subFull}</span></div>${c.expenseDate?`<div class="hc-row"><span class="hc-lbl">Expense Date</span><span class="hc-val">${c.expenseDate}</span></div>`:''}<div class="hc-row"><span class="hc-lbl">Department</span><span class="hc-val">${escapeHtml(c.department)}</span></div><div class="hc-row"><span class="hc-lbl">Description</span><span class="hc-val">${escapeHtml(c.description)}</span></div>${bdNote}</div><div class="hc-section"><div class="hc-section-lbl">Payment — ${pm}</div>${pdRows||'<div style="font-size:12px;color:var(--gray)">No payment details</div>'}</div><div class="hc-section"><div class="hc-section-lbl">Line Manager</div><div class="hc-row"><span class="hc-lbl">Name</span><span class="hc-val">${escapeHtml(c.lmName||'—')}</span></div><div class="hc-row"><span class="hc-lbl">Email</span><span class="hc-val" style="font-size:12px">${escapeHtml(c.lmEmail||'—')}</span></div>${decFull?`<div class="hc-row"><span class="hc-lbl">Decision</span><span class="hc-val">${decFull}</span></div>`:''} ${paidFull?`<div class="hc-row"><span class="hc-lbl">Paid</span><span class="hc-val">${paidFull}${c.paidBy?' · '+escapeHtml(c.paidBy):''}</span></div>`:''}</div>${commentSection}${attachSection}${timeline}</div>`;
+  }).join('');
+  body.innerHTML=statsHtml+cards;
+}
+
+// ── Pending Approvals (LM) ──
+async function loadApprovals(){
+  const body=qs('approve-body');
+  body.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--gray)"><div class="lg-spinner" style="margin:0 auto 14px;border-top-color:var(--teal)"></div>Loading...</div>';
+  if(isReimbDemo()){
+    pendingClaims=[{claimId:'RB-DEMO001',name:'Demo Staff',email:'staff@africanoriginals.com',staffId:'AO002',department:'Commercial',amount:4500,payMethod:'mpesa',payDetails:{mpesaNumber:'0712345678'},description:'Fuel for client visit to Mombasa',attachUrl:'',attachName:'',submittedAt:new Date().toISOString(),token:'demo-token',backdated:false,daysLate:0}];
+    pendingCount=1;updateApproveUI();renderApproveList();return;
+  }
+  try{
+    const res=await reimbApiFetch({action:'getPendingApprovals',email:user.email,staffId:user.staffId});
+    pendingClaims=res.claims||[];pendingCount=pendingClaims.length;updateApproveUI();renderApproveList();
+  }catch(e){body.innerHTML='<p style="text-align:center;color:var(--red);padding:2rem">Failed to load. Please try again.</p>';}
+}
+
+function renderApproveList(){
+  const body=qs('approve-body');
+  if(!pendingClaims.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem"><p style="font-size:32px;margin-bottom:10px">✅</p><p style="font-size:14px;color:var(--gray)">No pending approvals.</p></div>';return;}
+  const pl={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'};
+  body.innerHTML=pendingClaims.map((c,idx)=>{
+    const d=new Date(c.submittedAt);
+    const ds=d.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'});
+    const ts=d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+    const pm=pl[c.payMethod]||c.payMethod;
+    const attachBtn=c.attachUrl?`<a href="${c.attachUrl}" target="_blank" style="font-size:12px;color:var(--blue);text-decoration:none;border:1px solid var(--blue);border-radius:6px;padding:4px 10px;margin-top:8px;display:inline-block;">📎 View Attachment</a>`:'';
+    const bdNote=c.backdated?`<div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:6px">⚠ Backdated — ${c.daysLate} day${c.daysLate!==1?'s':''} late</div>`:'';
+    return`<div class="pending-item" onclick="openReviewModal(${idx})"><div class="pending-item-hdr"><div><div class="pending-item-name">${escapeHtml(c.name)}</div><span style="font-size:11px;background:var(--blue-lt);color:var(--blue);padding:2px 8px;border-radius:9px;font-weight:600">${escapeHtml(c.staffId)}</span></div><div class="pending-item-amt">KES ${fmt(c.amount)}</div></div><div class="pending-item-meta">${escapeHtml(c.department)} · ${pm}<br>${ds} at ${ts}</div><div class="pending-item-desc">${escapeHtml(c.description)}</div>${bdNote}${attachBtn}<div style="margin-top:10px;font-size:12px;color:var(--blue);font-weight:600;">Tap to review →</div></div>`;
+  }).join('');
+}
+
+function openReviewModal(idx){
+  const c=pendingClaims[idx];if(!c)return;
+  window._reviewCtx={idx,token:c.token,claimId:c.claimId};
+  const d=new Date(c.submittedAt);
+  const ds=d.toLocaleDateString('en-KE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const ts=d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+  const pm={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'}[c.payMethod]||c.payMethod;
+  const pd=c.payDetails||{};
+  const pdLabel={bankName:'Bank',accountNumber:'Account No.',paybillNumber:'Paybill No.',accountRef:'Acct Ref',mpesaNumber:'M-Pesa No.',tillNumber:'Till No.'};
+  const pdRows=Object.entries(pd).filter(([,v])=>v).map(([k,v])=>`<div class="modal-row"><span class="modal-lbl">${pdLabel[k]||k}</span><span class="modal-val" style="font-family:monospace">${escapeHtml(v)}</span></div>`).join('');
+  const attachBtn=c.attachUrl?`<div class="modal-row"><span class="modal-lbl">Attachment</span><span class="modal-val"><a href="${c.attachUrl}" target="_blank" style="color:var(--blue)">${escapeHtml(c.attachName||'View file')}</a></span></div>`:'';
+  const bdRow=c.backdated?`<div class="modal-row"><span class="modal-lbl" style="color:var(--amber)">Backdated</span><span class="modal-val" style="color:var(--amber);font-weight:700">${c.daysLate} day${c.daysLate!==1?'s':''} late ⚠</span></div>`:'';
+  qs('modal-content').innerHTML=`<div class="modal-title">Review Claim</div><div class="modal-row"><span class="modal-lbl">Requester</span><span class="modal-val">${escapeHtml(c.name)} · ${escapeHtml(c.staffId)}</span></div><div class="modal-row"><span class="modal-lbl">Department</span><span class="modal-val">${escapeHtml(c.department)}</span></div><div class="modal-row"><span class="modal-lbl">Amount</span><span class="modal-val" style="color:var(--blue);font-size:17px;font-weight:700">KES ${fmt(c.amount)}</span></div><div class="modal-row"><span class="modal-lbl">Payment Via</span><span class="modal-val">${pm}</span></div>${pdRows}<div class="modal-row"><span class="modal-lbl">Description</span><span class="modal-val">${escapeHtml(c.description)}</span></div><div class="modal-row"><span class="modal-lbl">Submitted</span><span class="modal-val">${ds}<br>${ts}</span></div>${bdRow}${attachBtn}<div class="modal-comment"><label>Comment (required when rejecting)</label><textarea id="review-comment" placeholder="Add a note for the requester..."></textarea></div><div id="review-err" class="err hidden"></div><div class="modal-btns"><button class="btn-reject" id="btn-reject" onclick="submitDecision('rejected')">❌ Reject</button><button class="btn-approve" id="btn-approve" onclick="submitDecision('approved')">✅ Approve</button></div><button class="btn-secondary" style="margin-top:10px" onclick="closeModal()">Cancel</button>`;
+  qs('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal(){qs('modal-overlay').classList.add('hidden');}
+
+async function submitDecision(decision){
+  const ctx=window._reviewCtx;if(!ctx)return;
+  const comment=qs('review-comment').value.trim();
+  const errEl=qs('review-err');errEl.classList.add('hidden');
+  if(decision==='rejected'&&!comment){errEl.textContent='Please add a comment explaining the rejection.';errEl.classList.remove('hidden');return;}
+  qs('btn-approve').disabled=true;qs('btn-reject').disabled=true;
+  qs('btn-approve').innerHTML='<div class="spinner" style="border-top-color:white;display:inline-block"></div>';
+  if(!isReimbDemo()){
+    try{await reimbApiFetch({action:'approveReimb',token:ctx.token,decision,comment});}
+    catch(e){errEl.textContent='Failed to save. Please try again.';errEl.classList.remove('hidden');qs('btn-approve').disabled=false;qs('btn-reject').disabled=false;qs('btn-approve').textContent='✅ Approve';return;}
+  }
+  pendingClaims.splice(ctx.idx,1);pendingCount=pendingClaims.length;
+  updateApproveUI();closeModal();renderApproveList();
+}
+
+// ── Finance — Mark as Paid ──
+async function loadFinancePending(){
+  const body=qs('finance-body');
+  body.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--gray)"><div class="lg-spinner" style="margin:0 auto 14px;border-top-color:var(--teal)"></div>Loading...</div>';
+  let claims=[];
+  if(isReimbDemo()){
+    claims=[{claimId:'RB-DEMO002',name:'Demo Staff',email:'staff@africanoriginals.com',staffId:'AO002',department:'Commercial',amount:4500,payMethod:'mpesa',payDetails:{mpesaNumber:'0712345678'},description:'Fuel for client visit',submittedAt:new Date().toISOString(),lmName:'Demo Manager',decidedAt:new Date().toISOString()}];
+  }else{
+    try{const res=await reimbApiFetch({action:'getApprovedClaims',email:user.email,staffId:user.staffId});claims=res.claims||[];}
+    catch(e){body.innerHTML='<p style="text-align:center;color:var(--red);padding:2rem">Failed to load. Please try again.</p>';return;}
+  }
+  updateFinanceUI(claims.length);
+  if(!claims.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem"><p style="font-size:32px;margin-bottom:10px">✅</p><p style="font-size:14px;color:var(--gray)">No approved claims awaiting payment.</p></div>';return;}
+  const pl={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'};
+  const pdLabel={bankName:'Bank',accountNumber:'Account No.',paybillNumber:'Paybill No.',accountRef:'Acct Ref',mpesaNumber:'M-Pesa No.',tillNumber:'Till No.'};
+  body.innerHTML=`<div style="background:var(--teal-lt);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--teal)"><strong>${claims.length} approved claim${claims.length!==1?'s':''}</strong> awaiting payment. Mark each as paid once processed.</div>`+
+  claims.map(c=>{
+    const d=new Date(c.submittedAt);
+    const ds=d.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'});
+    const pd=c.payDetails||{};
+    const pdRows=Object.entries(pd).filter(([,v])=>v).map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)"><span style="color:var(--gray)">${pdLabel[k]||k}</span><span style="font-family:monospace;font-weight:600">${escapeHtml(v)}</span></div>`).join('');
+    return`<div class="reimb-item"><div class="reimb-item-hdr"><div><div class="reimb-item-dept">${escapeHtml(c.name)} · ${escapeHtml(c.staffId)}</div><div class="reimb-item-date">${escapeHtml(c.department)} · ${ds} · Approved by ${escapeHtml(c.lmName||'LM')}</div></div><div class="reimb-item-amt">KES ${fmt(c.amount)}</div></div><div class="reimb-item-desc">${escapeHtml(c.description)}</div><div style="margin-top:10px;padding:10px;background:#f9fafb;border-radius:8px;"><div style="font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">${pl[c.payMethod]||c.payMethod}</div>${pdRows}</div><button onclick="markAsPaid('${c.claimId}',this)" style="margin-top:12px;width:100%;padding:11px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">✅ Mark as Paid</button></div>`;
+  }).join('');
+}
+
+async function markAsPaid(claimId,btn){
+  btn.disabled=true;btn.innerHTML='<span style="opacity:.7">Processing...</span>';
+  const prev=btn.nextElementSibling;
+  if(prev&&prev.classList.contains('paid-err'))prev.remove();
+  function showPaidErr(msg){btn.disabled=false;btn.textContent='✅ Mark as Paid';const e=document.createElement('div');e.className='err paid-err';e.style.marginTop='8px';e.textContent=msg;btn.after(e);}
+  if(!isReimbDemo()){
+    try{
+      const res=await reimbApiFetch({action:'markReimbPaid',claimId,paidBy:user.name});
+      if(res.error){showPaidErr('Error: '+res.error);return;}
+    }catch(e){showPaidErr('Connection error. Try again.');return;}
+  }
+  btn.textContent='✅ Paid — requester notified';btn.style.background='#9ca3af';
+  setTimeout(()=>loadFinancePending(),1500);
+}
 
 init();
 </script>
