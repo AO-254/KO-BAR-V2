@@ -13,6 +13,7 @@
   --amber:#85500b;--amber-lt:#faeeda;
   --gray:#6b7280;--border:rgba(0,0,0,0.09);
   --card:#ffffff;--bg:#f2f4f8;
+  --mod:#1a4a8a;
 }
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh;}
 input,button{font-family:inherit;}
@@ -60,8 +61,30 @@ input,button{font-family:inherit;}
 .pk.del{font-size:16px;color:var(--gray);}
 .pk.empty{border:none;background:transparent;cursor:default;}
 
+/* ─── MODULE HOME ─── */
+.home-hdr{background:var(--blue);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.home-hdr-left{display:flex;align-items:center;gap:12px;}
+.home-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:700;flex-shrink:0;}
+.home-name{font-size:15px;font-weight:700;}
+.home-id{font-size:11px;opacity:.75;margin-top:1px;}
+.home-logout{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:white;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
+.home-body{padding:20px 16px 32px;}
+.home-sec-lbl{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px;}
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mc-card{background:white;border-radius:14px;border:2px solid var(--border);padding:16px 14px 14px;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.06);transition:box-shadow .15s,transform .1s;-webkit-tap-highlight-color:transparent;}
+.mc-card:hover{box-shadow:0 6px 22px rgba(0,0,0,.12);transform:translateY(-2px);}
+.mc-card:active{transform:scale(.97);}
+.mc-icon{font-size:28px;margin-bottom:10px;line-height:1;}
+.mc-label{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:3px;}
+.mc-sub{font-size:11px;color:var(--gray);line-height:1.4;}
+.mc-staff{border-color:rgba(15,110,86,.25);}.mc-staff .mc-label{color:#0f6e56;}
+.mc-bar{border-color:rgba(26,74,138,.25);}.mc-bar .mc-label{color:#1a4a8a;}
+.mc-stock{border-color:rgba(133,80,11,.25);}.mc-stock .mc-label{color:#85500b;}
+.mc-receive{border-color:rgba(83,58,171,.25);}.mc-receive .mc-label{color:#533aab;}
+.mc-orders{border-color:rgba(26,74,138,.25);}.mc-orders .mc-label{color:#1a4a8a;}
+
 /* ─── SHOP HEADER ─── */
-.shop-hdr{background:var(--blue);color:white;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:10;}
+.shop-hdr{background:var(--mod);color:white;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:10;}
 .hdr-name{font-size:15px;font-weight:600;}
 .hdr-id{font-size:11px;opacity:.75;margin-top:1px;}
 .hdr-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
@@ -200,6 +223,49 @@ input,button{font-family:inherit;}
 /* ─── LOADING ─── */
 .loading-overlay{position:fixed;inset:0;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;gap:16px;z-index:100;}
 .lg-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
+
+/* ─── STOCK TAKE ─── */
+.stock-type-tabs{display:flex;background:#f2f4f8;border-radius:8px;padding:3px;margin-bottom:14px;}
+.stock-tab{flex:1;padding:7px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--gray);}
+.stock-tab.active{background:var(--mod);color:white;font-weight:700;}
+.st-cat{margin-bottom:18px;}
+.st-cat-label{font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.st-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f5f5f5;}
+.st-item:last-child{border-bottom:none;}
+.st-item-name{font-size:12.5px;color:#1a1a2e;flex:1;margin-right:10px;line-height:1.3;}
+.st-item-var{font-size:11px;color:var(--gray);}
+.st-qty-inp{width:68px;padding:7px 8px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;text-align:center;outline:none;}
+.st-qty-inp:focus{border-color:var(--mod);}
+
+/* ─── ORDER QUEUE ─── */
+.oq-hdr{background:var(--blue);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.oq-hdr-left{display:flex;flex-direction:column;}
+.oq-hdr-title{font-size:16px;font-weight:700;}
+.oq-hdr-sub{font-size:11px;opacity:.75;margin-top:2px;}
+.oq-hdr-right{display:flex;align-items:center;gap:8px;}
+.oq-refresh-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:white;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
+.oq-refresh-btn:hover{background:rgba(255,255,255,.32);}
+.oq-back-btn{background:none;border:1.5px solid rgba(255,255,255,.5);color:white;padding:7px 11px;border-radius:8px;font-size:12px;cursor:pointer;}
+.oq-body{padding:14px 16px 28px;}
+.oq-date-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.oq-date-inp{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--blue-dk);background:white;flex:1;outline:none;}
+.oq-date-inp:focus{border-color:var(--blue);}
+.oq-count{font-size:12px;color:var(--gray);font-weight:600;white-space:nowrap;}
+.oq-card{background:white;border-radius:12px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.oq-card-hdr{background:#f0f4ff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.oq-name{font-size:13px;font-weight:700;color:var(--blue);}
+.oq-time{font-size:11px;color:var(--gray);margin-top:2px;}
+.oq-pay{font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;}
+.oq-pay.cash{background:var(--teal-lt);color:var(--teal);}
+.oq-pay.tab{background:var(--blue-lt);color:var(--blue);}
+.oq-card-body{padding:10px 14px;}
+.oq-item{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f5;}
+.oq-item:last-child{border-bottom:none;}
+.oq-iname{color:#374151;flex:1;}
+.oq-iqty{font-weight:700;color:var(--blue-dk);margin-left:8px;}
+.oq-card-foot{padding:9px 14px;background:#f9fafb;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.oq-total{font-size:14px;font-weight:700;color:var(--blue-dk);}
+.oq-empty{text-align:center;padding:3rem 1rem;color:var(--gray);font-size:14px;}
 </style>
 </head>
 <body>
@@ -331,17 +397,38 @@ const CONFIG = {
   </div>
 </div>
 
+<!-- HOME — module cards -->
+<div id="s-home" class="hidden">
+  <div class="home-hdr">
+    <div class="home-hdr-left">
+      <div class="home-avatar" id="home-avatar">?</div>
+      <div>
+        <div class="home-name" id="home-name"></div>
+        <div class="home-id" id="home-id"></div>
+      </div>
+    </div>
+    <button class="home-logout" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="home-body">
+    <div class="home-sec-lbl">What would you like to do?</div>
+    <div class="module-grid" id="home-module-grid"></div>
+  </div>
+</div>
+
 <!-- SHOP -->
 <div id="s-shop" class="hidden">
   <div class="shop-hdr">
-    <div><div class="hdr-name" id="sh-name"></div><div class="hdr-id" id="sh-id"></div></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="shop-bar-back" class="hidden" onclick="goHome()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:white;padding:5px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">&#8592; Home</button>
+      <div><div class="hdr-name" id="sh-name"></div><div class="hdr-id" id="sh-id"></div></div>
+    </div>
     <div class="hdr-right">
       <button class="cart-pill" onclick="goCart()">Cart <span class="badge" id="cart-cnt">0</span></button>
-      <button class="hdr-menu-btn" onclick="openAcctMenu()">&#9776;</button>
+      <button id="shop-menu-btn" class="hdr-menu-btn" onclick="openAcctMenu()">&#9776;</button>
     </div>
   </div>
   <div class="type-bar">
-    <div class="toggle-wrap">
+    <div id="price-toggle" class="toggle-wrap">
       <button class="t-btn on-normal" id="tn" onclick="setPT('normal')">Normal Price</button>
       <button class="t-btn" id="ts" onclick="setPT('staff')">Staff Price</button>
     </div>
@@ -409,32 +496,100 @@ const CONFIG = {
   <div id="hist-body" style="padding:14px 16px;"></div>
 </div>
 
+<!-- STOCK TAKE -->
+<div id="s-stock" class="hidden">
+  <div class="page-top" style="background:var(--mod);">
+    <button class="back-btn" onclick="goHome()" style="color:white;">&#8592; Home</button>
+    <h2 style="color:white;" id="st-title">Stock Take</h2>
+  </div>
+  <div style="padding:14px 16px 32px;">
+    <div class="stock-type-tabs">
+      <button id="st-tab-opening" class="stock-tab active" onclick="switchStockType('stock')">Opening Stock</button>
+      <button id="st-tab-receive" class="stock-tab" onclick="switchStockType('receive')">Receive Stock</button>
+    </div>
+    <div class="fld">
+      <label>Date</label>
+      <input type="date" id="st-date" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;">
+    </div>
+    <div id="st-form"></div>
+    <div class="fld" style="margin-top:6px;">
+      <label>Batch Notes (optional)</label>
+      <textarea id="st-notes" rows="2" placeholder="e.g. Monday morning count" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;resize:none;font-family:inherit;"></textarea>
+    </div>
+    <button id="st-submit-btn" onclick="submitStockTake()" class="btn-primary" style="background:var(--mod);margin-top:4px;">Submit Stock Take</button>
+    <div id="st-err" class="err hidden" style="margin-top:8px;"></div>
+    <div id="st-suc" class="suc hidden" style="margin-top:8px;"></div>
+  </div>
 </div>
 
+<!-- ORDER QUEUE -->
+<div id="s-orders" class="hidden">
+  <div class="oq-hdr">
+    <div class="oq-hdr-left">
+      <div class="oq-hdr-title">&#128203; Order Queue</div>
+      <div class="oq-hdr-sub" id="oq-sub"></div>
+    </div>
+    <div class="oq-hdr-right">
+      <button class="oq-refresh-btn" onclick="loadOrderQueue()">&#8635; Refresh</button>
+      <button class="oq-back-btn" onclick="goHome()">&#8592; Home</button>
+    </div>
+  </div>
+  <div class="oq-body">
+    <div class="oq-date-row">
+      <input type="date" class="oq-date-inp" id="oq-date" onchange="loadOrderQueue()">
+      <span class="oq-count" id="oq-count"></span>
+    </div>
+    <div id="oq-list"></div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
 <script>
+// ═══════════════════════════════════════
+// MODULES
+// ═══════════════════════════════════════
+const ALL_MODULES=[
+  {id:'staff',   label:'Staff Order',   icon:'🛍️', sub:'Order for yourself at staff price',      cls:'mc-staff'},
+  {id:'bar',     label:'Bar Order',     icon:'🍺', sub:'Customer order at normal price',          cls:'mc-bar'},
+  {id:'stock',   label:'Opening Stock', icon:'📦', sub:'Daily stock count at bar open',           cls:'mc-stock'},
+  {id:'receive', label:'Receive Stock', icon:'📥', sub:'Record incoming stock from warehouse',    cls:'mc-receive'},
+  {id:'orders',  label:'Order Queue',   icon:'📋', sub:"View and track today's bar orders",      cls:'mc-orders'},
+];
+const ROLE_MODULES={
+  staff:  ['staff'],
+  barman: ['bar','stock','receive','orders'],
+};
+const MOD_COLOR={
+  staff:'#0f6e56', bar:'#1a4a8a', stock:'#85500b', receive:'#533aab', orders:'#1a4a8a',
+};
+
 // ═══════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════
 let user=null, pt='normal', cart={}, lastEmail='', PRODUCTS=[], selectedCat='All', payMethod=null;
+let module=null, oqTimer=null, sessionSpend=0, pinReturnScreen='s-shop';
 
-// PIN state machine
-let pinState = {
-  mode: null,       // 'set-new' | 'set-confirm' | 'change-current' | 'change-new' | 'change-confirm'
-  buffer: '',
-  newPin: '',
-};
+let pinState={mode:null,buffer:'',newPin:''};
 
-const qs = id => document.getElementById(id);
-function show(id){['s-loading','s-login','s-setpin','s-changepin','s-reset','s-verify','s-shop','s-cart','s-conf','s-hist'].forEach(s=>qs(s).classList.toggle('hidden',s!==id));}
+const qs=id=>document.getElementById(id);
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function show(id){
+  ['s-loading','s-login','s-setpin','s-changepin','s-reset','s-verify',
+   's-home','s-shop','s-cart','s-conf','s-hist','s-stock','s-orders']
+  .forEach(s=>qs(s).classList.toggle('hidden',s!==id));
+}
+
+function setModColor(c){document.documentElement.style.setProperty('--mod',c);}
 function fmt(n){return Number(n).toLocaleString('en-KE',{minimumFractionDigits:0,maximumFractionDigits:2});}
 function weekKey(){const d=new Date();const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);const jan1=new Date(mon.getFullYear(),0,1);const wk=Math.ceil(((mon-jan1)/86400000+1)/7);return mon.getFullYear()+'-W'+String(wk).padStart(2,'0');}
 function monthKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 function getWeekRange(){const d=new Date();const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);const sun=new Date(mon);sun.setDate(mon.getDate()+6);const f=dt=>dt.toLocaleDateString('en-KE',{day:'numeric',month:'short'});return f(mon)+' – '+f(sun);}
 function getLocalOrders(){try{return JSON.parse(localStorage.getItem('ko_v3')||'[]');}catch{return[];}}
 function saveLocalOrder(o){const a=getLocalOrders();a.push(o);localStorage.setItem('ko_v3',JSON.stringify(a));}
-function weeklySpend(email){const wk=weekKey();return getLocalOrders().filter(o=>o.email===email&&o.pt==='staff'&&o.weekKey===wk).reduce((s,o)=>s+o.total,0);}
+function weeklySpend(email){return((user&&user.serverWeeklySpend)||0)+sessionSpend;}
 function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
-// Returns this user's personal weekly limit, falling back to the global CONFIG default
 function getUserLimit(){return(user&&user.weeklyLimit&&user.weeklyLimit>0)?user.weeklyLimit:CONFIG.WEEKLY_LIMIT;}
 
 // ═══════════════════════════════════════
@@ -450,14 +605,12 @@ async function apiFetch(params){
 }
 const isDemo=()=>CONFIG.SCRIPT_URL==='YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 
-// ── PIN hashing: SHA-256(email:staffId:pin) so same PIN = different hash per user ──
 async function hashPin(email,staffId,pin){
   const raw=email.toLowerCase()+':'+staffId.toUpperCase()+':'+pin;
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// ── Login lockout: 5 failed attempts → 15 min lock ──
 const LOCK_MAX=5,LOCK_MS=15*60*1000;
 function lockKey(em,sid){return'ko_lk_'+btoa(em+'|'+sid);}
 function checkLock(em,sid){
@@ -483,7 +636,8 @@ async function init(){
   show('s-loading');
   if(isDemo()){PRODUCTS=BUNDLED_PRODUCTS;}
   else{try{const d=await apiFetch({action:'getProducts'});PRODUCTS=d.products||BUNDLED_PRODUCTS;}catch{PRODUCTS=BUNDLED_PRODUCTS;}}
-  buildCatBar();show('s-login');
+  buildCatBar();
+  show('s-login');
 }
 
 // ═══════════════════════════════════════
@@ -495,7 +649,6 @@ async function doLogin(){
   const pin=qs('li-pin').value.trim();
   const errEl=qs('li-err');const btn=qs('login-btn');
   if(!em||!sid){errEl.textContent='Please enter your email and Staff ID.';errEl.classList.remove('hidden');return;}
-  // Lockout check before attempting anything
   const lk=checkLock(em,sid);
   if(lk.locked){errEl.textContent=`Too many failed attempts. Try again in ${lk.mins} min.`;errEl.classList.remove('hidden');return;}
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Verifying...';errEl.classList.add('hidden');
@@ -505,7 +658,7 @@ async function doLogin(){
       const u=BUNDLED_USERS.find(x=>x.email===em&&x.staffId===sid);
       if(!u){errEl.textContent='Staff ID or email not found.';errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;}
       if(!u.pin){
-        user={email:em,staffId:sid,name:u.name,noPin:true};
+        user={email:em,staffId:sid,name:u.name,role:u.role||'staff',weeklyLimit:CONFIG.WEEKLY_LIMIT,serverWeeklySpend:0,noPin:true};
         openSetPIN();btn.disabled=false;btn.innerHTML='Sign In';return;
       }
       if(u.pin!==pinHash){
@@ -513,12 +666,17 @@ async function doLogin(){
         errEl.textContent=left>0?`Incorrect PIN. ${left} attempt${left!==1?'s':''} left.`:'Too many failed attempts. Locked for 15 min.';
         errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;
       }
-      clearLock(em,sid);enterShop(u.name,sid);
+      clearLock(em,sid);
+      const demoSpend=getLocalOrders().filter(o=>o.email===em&&o.pt==='staff'&&o.weekKey===weekKey()).reduce((s,o)=>s+o.total,0);
+      user={email:em,staffId:sid,name:u.name,role:u.role||'staff',weeklyLimit:CONFIG.WEEKLY_LIMIT,serverWeeklySpend:demoSpend};
+      sessionSpend=0;
+      enterHome();
     }else{
-      const d=await apiFetch({action:'checkUser',email:em,staffId:sid});
+      const d=await apiFetch({action:'checkUser',email:em,staffId:sid,weekKey:weekKey()});
       if(!d.found){errEl.textContent='Email or Staff ID not found.';errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;}
       if(!d.hasPin){
-        user={email:em,staffId:sid,name:d.name,noPin:true,weeklyLimit:d.weeklyLimit||CONFIG.WEEKLY_LIMIT};
+        user={email:em,staffId:sid,name:d.name,role:d.role||'staff',noPin:true,weeklyLimit:d.weeklyLimit||CONFIG.WEEKLY_LIMIT,serverWeeklySpend:d.weeklySpend||0};
+        sessionSpend=0;
         openSetPIN();btn.disabled=false;btn.innerHTML='Sign In';return;
       }
       const v=await apiFetch({action:'verifyPin',email:em,staffId:sid,pinHash});
@@ -527,37 +685,31 @@ async function doLogin(){
         errEl.textContent=left>0?`Incorrect PIN. ${left} attempt${left!==1?'s':''} left.`:'Too many failed attempts. Locked for 15 min.';
         errEl.classList.remove('hidden');btn.disabled=false;btn.innerHTML='Sign In';return;
       }
-      user={email:em,staffId:sid,name:d.name,weeklyLimit:d.weeklyLimit||CONFIG.WEEKLY_LIMIT};clearLock(em,sid);enterShop(d.name,sid);
+      user={email:em,staffId:sid,name:d.name,role:d.role||'staff',weeklyLimit:d.weeklyLimit||CONFIG.WEEKLY_LIMIT,serverWeeklySpend:d.weeklySpend||0};
+      sessionSpend=0;
+      clearLock(em,sid);
+      enterHome();
     }
   }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.remove('hidden');}
   btn.disabled=false;btn.innerHTML='Sign In';
 }
 
-function enterShop(name,sid){
-  user={...user,name,staffId:sid};
-  cart={};pt='normal';
-  qs('sh-name').textContent=name;
-  qs('sh-id').textContent=sid;
-  qs('acct-name-m').textContent=name;
-  qs('acct-id-m').textContent=sid;
-  qs('acct-avatar').textContent=initials(name);
-  renderProds();updSpend();show('s-shop');
-}
-
 function doLogout(){
-  user=null;cart={};
+  user=null;cart={};module=null;sessionSpend=0;
+  clearInterval(oqTimer);oqTimer=null;
   ['li-email','li-sid','li-pin'].forEach(id=>qs(id).value='');
   qs('li-err').classList.add('hidden');
-  closeAcctMenu();show('s-login');
+  closeAcctMenu();
+  setModColor('#1a4a8a');
+  show('s-login');
 }
 
-// ── FORGOT PIN FLOW ──────────────────────────────────────
-let resetEmail='', resetSid='';
+// ─── FORGOT PIN FLOW ─────────────────────────────────
+let resetEmail='',resetSid='';
 
 function goForgotPin(){
   ['rs-email','rs-sid'].forEach(id=>qs(id).value='');
   qs('rs-err').classList.add('hidden');
-  // Pre-fill from login fields if already entered
   const em=qs('li-email').value.trim();
   const sid=qs('li-sid').value.trim();
   if(em)qs('rs-email').value=em;
@@ -573,7 +725,6 @@ async function doRequestReset(){
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Sending...';errEl.classList.add('hidden');
   try{
     if(isDemo()){
-      // Demo mode — skip server, go straight to verify
       resetEmail=em;resetSid=sid;
       qs('vf-hint').textContent='Demo mode — use code 123456';
       qs('vf-otp').value='';qs('vf-err').classList.add('hidden');
@@ -606,7 +757,6 @@ async function doVerifyReset(){
       else{errEl.textContent=d.error||'Incorrect or expired code.';errEl.classList.remove('hidden');}
     }
     if(valid){
-      // OTP verified — take them to set a new PIN
       user={email:resetEmail,staffId:resetSid,name:'',noPin:true};
       pinState={mode:'set-new',buffer:'',newPin:''};
       qs('setpin-name').textContent='Choose your new PIN';
@@ -621,7 +771,7 @@ async function doVerifyReset(){
 }
 
 // ═══════════════════════════════════════
-// PIN KEYPAD BUILDER
+// PIN KEYPAD
 // ═══════════════════════════════════════
 let activeKeypad='set';
 function buildKeypad(containerId,mode){
@@ -641,7 +791,7 @@ function updateDots(prefix,count){
 }
 
 // ═══════════════════════════════════════
-// SET PIN (first login)
+// SET PIN
 // ═══════════════════════════════════════
 function openSetPIN(){
   pinState={mode:'set-new',buffer:'',newPin:''};
@@ -660,9 +810,7 @@ function setPinDigit(d){
   if(pinState.buffer.length===4){
     setTimeout(()=>{
       if(pinState.mode==='set-new'){
-        pinState.newPin=pinState.buffer;
-        pinState.buffer='';
-        pinState.mode='set-confirm';
+        pinState.newPin=pinState.buffer;pinState.buffer='';pinState.mode='set-confirm';
         qs('setpin-label').textContent='Confirm your PIN';
         qs('setpin-err').classList.add('hidden');
         updateDots('sd',0);
@@ -673,30 +821,29 @@ function setPinDigit(d){
           pinState.buffer='';pinState.newPin='';pinState.mode='set-new';
           qs('setpin-label').textContent='Choose a 4-digit PIN';
           updateDots('sd',0);
-        }else{
-          savePIN(pinState.newPin,'set');
-        }
+        }else{savePIN(pinState.newPin);}
       }
     },150);
   }
 }
 function setPinDelete(){if(pinState.buffer.length>0){pinState.buffer=pinState.buffer.slice(0,-1);updateDots('sd',pinState.buffer.length);}}
 
-async function savePIN(pin,mode){
+async function savePIN(pin){
   qs('setpin-err').classList.add('hidden');
   const pinHash=await hashPin(user.email,user.staffId,pin);
   if(!isDemo()){
     try{await apiFetch({action:'setPin',email:user.email,staffId:user.staffId,pinHash});}
-    catch(e){qs('setpin-err').textContent='Could not save PIN. Please try again.';qs('setpin-err').classList.remove('hidden');pinState.buffer='';pinState.newPin='';pinState.mode='set-new';updateDots('sd',4,0);return;}
+    catch(e){qs('setpin-err').textContent='Could not save PIN. Please try again.';qs('setpin-err').classList.remove('hidden');pinState.buffer='';pinState.newPin='';pinState.mode='set-new';updateDots('sd',0);return;}
   }
   if(isDemo()){const u=BUNDLED_USERS.find(x=>x.email===user.email);if(u)u.pin=pinHash;}
-  enterShop(user.name,user.staffId);
+  enterHome();
 }
 
 // ═══════════════════════════════════════
-// CHANGE PIN (from account menu)
+// CHANGE PIN
 // ═══════════════════════════════════════
 function openChangePIN(){
+  pinReturnScreen='s-shop';
   pinState={mode:'change-current',buffer:'',newPin:''};
   qs('chpin-name').textContent=user.name;
   qs('chpin-label').textContent='Enter your current PIN';
@@ -706,8 +853,7 @@ function openChangePIN(){
   buildKeypad('chpin-keypad','change');
   show('s-changepin');
 }
-
-function closeChangePIN(){show('s-shop');}
+function closeChangePIN(){show(pinReturnScreen);}
 
 function chPinDigit(d){
   if(pinState.buffer.length>=4)return;
@@ -742,9 +888,7 @@ function chPinDigit(d){
           pinState.buffer='';pinState.newPin='';pinState.mode='change-new';
           qs('chpin-label').textContent='Enter your new PIN';
           updateDots('cd',0);
-        }else{
-          await changePin(pinState.newPin);
-        }
+        }else{await changePin(pinState.newPin);}
       }
     },150);
   }
@@ -755,7 +899,7 @@ async function changePin(pin){
   const pinHash=await hashPin(user.email,user.staffId,pin);
   if(!isDemo()){
     try{await apiFetch({action:'setPin',email:user.email,staffId:user.staffId,pinHash});}
-    catch(e){qs('chpin-err').textContent='Could not save. Try again.';qs('chpin-err').classList.remove('hidden');pinState.buffer='';pinState.newPin='';pinState.mode='change-current';updateDots('cd',4,0);return;}
+    catch(e){qs('chpin-err').textContent='Could not save. Try again.';qs('chpin-err').classList.remove('hidden');pinState.buffer='';pinState.newPin='';pinState.mode='change-current';updateDots('cd',0);return;}
   }
   if(isDemo()){const u=BUNDLED_USERS.find(x=>x.email===user.email);if(u)u.pin=pinHash;}
   qs('chpin-suc').textContent='PIN changed successfully!';
@@ -771,8 +915,54 @@ function openAcctMenu(){qs('acct-overlay').classList.remove('hidden');}
 function closeAcctMenu(){qs('acct-overlay').classList.add('hidden');}
 
 // ═══════════════════════════════════════
+// HOME + MODULE ROUTING
+// ═══════════════════════════════════════
+function enterHome(){
+  clearInterval(oqTimer);oqTimer=null;
+  const mods=ROLE_MODULES[user.role||'staff']||['staff'];
+  qs('home-name').textContent=user.name;
+  qs('home-id').textContent=user.staffId+' · '+(user.role==='barman'?'Barman':'Staff');
+  qs('home-avatar').textContent=initials(user.name);
+  qs('home-module-grid').innerHTML=ALL_MODULES
+    .filter(m=>mods.includes(m.id))
+    .map(m=>`<div class="mc-card ${m.cls}" onclick="openModule('${m.id}')">
+      <div class="mc-icon">${m.icon}</div>
+      <div class="mc-label">${m.label}</div>
+      <div class="mc-sub">${m.sub}</div>
+    </div>`).join('');
+  setModColor('#1a4a8a');
+  show('s-home');
+}
+
+function goHome(){clearInterval(oqTimer);oqTimer=null;enterHome();}
+
+function openModule(mod){
+  module=mod;
+  setModColor(MOD_COLOR[mod]||'#1a4a8a');
+  if(mod==='staff'||mod==='bar') openShop(mod);
+  else if(mod==='orders') openOrderQueue();
+  else openStock(mod);
+}
+
+// ═══════════════════════════════════════
 // SHOP
 // ═══════════════════════════════════════
+function openShop(mod){
+  cart={};
+  const isBar=mod==='bar';
+  qs('sh-name').textContent=isBar?'Bar Order':user.name;
+  qs('sh-id').textContent=isBar?user.name:user.staffId;
+  qs('acct-name-m').textContent=user.name;
+  qs('acct-id-m').textContent=user.staffId;
+  qs('acct-avatar').textContent=initials(user.name);
+  qs('shop-bar-back').classList.toggle('hidden',!isBar);
+  qs('shop-menu-btn').classList.toggle('hidden',isBar);
+  qs('price-toggle').style.display=isBar?'none':'';
+  setPT(isBar?'normal':'staff');
+  renderProds();updCount();updSpend();
+  show('s-shop');
+}
+
 function buildCatBar(){
   const cats=['All',...new Set(PRODUCTS.map(p=>p.cat).filter(Boolean))];
   qs('cat-bar').innerHTML=cats.map(c=>`<button class="cat-btn${c==='All'?' active':''}" onclick="setcat('${c}')">${c}</button>`).join('');
@@ -806,14 +996,14 @@ function renderProds(){
     const isStaffAvail=p.sp>0;const price=pt==='staff'&&isStaffAvail?p.sp:p.np;const qty=cart[p.id]||0;
     const staffFull=pt==='staff'&&isStaffAvail&&(remain-cst)<p.sp&&qty===0;
     return`<div class="pc${qty>0?' inc':''}" id="pc${p.id}">
-      <div class="pc-ico" style="background:${p.clr||'#1a4a8a'}">${p.ltr||p.name[0]}</div>
-      <div class="pc-name">${p.name}</div><div class="pc-var">${p.var}${p.cat?' · '+p.cat:''}</div>
+      <div class="pc-ico" style="background:${p.clr||'#1a4a8a'}">${escapeHtml(p.ltr||p.name[0])}</div>
+      <div class="pc-name">${escapeHtml(p.name)}</div><div class="pc-var">${escapeHtml(p.var)}${p.cat?' · '+escapeHtml(p.cat):''}</div>
       ${!isStaffAvail&&pt==='staff'?'<span class="no-staff-tag">Normal price only</span>':''}
       <div class="pc-price pp-${pt==='staff'&&isStaffAvail?'staff':'normal'}">KES ${fmt(price)} <small>/unit</small></div>
       <div class="qty-row">
         <button class="qb" onclick="updQ(${p.id},-1)" ${qty===0?'disabled':''}>&#8722;</button>
         <span class="qn" id="qn${p.id}">${qty}</span>
-        <button class="qb" onclick="updQ(${p.id},1)" ${staffFull?'disabled':''} title="${staffFull?'Weekly limit reached':''}">+</button>
+        <button class="qb" onclick="updQ(${p.id},1)" ${staffFull?'disabled':''}>+</button>
       </div></div>`;
   }).join('');
   updCount();
@@ -829,13 +1019,144 @@ function updQ(pid,d){
   updCount();updSpend();
 }
 
-// ═══════════════════════════════════════
-// CART + ORDER
-// ═══════════════════════════════════════
 function goCart(){renderCart();show('s-cart');}
 function goShop(){show('s-shop');}
 function goHistory(){renderHistory();show('s-hist');}
 
+// ═══════════════════════════════════════
+// STOCK TAKE
+// ═══════════════════════════════════════
+function openStock(mod){
+  const isReceive=mod==='receive';
+  qs('st-tab-opening').classList.toggle('active',!isReceive);
+  qs('st-tab-receive').classList.toggle('active',isReceive);
+  qs('st-title').textContent=isReceive?'Receive Stock':'Opening Stock';
+  qs('st-date').value=new Date().toISOString().slice(0,10);
+  qs('st-notes').value='';
+  qs('st-err').classList.add('hidden');
+  qs('st-suc').classList.add('hidden');
+  qs('st-submit-btn').disabled=false;
+  qs('st-submit-btn').textContent='Submit Stock Take';
+  renderStockForm();
+  show('s-stock');
+}
+
+function switchStockType(type){
+  module=type;
+  setModColor(MOD_COLOR[type]||'#85500b');
+  qs('st-tab-opening').classList.toggle('active',type==='stock');
+  qs('st-tab-receive').classList.toggle('active',type==='receive');
+  qs('st-title').textContent=type==='stock'?'Opening Stock':'Receive Stock';
+}
+
+function renderStockForm(){
+  const cats=[...new Set(PRODUCTS.map(p=>p.cat).filter(Boolean))];
+  qs('st-form').innerHTML=cats.map(cat=>{
+    const prods=PRODUCTS.filter(p=>p.cat===cat);
+    return`<div class="st-cat">
+      <div class="st-cat-label">${escapeHtml(cat)}</div>
+      ${prods.map(p=>`<div class="st-item">
+        <div class="st-item-name">${escapeHtml(p.name)}${p.var?` <span class="st-item-var">${escapeHtml(p.var)}</span>`:''}</div>
+        <input type="number" class="st-qty-inp" id="stq-${p.id}" min="0" step="1" placeholder="0">
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+async function submitStockTake(){
+  const btn=qs('st-submit-btn');
+  const errEl=qs('st-err');const sucEl=qs('st-suc');
+  errEl.classList.add('hidden');sucEl.classList.add('hidden');
+  const date=qs('st-date').value;
+  if(!date){errEl.textContent='Please select a date.';errEl.classList.remove('hidden');return;}
+  const type=qs('st-tab-opening').classList.contains('active')?'stock':'receive';
+  const notes=qs('st-notes').value.trim();
+  const items=PRODUCTS.filter(p=>{
+    const inp=qs('stq-'+p.id);return inp&&Number(inp.value)>0;
+  }).map(p=>({name:p.name,var:p.var||'',cat:p.cat||'',qty:Number(qs('stq-'+p.id).value),notes}));
+  if(!items.length){errEl.textContent='Enter at least one item quantity.';errEl.classList.remove('hidden');return;}
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Submitting…';
+  if(isDemo()){
+    btn.disabled=false;btn.textContent='Submit Stock Take';
+    sucEl.textContent=`Demo mode — ${items.length} item${items.length!==1?'s':''} recorded (not saved).`;
+    sucEl.classList.remove('hidden');return;
+  }
+  try{
+    const res=await apiFetch({action:'saveStockTake',data:{type,date,email:user.email,name:user.name,sid:user.staffId,items}});
+    if(res.error){errEl.textContent=res.error;errEl.classList.remove('hidden');}
+    else{
+      sucEl.textContent=`✅ ${items.length} item${items.length!==1?'s':''} submitted successfully!`;
+      sucEl.classList.remove('hidden');
+      PRODUCTS.forEach(p=>{const inp=qs('stq-'+p.id);if(inp)inp.value='';});
+      qs('st-notes').value='';
+    }
+  }catch{errEl.textContent='Connection error. Please try again.';errEl.classList.remove('hidden');}
+  btn.disabled=false;btn.textContent='Submit Stock Take';
+}
+
+// ═══════════════════════════════════════
+// ORDER QUEUE
+// ═══════════════════════════════════════
+function openOrderQueue(){
+  clearInterval(oqTimer);oqTimer=null;
+  qs('oq-date').value=new Date().toISOString().slice(0,10);
+  qs('oq-sub').textContent=user.name+' · '+user.staffId;
+  show('s-orders');
+  loadOrderQueue();
+  oqTimer=setInterval(loadOrderQueue,60000);
+}
+
+async function loadOrderQueue(){
+  const date=qs('oq-date').value;
+  const el=qs('oq-list');
+  el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gray);font-size:13px;">Loading…</div>';
+  let orders=[];
+  if(isDemo()){
+    orders=getLocalOrders()
+      .filter(o=>o.date&&o.date.slice(0,10)===date)
+      .map(o=>({date:o.date,email:o.email,name:o.name||'—',sid:o.sid,pt:o.pt,payMethod:o.payMethod,total:o.total,items:o.items}));
+  }else{
+    try{
+      const d=await apiFetch({action:'getBarOrders',date});
+      if(d.error){el.innerHTML=`<p class="oq-empty">${d.error}</p>`;return;}
+      orders=d.orders||[];
+    }catch{
+      el.innerHTML='<p class="oq-empty">Connection error — tap Refresh to retry.</p>';return;
+    }
+  }
+  orders.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  qs('oq-count').textContent=orders.length?`${orders.length} order${orders.length!==1?'s':''}`:'' ;
+  if(!orders.length){
+    el.innerHTML='<div class="oq-empty"><p style="font-size:28px;margin-bottom:8px">🍺</p><p>No orders for this date.</p></div>';return;
+  }
+  el.innerHTML=orders.map(o=>{
+    const d=new Date(o.date);
+    const timeStr=d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
+    const payClass=o.payMethod==='tab'?'tab':'cash';
+    const payLabel=o.payMethod==='tab'?'Tab':'Cash';
+    const itemsHtml=(o.items||[]).map(i=>
+      `<div class="oq-item"><span class="oq-iname">${escapeHtml(i.name)}${i.var?' '+escapeHtml(i.var):''}</span><span class="oq-iqty">×${i.q}</span></div>`
+    ).join('');
+    return`<div class="oq-card">
+      <div class="oq-card-hdr">
+        <div>
+          <div class="oq-name">${escapeHtml(o.name||'—')} <span style="font-weight:400;font-size:11px;opacity:.7">${escapeHtml(o.sid||'')}</span></div>
+          <div class="oq-time">${timeStr}</div>
+        </div>
+        <span class="oq-pay ${payClass}">${payLabel}</span>
+      </div>
+      <div class="oq-card-body">${itemsHtml||'<span style="color:var(--gray);font-size:12px">No items</span>'}</div>
+      <div class="oq-card-foot">
+        <div class="oq-total">KES ${fmt(o.total)}</div>
+        <span style="font-size:10px;color:var(--gray)">${o.pt==='staff'?'Staff Price':'Normal Price'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// CART + ORDER
+// ═══════════════════════════════════════
 function renderCart(){
   const items=Object.entries(cart).filter(([,q])=>q>0);
   const el=qs('cart-body');
@@ -844,8 +1165,8 @@ function renderCart(){
   const cst=cartStaffTotal();const ct=cartTotal();const newTot=spent+cst;const remain=getUserLimit()-newTot;
   const listHTML=items.map(([id,q])=>{
     const p=PRODUCTS.find(x=>x.id==id);const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
-    return`<div class="ci"><div class="ci-ico" style="background:${p.clr||'#1a4a8a'}">${p.ltr||p.name[0]}</div>
-      <div class="ci-info"><div class="ci-name">${p.name} ${p.var}</div><div class="ci-det">Qty: ${q} × KES ${fmt(pr)}</div>
+    return`<div class="ci"><div class="ci-ico" style="background:${p.clr||'#1a4a8a'}">${escapeHtml(p.ltr||p.name[0])}</div>
+      <div class="ci-info"><div class="ci-name">${escapeHtml(p.name)} ${escapeHtml(p.var)}</div><div class="ci-det">Qty: ${q} × KES ${fmt(pr)}</div>
       <span class="ci-tag tag-${isS?'staff':'normal'}">${isS?'Staff Price':'Normal Price'}</span></div>
       <div class="ci-sub">KES ${fmt(pr*q)}</div></div>`;
   }).join('');
@@ -870,12 +1191,10 @@ function renderCart(){
     <label>Payment Method</label>
     <div class="pay-opts">
       <div class="pay-opt" id="pay-cash" onclick="selectPay('cash')">
-        <span class="pay-icon">💵</span>
-        <span class="pay-label">Cash</span>
+        <span class="pay-icon">💵</span><span class="pay-label">Cash</span>
       </div>
       <div class="pay-opt" id="pay-tab" onclick="selectPay('tab')">
-        <span class="pay-icon">📋</span>
-        <span class="pay-label">Tab</span>
+        <span class="pay-icon">📋</span><span class="pay-label">Tab</span>
       </div>
     </div>
   </div>
@@ -892,30 +1211,29 @@ function selectPay(method){
 
 async function placeOrder(){
   if(!payMethod){qs('pay-req').classList.add('show');return;}
-
-  // Disable button immediately to prevent double-tap
   const btn=document.querySelector('.co-btn');
   if(btn){btn.disabled=true;btn.textContent='Placing order…';}
-
   const items=Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
     const p=PRODUCTS.find(x=>x.id==id);const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
     return{id:p.id,name:p.name,var:p.var,cat:p.cat,q,pr,sub:pr*q,isStaff:isS};
   });
   const total=items.reduce((s,i)=>s+i.sub,0);
-  const ord={email:user.email,name:user.name,sid:user.staffId,pt,payMethod,items,total,mk:monthKey(),weekKey:weekKey(),date:new Date().toISOString(),weeklyLimit:getUserLimit()};
-  saveLocalOrder(ord);
-
+  const ord={email:user.email,name:user.name,sid:user.staffId,pt,payMethod,items,total,mk:monthKey(),weekKey:weekKey(),date:new Date().toISOString()};
   let emailSent=false;
   if(!isDemo()){
     try{
       const res=await apiFetch({action:'saveOrder',order:ord});
+      if(res&&res.error==='Weekly limit exceeded'){
+        if(btn){btn.disabled=false;btn.textContent='Confirm & Place Order';}
+        const preq=qs('pay-req');preq.textContent='Weekly staff limit exceeded — reduce your order.';preq.classList.add('show');
+        return;
+      }
       emailSent=res&&res.success===true;
-    }catch(e){
-      console.warn('Sync failed',e);
-      emailSent=false;
     }
+    catch(e){console.warn('Sync failed',e);}
   }
-
+  saveLocalOrder(ord);
+  if(pt==='staff')sessionSpend+=total;
   const spent=pt==='staff'?weeklySpend(user.email):0;
   buildConfirm(ord,spent,getUserLimit()-spent,emailSent);
   cart={};updCount();
@@ -935,7 +1253,7 @@ function buildConfirm(ord,totalSpent,remaining,emailSent=false){
       :'⚠️ Order saved but email failed — show this screen to the bartender';
   qs('cnf-sub').textContent=statusMsg;
   qs('cnf-sub').style.color=(!isDemo()&&!emailSent)?'var(--red)':'var(--gray)';
-  const rows=ord.items.map(i=>`<tr><td>${i.name} ${i.var} ×${i.q}</td><td>KES ${fmt(i.sub)}</td></tr>`).join('');
+  const rows=ord.items.map(i=>`<tr><td>${escapeHtml(i.name)} ${escapeHtml(i.var)} ×${i.q}</td><td>KES ${fmt(i.sub)}</td></tr>`).join('');
   const totSec=isS
     ?`<div class="ep-totals"><table class="ep-tbl"><tr><td>This order</td><td>KES ${fmt(ord.total)}</td></tr><tr><td>Payment</td><td>${payLabel}</td></tr><tr><td>Week (${wkr}) spend</td><td>KES ${fmt(totalSpent)} / KES ${fmt(getUserLimit())}</td></tr><tr><td><strong>Remaining this week</strong></td><td><strong>KES ${fmt(remaining)}</strong></td></tr></table></div>`
     :`<div class="ep-totals"><table class="ep-tbl"><tr><td><strong>Order total</strong></td><td><strong>KES ${fmt(ord.total)}</strong></td></tr><tr><td>Payment</td><td>${payLabel}</td></tr></table></div>`;
@@ -944,11 +1262,10 @@ function buildConfirm(ord,totalSpent,remaining,emailSent=false){
     <div class="ep-subj">${subj}</div></div>
     <div class="ep-body">Hi ${ord.name},<br><br>Your order has been placed on ${ds} at ${ts}.<br><br>
     <table class="ep-tbl"><tr style="border-bottom:1.5px solid #e5e7eb"><td><strong>Item</strong></td><td style="text-align:right"><strong>Total</strong></td></tr>${rows}</table>${totSec}</div></div>`;
-  lastEmail=[`To: ${CONFIG.ADMIN_EMAIL}`,`Subject: ${subj}`,``,`Hi Peter,`,``,
+  lastEmail=[`To: ${CONFIG.ADMIN_EMAIL}`,`Subject: ${subj}`,``,`Hi,`,``,
     `${ord.name} (${ord.sid}) placed a${isS?' staff price':''} order on ${ds} at ${ts}.`,``,`ORDER DETAILS:`,
     ...ord.items.map(i=>`  ${i.name} ${i.var} x${i.q} @ KES ${fmt(i.pr)} = KES ${fmt(i.sub)}`),``,
-    `Order Total: KES ${fmt(ord.total)}`,
-    `Payment Method: ${payLabel}`,
+    `Order Total: KES ${fmt(ord.total)}`,`Payment Method: ${payLabel}`,
     ...(isS?[`Week (${wkr}) staff spend: KES ${fmt(totalSpent)} / KES ${fmt(getUserLimit())}`,`Remaining this week: KES ${fmt(remaining)}`]:[]),
     ``,`---`,`KO Staff POS`].join('\n');
   show('s-conf');
@@ -956,8 +1273,9 @@ function buildConfirm(ord,totalSpent,remaining,emailSent=false){
 
 function copyEmail(){
   const btn=document.querySelector('.copy-btn');
-  navigator.clipboard.writeText(lastEmail).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Email Text',2500);})
-  .catch(()=>{const ta=document.createElement('textarea');ta.value=lastEmail;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Email Text',2500);});
+  navigator.clipboard.writeText(lastEmail)
+    .then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Email Text',2500);})
+    .catch(()=>{btn.textContent='Copy failed — select text manually';setTimeout(()=>btn.textContent='Copy Email Text',2500);});
 }
 function newOrder(){renderProds();updSpend();show('s-shop');}
 
@@ -974,7 +1292,7 @@ function renderHistory(){
     return`<div class="hist-item"><div class="hist-meta"><div><div class="hist-date">${ds} at ${ts}</div>
       <span class="ci-tag tag-${o.pt}" style="margin-top:4px;display:inline-block">${o.pt==='staff'?'Staff Price':'Normal Price'}</span></div>
       <div class="hist-total">KES ${fmt(o.total)}</div></div>
-      <div class="hist-items">${o.items.map(i=>`${i.name} ${i.var} ×${i.q}`).join(', ')}</div></div>`;
+      <div class="hist-items">${o.items.map(i=>`${escapeHtml(i.name)} ${escapeHtml(i.var)} ×${i.q}`).join(', ')}</div></div>`;
   }).join(''):'<p style="text-align:center;color:var(--gray);font-size:14px;padding:2rem 0">No orders yet.</p>');
 }
 
@@ -982,7 +1300,8 @@ function renderHistory(){
 // BUNDLED DATA
 // ═══════════════════════════════════════
 const BUNDLED_USERS=[
-  {email:'demo@africanoriginals.com',staffId:'DEMO01',pin:null,name:'Demo User'},
+  {email:'demo@africanoriginals.com',staffId:'DEMO01',pin:null,name:'Demo User',role:'staff'},
+  {email:'bar@africanoriginals.com',staffId:'BAR01',pin:null,name:'Demo Barman',role:'barman'},
 ];
 const BUNDLED_PRODUCTS=[
   {id:1,name:'KO Pineapple and Mint',var:'330ml Bottle',cat:'Cider',np:242,sp:160,clr:'#0f6e56',ltr:'C'},
