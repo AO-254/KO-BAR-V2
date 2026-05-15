@@ -45,7 +45,7 @@ input,button{font-family:inherit;}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .err{background:var(--red-lt);color:var(--red);border-radius:8px;padding:9px 12px;font-size:12px;text-align:center;margin-top:10px;}
-.suc{background:var(--teal-lt);color:var(--teal);border-radius:8px;padding:9px 12px;font-size:12px;text-align:center;margin-top:10px;}
+.suc{background:var(--teal-lt);color:var(--teal);border-radius:10px;padding:18px 16px;font-size:13px;text-align:center;margin-top:12px;border:1.5px solid rgba(15,110,86,.25);}
 .info-box{background:var(--blue-lt);color:var(--blue);border-radius:8px;padding:12px 13px;font-size:12px;line-height:1.6;margin-bottom:14px;}
 .info-box strong{display:block;font-size:13px;margin-bottom:2px;}
 .divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
@@ -372,7 +372,7 @@ const CONFIG = {
   CLIENT_SECRET: 'KO@AO#2026$POS!xK9mZ',
   REIMB_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxNmc-9OFjtan1TO3zPtWQ_MBWTreOmIgsciRxiwTvF_mthTnpcpfX8oTj8qNLBzslN/exec',
   REIMB_CLIENT_SECRET: 'KO@AO#2026$REIMB!yM7nX',
-  REIMB_DEPARTMENTS: ['Commercial','Marketing','Ops & Production','People'],
+  REIMB_DEPARTMENTS: ['Commercial','Marketing','Ops & Production','People','Finance & Data'],
 };
 </script>
 
@@ -1219,7 +1219,7 @@ function openShop(mod){
   qs('acct-name-m').textContent=user.name;
   qs('acct-id-m').textContent=user.staffId;
   qs('acct-avatar').textContent=initials(user.name);
-  qs('shop-bar-back').classList.toggle('hidden',!isBar);
+  qs('shop-bar-back').classList.remove('hidden');
   qs('shop-menu-btn').classList.toggle('hidden',isBar);
   qs('price-toggle').style.display=isBar?'none':'';
   setPT(isBar?'normal':'staff');
@@ -1847,8 +1847,9 @@ async function submitClaim(){
   }
   const payLabel={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'}[selectedPayMethod];
   const bdNote=daysLate>0?`<br><span style="color:var(--amber);font-size:11px">⚠ Backdated by ${daysLate} day${daysLate!==1?'s':''}</span>`:'';
-  sucEl.innerHTML=`✅ <strong>Claim submitted!</strong> Ref: <strong>${claimId}</strong><br>KES ${fmt(amount)} · ${dept} · ${payLabel}${bdNote}<br><span style="font-size:11px;opacity:.85">${isReimbDemo()?'Demo mode — no email sent':'Your line manager '+escapeHtml(user.lmName)+' has been notified.'}</span>`;
+  sucEl.innerHTML=`<div style="font-size:28px;margin-bottom:6px">✅</div><strong style="font-size:15px">Claim Submitted!</strong><div style="margin:6px 0 2px;font-size:13px">Ref: <strong>${claimId}</strong></div><div style="font-size:12px;opacity:.85">KES ${fmt(amount)} · ${dept} · ${payLabel}${bdNote}</div><div style="margin-top:8px;font-size:12px;opacity:.85">${isReimbDemo()?'Demo mode — no email sent.':'📧 Email notification sent to '+escapeHtml(user.lmName)+' for approval.'}</div>`;
   sucEl.classList.remove('hidden');
+  sucEl.scrollIntoView({behavior:'smooth',block:'center'});
   btn.disabled=false;btn.textContent='Submit Another Claim';
   attachFile=null;qs('rb-file').value='';updateAttachUI();
   updateReimbStats(getLocalClaims().filter(c=>c.email===user.email));
