@@ -331,6 +331,24 @@ input,button{font-family:inherit;}
 .reimb-item-dept{font-size:12px;font-weight:600;color:#1a1a2e;}
 .reimb-item-desc{font-size:12px;color:var(--gray);margin-top:5px;line-height:1.5;}
 
+/* ─── PETTY CASH ─── */
+.mc-pc{border-color:rgba(83,58,171,.25);}.mc-pc .mc-label{color:#533aab;}
+.sb-disbursed{background:#ede9f9;color:#533aab;}
+.sb-reconciled{background:#f0fdf4;color:#166534;}
+.pc-line-block{background:#f9fafb;border-radius:10px;padding:12px;margin-bottom:10px;border:1px solid var(--border);}
+.pc-line-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.pc-line-num{font-size:11px;font-weight:700;color:#533aab;text-transform:uppercase;letter-spacing:.5px;}
+.pc-rm-btn{background:none;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:0;line-height:1;}
+.pc-add-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;background:#ede9f9;color:#533aab;border:1.5px dashed rgba(83,58,171,.4);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:4px;}
+.pc-add-btn:hover{background:#e0daf5;}
+.pc-total-bar{background:#ede9f9;border-radius:8px;padding:10px 14px;font-size:14px;font-weight:700;color:#533aab;margin-top:10px;display:flex;justify-content:space-between;align-items:center;}
+.pc-apv-inp{width:88px;padding:5px 7px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;text-align:right;font-family:inherit;outline:none;}
+.pc-apv-inp:focus{border-color:#533aab;}
+.recon-inp{width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:13px;text-align:right;font-family:inherit;outline:none;}
+.recon-inp:focus{border-color:var(--teal);}
+.pc-pending-item{background:white;border-radius:10px;border:1.5px solid var(--border);padding:14px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s;}
+.pc-pending-item:hover{box-shadow:0 3px 14px rgba(0,0,0,.1);border-color:#533aab;}
+
 /* ─── ORDER QUEUE ─── */
 .oq-hdr{background:var(--blue);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
 .oq-hdr-left{display:flex;flex-direction:column;}
@@ -370,7 +388,7 @@ const CONFIG = {
   ADMIN_EMAIL: 'wayoyipeter@africanoriginals.com',
   WEEKLY_LIMIT: 2000,
   CLIENT_SECRET: 'KO@AO#2026$POS!xK9mZ',
-  REIMB_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxNmc-9OFjtan1TO3zPtWQ_MBWTreOmIgsciRxiwTvF_mthTnpcpfX8oTj8qNLBzslN/exec',
+  REIMB_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwI8i7Yqb4-kwtqKLANd9vhigjPR7dvd-G8SbHAMUNArXg94TZ5aBunYleFTvueUCxf/exec',
   REIMB_CLIENT_SECRET: 'KO@AO#2026$REIMB!yM7nX',
   REIMB_DEPARTMENTS: ['Commercial','Marketing','Ops & Production','People','Finance & Data'],
 };
@@ -801,6 +819,185 @@ const CONFIG = {
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════ -->
+<!-- PETTY CASH MODULE                      -->
+<!-- ═══════════════════════════════════════ -->
+
+<!-- PETTY CASH HOME -->
+<div id="s-pc" class="hidden">
+  <div class="home-hdr" style="background:#533aab">
+    <div class="home-hdr-left">
+      <button onclick="goHome()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:white;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">&#8592; Home</button>
+      <div>
+        <div class="home-name">Petty Cash</div>
+        <div class="home-id" id="pc-hdr-sub"></div>
+      </div>
+    </div>
+  </div>
+  <div class="home-body">
+    <div class="reimb-stats-row">
+      <div class="rs-card"><div class="rs-val" id="pcds-total">—</div><div class="rs-lbl">Total</div></div>
+      <div class="rs-card"><div class="rs-val" id="pcds-pending" style="color:var(--red)">—</div><div class="rs-lbl">Pending</div></div>
+      <div class="rs-card"><div class="rs-val" id="pcds-active" style="color:#533aab">—</div><div class="rs-lbl">Active</div></div>
+      <div class="rs-card"><div class="rs-val" id="pcds-done" style="color:var(--teal)">—</div><div class="rs-lbl">Done</div></div>
+    </div>
+    <div id="pc-lm-banner" class="reimb-notify hidden" onclick="goPCApprovals()">
+      <div>
+        <div class="reimb-notify-lbl">&#9203; Pending Approvals <span id="pc-lm-badge" class="reimb-notify-badge" style="display:none">0</span></div>
+        <div class="reimb-notify-sub">Petty cash requests awaiting your review</div>
+      </div>
+      <span style="font-size:18px;color:var(--gray)">&#8250;</span>
+    </div>
+    <div id="pc-fin-banner" class="reimb-notify reimb-fin-notify hidden" onclick="goPCDisburse()">
+      <div>
+        <div class="reimb-notify-lbl">&#128176; Ready to Disburse <span id="pc-fin-badge" class="reimb-notify-badge" style="display:none">0</span></div>
+        <div class="reimb-notify-sub">Approved requests awaiting cash disbursement</div>
+      </div>
+      <span style="font-size:18px;color:var(--gray)">&#8250;</span>
+    </div>
+    <div class="home-sec-lbl">Quick Actions</div>
+    <div class="module-grid">
+      <div class="mc-card mc-pc" onclick="goNewPCRequest()">
+        <div class="mc-icon">&#128221;</div>
+        <div class="mc-label">New Request</div>
+        <div class="mc-sub">Request petty cash for expenses</div>
+      </div>
+      <div class="mc-card mc-orders" onclick="goPCHistory()">
+        <div class="mc-icon">&#128203;</div>
+        <div class="mc-label">My Requests</div>
+        <div class="mc-sub">View all your petty cash requests</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PETTY CASH — NEW REQUEST FORM -->
+<div id="s-pc-form" class="hidden">
+  <div class="page-top" style="background:#533aab">
+    <button class="back-btn" onclick="show('s-pc')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">New Petty Cash Request</h2>
+  </div>
+  <div class="reimb-form">
+    <div class="reimb-card">
+      <h3 style="color:#533aab;">&#128203; Request Details</h3>
+      <div class="fld">
+        <label>Department</label>
+        <select id="pc-dept" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;background:white;">
+          <option value="">— Select department —</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Line Manager (Approver)</label>
+        <div class="lm-info-box" style="border-color:rgba(83,58,171,.2);background:#ede9f9;">
+          <div class="lm-name" id="pc-lm-name" style="color:#533aab">—</div>
+          <div class="lm-email" id="pc-lm-email"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reimb-card">
+      <h3 style="color:#533aab;">&#128200; Budget Lines</h3>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:14px;">Add one line per expense category. You can add up to 6 lines.</p>
+      <div id="pc-lines-container"></div>
+      <button class="pc-add-btn" id="pc-add-line-btn" onclick="addPCLine()">&#43; Add Budget Line</button>
+      <div class="pc-total-bar" id="pc-total-bar">
+        <span>Total Requested</span>
+        <span id="pc-total-display">KES 0</span>
+      </div>
+    </div>
+
+    <div class="reimb-card">
+      <h3 style="color:#533aab;">&#128179; Payment Details</h3>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">How should we pay you?</p>
+      <div class="pay-method-grp">
+        <button class="pm-btn" id="pc-pm-account" onclick="selectPCPayMethod('account')"><span class="pm-icon">&#127970;</span>Bank Account</button>
+        <button class="pm-btn" id="pc-pm-paybill" onclick="selectPCPayMethod('paybill')"><span class="pm-icon">&#128242;</span>Paybill</button>
+        <button class="pm-btn" id="pc-pm-mpesa"   onclick="selectPCPayMethod('mpesa')"><span class="pm-icon">&#128241;</span>M-Pesa</button>
+        <button class="pm-btn" id="pc-pm-till"    onclick="selectPCPayMethod('till')"><span class="pm-icon">&#127978;</span>Till Number</button>
+      </div>
+      <div id="pc-pd-account" class="pay-detail-field hidden">
+        <div class="fld"><label>Bank Name</label><input type="text" id="pc-pd-bank" placeholder="e.g. Equity Bank"></div>
+        <div class="fld"><label>Account Number</label><input type="text" id="pc-pd-accnum" placeholder="Account number" inputmode="numeric"></div>
+      </div>
+      <div id="pc-pd-paybill" class="pay-detail-field hidden">
+        <div class="fld"><label>Paybill Number</label><input type="text" id="pc-pd-pbnum" placeholder="e.g. 247247" inputmode="numeric"></div>
+        <div class="fld"><label>Account Reference</label><input type="text" id="pc-pd-pbref" placeholder="Account reference / name"></div>
+      </div>
+      <div id="pc-pd-mpesa" class="pay-detail-field hidden">
+        <div class="fld"><label>M-Pesa Number</label><input type="tel" id="pc-pd-mpnum" placeholder="e.g. 0712 345 678" inputmode="numeric"></div>
+      </div>
+      <div id="pc-pd-till" class="pay-detail-field hidden">
+        <div class="fld"><label>Till Number</label><input type="text" id="pc-pd-tillnum" placeholder="e.g. 123456" inputmode="numeric"></div>
+      </div>
+    </div>
+
+    <div id="pc-form-err" class="err hidden"></div>
+    <div id="pc-form-suc" class="suc hidden"></div>
+    <button class="btn-primary" id="pc-submit-btn" onclick="submitPCRequest()" style="background:#533aab;">Submit Request</button>
+    <button class="btn-secondary" onclick="show('s-pc')" style="margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<!-- PETTY CASH — MY REQUESTS HISTORY -->
+<div id="s-pc-hist" class="hidden">
+  <div class="page-top" style="background:#533aab">
+    <button class="back-btn" onclick="show('s-pc')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">My Requests</h2>
+    <button class="page-top-action" style="color:white;" onclick="loadPCHistory()">&#8635; Refresh</button>
+  </div>
+  <div style="padding:14px 16px 30px;" id="pc-hist-body"></div>
+</div>
+
+<!-- PETTY CASH — LM APPROVALS -->
+<div id="s-pc-approve" class="hidden">
+  <div class="page-top" style="background:#533aab">
+    <button class="back-btn" onclick="show('s-pc')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">Petty Cash Approvals</h2>
+    <button class="page-top-action" style="color:white;" onclick="loadPCApprovals()">&#8635; Refresh</button>
+  </div>
+  <div style="padding:14px 16px 30px;" id="pc-approve-body"></div>
+</div>
+
+<!-- PETTY CASH — FINANCE DISBURSE -->
+<div id="s-pc-disburse" class="hidden">
+  <div class="page-top" style="background:#533aab">
+    <button class="back-btn" onclick="show('s-pc')" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">Disburse Cash</h2>
+    <button class="page-top-action" style="color:white;" onclick="loadPCDisburse()">&#8635; Refresh</button>
+  </div>
+  <div style="padding:14px 16px 30px;" id="pc-disburse-body"></div>
+</div>
+
+<!-- PETTY CASH — RECONCILIATION -->
+<div id="s-pc-recon" class="hidden">
+  <div class="page-top" style="background:var(--teal)">
+    <button class="back-btn" onclick="goPCHistory()" style="color:white;">&#8592; Back</button>
+    <h2 style="color:white;">Reconcile Expenses</h2>
+  </div>
+  <div class="reimb-form">
+    <div style="background:#e1f5ee;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--teal)">
+      <strong>Request:</strong> <span id="pc-recon-id" style="font-family:monospace"></span><br>
+      Enter the <strong>actual amount spent</strong> for each budget line. Leave as 0 if unused.
+    </div>
+    <div id="pc-recon-lines"></div>
+    <div class="pc-total-bar" style="background:var(--teal-lt);color:var(--teal);margin-bottom:14px;">
+      <span>Total Spent</span>
+      <span id="pc-recon-total">KES 0</span>
+    </div>
+    <div class="reimb-card" style="margin-bottom:14px;">
+      <h3 style="color:var(--teal);">&#128221; Reconciliation Notes</h3>
+      <div class="fld" style="margin:0">
+        <label>Any notes or explanation (optional)</label>
+        <textarea id="pc-recon-notes" rows="3" placeholder="e.g. Unused accommodation budget refunded to cashier..." style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;resize:none;font-family:inherit;"></textarea>
+      </div>
+    </div>
+    <div id="pc-recon-err" class="err hidden"></div>
+    <div id="pc-recon-suc" class="suc hidden"></div>
+    <button class="btn-primary" id="pc-recon-btn" onclick="submitPCRecon()" style="background:var(--teal);">Submit Reconciliation</button>
+    <button class="btn-secondary" onclick="goPCHistory()" style="margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
 </div><!-- #app -->
 
 <script>
@@ -820,7 +1017,7 @@ const ROLE_MODULES={
   barman: ['bar','stock','receive','orders'],
 };
 const MOD_COLOR={
-  staff:'#0f6e56', bar:'#1a4a8a', stock:'#85500b', receive:'#533aab', orders:'#1a4a8a', reimb:'#0f6e56',
+  staff:'#0f6e56', bar:'#1a4a8a', stock:'#85500b', receive:'#533aab', orders:'#1a4a8a', reimb:'#0f6e56', pc:'#533aab',
 };
 
 // ═══════════════════════════════════════
@@ -838,7 +1035,8 @@ function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;
 function show(id){
   ['s-loading','s-login','s-setpin','s-changepin','s-reset','s-verify',
    's-home','s-shop','s-cart','s-conf','s-hist','s-stock','s-orders',
-   's-reimb','s-form','s-reimb-hist','s-approve','s-finance']
+   's-reimb','s-form','s-reimb-hist','s-approve','s-finance',
+   's-pc','s-pc-form','s-pc-hist','s-pc-approve','s-pc-disburse','s-pc-recon']
   .forEach(s=>qs(s).classList.toggle('hidden',s!==id));
 }
 
@@ -958,6 +1156,7 @@ async function doLogin(){
 function doLogout(){
   user=null;cart={};module=null;sessionSpend=0;
   pendingClaims=[];pendingCount=0;selectedPayMethod='';attachFile=null;
+  pcPending=[];pcPendingCount=0;pcLines=[];pcSelectedPayMethod='';
   clearInterval(oqTimer);oqTimer=null;
   ['li-email','li-sid','li-pin'].forEach(id=>qs(id).value='');
   qs('li-err').classList.add('hidden');
@@ -1205,6 +1404,7 @@ function openModule(mod){
   if(mod==='staff'||mod==='bar') openShop(mod);
   else if(mod==='orders') openOrderQueue();
   else if(mod==='reimb') openReimb();
+  else if(mod==='pc') openPC();
   else openStock(mod);
 }
 
@@ -1652,6 +1852,15 @@ async function loadReimbUser(){
       div.innerHTML='<div class="mc-icon">💸</div><div class="mc-label">Reimbursement</div><div class="mc-sub">Submit &amp; track expense claims</div>';
       grid.appendChild(div);
     }
+    // Add petty cash card to home grid if not already there
+    if(grid&&!grid.querySelector('[data-pc]')){
+      const pcDiv=document.createElement('div');
+      pcDiv.className='mc-card mc-pc';
+      pcDiv.setAttribute('data-pc','1');
+      pcDiv.onclick=()=>openModule('pc');
+      pcDiv.innerHTML='<div class="mc-icon">💵</div><div class="mc-label">Petty Cash</div><div class="mc-sub">Request &amp; reconcile petty cash</div>';
+      grid.appendChild(pcDiv);
+    }
   }catch(e){/* silently fail — POS works normally */}
 }
 
@@ -1996,6 +2205,576 @@ async function markAsPaid(claimId,btn){
   }
   btn.textContent='✅ Paid — requester notified';btn.style.background='#9ca3af';
   setTimeout(()=>loadFinancePending(),1500);
+}
+
+// ═══════════════════════════════════════
+// PETTY CASH MODULE
+// ═══════════════════════════════════════
+
+const PC_CATEGORIES = ['Transport','Lunch','Dinner','Accommodation','Stationery','Entertainment','Other'];
+let pcPending = [], pcPendingCount = 0, pcLines = [], pcSelectedPayMethod = '';
+
+// ── Local storage ──
+function getPCLocal(){try{return JSON.parse(localStorage.getItem('ko_pc_v1')||'[]');}catch{return[];}}
+function savePCLocal(r){const a=getPCLocal();a.push(r);localStorage.setItem('ko_pc_v1',JSON.stringify(a));}
+function updateLocalPC(pcId,upd){
+  const a=getPCLocal().map(r=>r.pcId===pcId?{...r,...upd}:r);
+  localStorage.setItem('ko_pc_v1',JSON.stringify(a));
+}
+
+// ── Open home ──
+function openPC(){
+  qs('pc-hdr-sub').textContent=user.name+' · '+user.staffId;
+  qs('pc-lm-banner').classList.toggle('hidden',!isApprover());
+  qs('pc-fin-banner').classList.toggle('hidden',!isFinance());
+  show('s-pc');
+  loadPCDashStats();
+  if(isApprover()) loadPCPendingCount();
+  if(isFinance())  loadPCFinanceCount();
+}
+
+// ── Dashboard stats ──
+function loadPCDashStats(){
+  const reqs=getPCLocal().filter(r=>r.email===user.email);
+  updatePCStats(reqs);
+  if(isReimbDemo()) return;
+  reimbApiFetch({action:'getPettyCashRequests',email:user.email})
+    .then(res=>{
+      (res.requests||[]).forEach(sr=>updateLocalPC(sr.pcId,sr));
+      updatePCStats(getPCLocal().filter(r=>r.email===user.email));
+    }).catch(()=>{});
+}
+
+function updatePCStats(reqs){
+  qs('pcds-total').textContent=reqs.length;
+  qs('pcds-pending').textContent=reqs.filter(r=>r.status==='submitted').length;
+  qs('pcds-active').textContent=reqs.filter(r=>['approved','disbursed'].includes(r.status)).length;
+  qs('pcds-done').textContent=reqs.filter(r=>r.status==='reconciled').length;
+}
+
+async function loadPCPendingCount(){
+  if(isReimbDemo()){pcPendingCount=1;updatePCApproveUI();return;}
+  try{
+    const res=await reimbApiFetch({action:'getPCPendingApprovals',email:user.email,staffId:user.staffId});
+    pcPending=res.requests||[];pcPendingCount=pcPending.length;updatePCApproveUI();
+  }catch(e){}
+}
+
+function updatePCApproveUI(){
+  const badge=qs('pc-lm-badge');
+  if(badge){badge.textContent=pcPendingCount;badge.style.display=pcPendingCount>0?'inline-block':'none';}
+}
+
+async function loadPCFinanceCount(){
+  if(isReimbDemo()){updatePCFinanceUI(1);return;}
+  try{
+    const res=await reimbApiFetch({action:'getPCForDisburse',email:user.email,staffId:user.staffId});
+    updatePCFinanceUI((res.requests||[]).length);
+  }catch(e){}
+}
+
+function updatePCFinanceUI(count){
+  const badge=qs('pc-fin-badge');
+  if(badge){badge.textContent=count;badge.style.display=count>0?'inline-block':'none';}
+}
+
+// ── Nav ──
+function goNewPCRequest(){resetPCForm();show('s-pc-form');}
+function goPCHistory(){loadPCHistory();show('s-pc-hist');}
+function goPCApprovals(){if(!isApprover())return;loadPCApprovals();show('s-pc-approve');}
+function goPCDisburse(){if(!isFinance())return;loadPCDisburse();show('s-pc-disburse');}
+
+// ── Form ──
+function resetPCForm(){
+  pcLines=[{category:'',details:'',requested:''}];
+  pcSelectedPayMethod='';
+  const deptSel=qs('pc-dept');
+  deptSel.innerHTML='<option value="">— Select department —</option>';
+  CONFIG.REIMB_DEPARTMENTS.forEach(d=>{
+    const o=document.createElement('option');o.value=d;o.textContent=d;deptSel.appendChild(o);
+  });
+  if(user.department) deptSel.value=user.department;
+  qs('pc-lm-name').textContent=user.lmName||'(No line manager assigned)';
+  qs('pc-lm-email').textContent=user.lmEmail||'';
+  selectPCPayMethod('');
+  qs('pc-form-err').classList.add('hidden');
+  qs('pc-form-suc').classList.add('hidden');
+  const btn=qs('pc-submit-btn');btn.disabled=false;btn.textContent='Submit Request';
+  renderPCLines();
+}
+
+function renderPCLines(){
+  const container=qs('pc-lines-container');
+  container.innerHTML=pcLines.map((l,i)=>`
+    <div class="pc-line-block">
+      <div class="pc-line-hdr">
+        <span class="pc-line-num">Line ${i+1}</span>
+        ${pcLines.length>1?`<button class="pc-rm-btn" onclick="removePCLine(${i})">&#215;</button>`:''}
+      </div>
+      <div class="fld" style="margin-bottom:8px">
+        <label>Category</label>
+        <select onchange="pcLines[${i}].category=this.value" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;background:white;">
+          <option value="">— Select —</option>
+          ${PC_CATEGORIES.map(c=>`<option value="${c}"${l.category===c?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fld" style="margin-bottom:8px">
+        <label>Details</label>
+        <input type="text" value="${escapeHtml(l.details)}" oninput="pcLines[${i}].details=this.value" placeholder="e.g. Nairobi–Mombasa bus fare" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;">
+      </div>
+      <div class="fld" style="margin-bottom:0">
+        <label>Amount (KES)</label>
+        <input type="number" value="${l.requested}" oninput="pcLines[${i}].requested=this.value;updatePCTotal()" min="1" step="1" placeholder="0" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;">
+      </div>
+    </div>`).join('');
+  const addBtn=qs('pc-add-line-btn');
+  if(addBtn) addBtn.style.display=pcLines.length>=6?'none':'flex';
+  updatePCTotal();
+}
+
+function addPCLine(){
+  if(pcLines.length>=6)return;
+  pcLines.push({category:'',details:'',requested:''});
+  renderPCLines();
+}
+
+function removePCLine(i){
+  pcLines.splice(i,1);
+  renderPCLines();
+}
+
+function updatePCTotal(){
+  const total=pcLines.reduce((s,l)=>s+(parseFloat(l.requested)||0),0);
+  qs('pc-total-display').textContent='KES '+fmt(total);
+  const btn=qs('pc-submit-btn');
+  if(btn) btn.textContent=total>0?`Submit Request — KES ${fmt(total)}`:'Submit Request';
+}
+
+function selectPCPayMethod(m){
+  pcSelectedPayMethod=m;
+  ['account','paybill','mpesa','till'].forEach(k=>{
+    qs('pc-pm-'+k).classList.toggle('active',k===m);
+    qs('pc-pd-'+k).classList.toggle('hidden',k!==m);
+  });
+}
+
+async function submitPCRequest(){
+  const dept=qs('pc-dept').value;
+  const errEl=qs('pc-form-err'),sucEl=qs('pc-form-suc');
+  errEl.classList.add('hidden');sucEl.classList.add('hidden');
+
+  if(!dept){errEl.textContent='Please select your department.';errEl.classList.remove('hidden');return;}
+  if(!user.lmEmail){errEl.textContent='No line manager assigned. Contact your admin.';errEl.classList.remove('hidden');return;}
+
+  const validLines=pcLines.filter(l=>l.category&&l.details&&parseFloat(l.requested)>0);
+  if(!validLines.length){errEl.textContent='Please add at least one complete budget line (category + details + amount).';errEl.classList.remove('hidden');return;}
+
+  const incompleteLines=pcLines.filter(l=>(l.category||l.details||l.requested)&&!(l.category&&l.details&&parseFloat(l.requested)>0));
+  if(incompleteLines.length){errEl.textContent='Some budget lines are incomplete. Please fill all fields or remove them.';errEl.classList.remove('hidden');return;}
+
+  if(!pcSelectedPayMethod){errEl.textContent='Please select a payment method.';errEl.classList.remove('hidden');return;}
+
+  let payDetails={};
+  if(pcSelectedPayMethod==='account'){
+    const bank=qs('pc-pd-bank').value.trim(),acc=qs('pc-pd-accnum').value.trim();
+    if(!bank||!acc){errEl.textContent='Please enter bank name and account number.';errEl.classList.remove('hidden');return;}
+    payDetails={bankName:bank,accountNumber:acc};
+  }else if(pcSelectedPayMethod==='paybill'){
+    const pb=qs('pc-pd-pbnum').value.trim(),ref=qs('pc-pd-pbref').value.trim();
+    if(!pb||!ref){errEl.textContent='Please enter paybill number and account reference.';errEl.classList.remove('hidden');return;}
+    payDetails={paybillNumber:pb,accountRef:ref};
+  }else if(pcSelectedPayMethod==='mpesa'){
+    const mp=qs('pc-pd-mpnum').value.trim();
+    if(!mp){errEl.textContent='Please enter M-Pesa number.';errEl.classList.remove('hidden');return;}
+    payDetails={mpesaNumber:mp};
+  }else if(pcSelectedPayMethod==='till'){
+    const tn=qs('pc-pd-tillnum').value.trim();
+    if(!tn){errEl.textContent='Please enter till number.';errEl.classList.remove('hidden');return;}
+    payDetails={tillNumber:tn};
+  }
+
+  const btn=qs('pc-submit-btn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Submitting...';
+
+  const totalReq=validLines.reduce((s,l)=>s+parseFloat(l.requested),0);
+  const pcId='PC-'+Date.now();
+  const submittedAt=new Date().toISOString();
+  const lines=validLines.map(l=>({category:l.category,details:l.details,requested:parseFloat(l.requested),approved:0,spent:0}));
+
+  const request={pcId,email:user.email,name:user.name,staffId:user.staffId,
+    department:dept,lmName:user.lmName,lmEmail:user.lmEmail,
+    payMethod:pcSelectedPayMethod,payDetails,lines,
+    totalRequested:totalReq,totalApproved:0,totalSpent:0,
+    submittedAt,status:'submitted'};
+
+  savePCLocal({...request});
+
+  if(!isReimbDemo()){
+    try{await reimbApiFetch({action:'savePettyCash',...request});}
+    catch(e){console.warn('PC sync failed — saved locally',e);}
+  }
+
+  sucEl.innerHTML=`<div style="font-size:28px;margin-bottom:6px">✅</div><strong style="font-size:15px">Request Submitted!</strong><div style="margin:6px 0 2px;font-size:13px">Ref: <strong>${pcId}</strong></div><div style="font-size:12px;opacity:.85">KES ${fmt(totalReq)} · ${lines.length} budget line${lines.length!==1?'s':''}</div><div style="margin-top:8px;font-size:12px;opacity:.85">${isReimbDemo()?'Demo mode — no email sent.':'📧 Notification sent to '+escapeHtml(user.lmName)+' for approval.'}</div>`;
+  sucEl.classList.remove('hidden');
+  sucEl.scrollIntoView({behavior:'smooth',block:'center'});
+  btn.disabled=false;btn.textContent='Submit Another Request';
+  pcLines=[{category:'',details:'',requested:''}];
+  renderPCLines();selectPCPayMethod('');
+  updatePCStats(getPCLocal().filter(r=>r.email===user.email));
+}
+
+// ── History ──
+async function loadPCHistory(){
+  const body=qs('pc-hist-body');
+  body.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gray)"><div class="lg-spinner" style="margin:0 auto 14px;border-top-color:#533aab"></div>Loading...</div>';
+  let reqs=getPCLocal().filter(r=>r.email===user.email).sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+  if(!isReimbDemo()){
+    try{
+      const res=await reimbApiFetch({action:'getPettyCashRequests',email:user.email});
+      (res.requests||[]).forEach(sr=>updateLocalPC(sr.pcId,sr));
+      reqs=getPCLocal().filter(r=>r.email===user.email).sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+    }catch(e){}
+  }
+  updatePCStats(reqs);
+  if(!reqs.length){
+    body.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--gray)"><p style="font-size:32px;margin-bottom:10px">💵</p><p style="font-size:14px">No petty cash requests yet.</p></div>';
+    return;
+  }
+  const statusCls={submitted:'sb-submitted',approved:'sb-approved',rejected:'sb-rejected',disbursed:'sb-disbursed',reconciled:'sb-reconciled'};
+  const statusLbl={submitted:'Pending Review',approved:'Approved',rejected:'Rejected',disbursed:'Disbursed — Reconcile Now',reconciled:'Reconciled'};
+  const pmLbl={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'};
+  const pdLbl={bankName:'Bank',accountNumber:'Acct No.',paybillNumber:'Paybill No.',accountRef:'Acct Ref',mpesaNumber:'M-Pesa No.',tillNumber:'Till No.'};
+
+  body.innerHTML=reqs.map(r=>{
+    const sc=statusCls[r.status]||'sb-submitted';
+    const sl=statusLbl[r.status]||r.status;
+    const showApproved=r.status!=='submitted';
+    const showSpent=r.status==='reconciled';
+    const lines=r.lines||[];
+
+    const thApproved=showApproved?'<th style="padding:5px 4px;font-size:10px;text-transform:uppercase;color:#533aab;text-align:right;border-bottom:1.5px solid var(--border)">Approved</th>':'';
+    const thSpent=showSpent?'<th style="padding:5px 4px;font-size:10px;text-transform:uppercase;color:var(--teal);text-align:right;border-bottom:1.5px solid var(--border)">Spent</th>':'';
+
+    const linesHtml=lines.map(l=>{
+      const tdApproved=showApproved?`<td style="padding:5px 4px;font-size:12px;text-align:right;color:#533aab;font-weight:600">${l.approved>0?'KES '+fmt(l.approved):'—'}</td>`:'';
+      const tdSpent=showSpent?`<td style="padding:5px 4px;font-size:12px;text-align:right;color:var(--teal);font-weight:600">${l.spent>0?'KES '+fmt(l.spent):'—'}</td>`:'';
+      return`<tr><td style="padding:5px 4px;font-size:12px;font-weight:600">${escapeHtml(l.category)}</td><td style="padding:5px 4px;font-size:12px;color:var(--gray)">${escapeHtml(l.details)}</td><td style="padding:5px 4px;font-size:12px;text-align:right">KES ${fmt(l.requested)}</td>${tdApproved}${tdSpent}</tr>`;
+    }).join('');
+
+    const totApproved=showApproved?`<td style="padding:6px 4px;font-size:12px;font-weight:700;text-align:right;color:#533aab">KES ${fmt(r.totalApproved||0)}</td>`:'';
+    const totSpent=showSpent?`<td style="padding:6px 4px;font-size:12px;font-weight:700;text-align:right;color:var(--teal)">KES ${fmt(r.totalSpent||0)}</td>`:'';
+
+    const pd=r.payDetails||{};
+    const pdRows=Object.entries(pd).filter(([,v])=>v).map(([k,v])=>`<div class="hc-row"><span class="hc-lbl">${pdLbl[k]||k}</span><span class="hc-val" style="font-family:monospace">${escapeHtml(v)}</span></div>`).join('');
+
+    const commentSection=r.lmComment?`<div class="hc-section" style="background:${r.status==='rejected'?'var(--red-lt)':'var(--blue-lt)'}"><div class="hc-section-lbl" style="color:${r.status==='rejected'?'var(--red)':'var(--blue)'}">LM Feedback</div><p style="font-size:13px;line-height:1.6;margin:0">${escapeHtml(r.lmComment)}</p></div>`:'';
+
+    const reconBtn=r.status==='disbursed'?`<button onclick="openPCRecon('${r.pcId}')" style="margin-top:10px;width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">📝 Submit Reconciliation</button>`:'';
+
+    const fmtDtShort=iso=>iso?new Date(iso).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}):'';
+
+    return`<div class="hc">
+      <div class="hc-header">
+        <div><div class="hc-amount" style="color:#533aab">KES ${fmt(r.totalRequested)}</div><div class="hc-id">${r.pcId}</div></div>
+        <span class="status-badge ${sc}">${sl}</span>
+      </div>
+      <div class="hc-section">
+        <div class="hc-section-lbl">Budget Lines</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr>
+            <th style="padding:5px 4px;font-size:10px;text-transform:uppercase;color:var(--gray);text-align:left;border-bottom:1.5px solid var(--border)">Category</th>
+            <th style="padding:5px 4px;font-size:10px;text-transform:uppercase;color:var(--gray);text-align:left;border-bottom:1.5px solid var(--border)">Details</th>
+            <th style="padding:5px 4px;font-size:10px;text-transform:uppercase;color:var(--gray);text-align:right;border-bottom:1.5px solid var(--border)">Requested</th>
+            ${thApproved}${thSpent}
+          </tr>
+          ${linesHtml}
+          <tr style="background:#f9fafb">
+            <td colspan="2" style="padding:6px 4px;font-size:12px;font-weight:700">Total</td>
+            <td style="padding:6px 4px;font-size:12px;font-weight:700;text-align:right">KES ${fmt(r.totalRequested)}</td>
+            ${totApproved}${totSpent}
+          </tr>
+        </table>
+      </div>
+      <div class="hc-section">
+        <div class="hc-section-lbl">Payment — ${pmLbl[r.payMethod]||r.payMethod||'—'}</div>
+        ${pdRows||'<div style="font-size:12px;color:var(--gray)">No payment details</div>'}
+      </div>
+      ${commentSection}
+      <div class="hc-section">
+        <div class="hc-section-lbl">Timeline</div>
+        ${r.submittedAt?`<div class="hc-row"><span class="hc-lbl">Submitted</span><span class="hc-val">${fmtDtShort(r.submittedAt)}</span></div>`:''}
+        ${r.decidedAt?`<div class="hc-row"><span class="hc-lbl">LM Decision</span><span class="hc-val">${fmtDtShort(r.decidedAt)}</span></div>`:''}
+        ${r.disbursedAt?`<div class="hc-row"><span class="hc-lbl">Disbursed</span><span class="hc-val">${fmtDtShort(r.disbursedAt)}${r.disbursedBy?' · '+escapeHtml(r.disbursedBy):''}</span></div>`:''}
+        ${r.reconciledAt?`<div class="hc-row"><span class="hc-lbl">Reconciled</span><span class="hc-val">${fmtDtShort(r.reconciledAt)}</span></div>`:''}
+        ${r.reconNotes?`<div class="hc-row"><span class="hc-lbl">Notes</span><span class="hc-val">${escapeHtml(r.reconNotes)}</span></div>`:''}
+        ${reconBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── LM Approvals ──
+async function loadPCApprovals(){
+  const body=qs('pc-approve-body');
+  body.innerHTML='<div style="text-align:center;padding:3rem;color:var(--gray)"><div class="lg-spinner" style="margin:0 auto 14px;border-top-color:#533aab"></div>Loading...</div>';
+  if(isReimbDemo()){
+    pcPending=[{
+      pcId:'PC-DEMO001',name:'Demo Staff',email:'staff@africanoriginals.com',staffId:'AO002',
+      department:'Commercial',totalRequested:5800,status:'submitted',
+      submittedAt:new Date().toISOString(),token:'demo-pc-token',
+      payMethod:'mpesa',payDetails:{mpesaNumber:'0712345678'},
+      lines:[
+        {category:'Transport',details:'Nairobi–Mombasa bus',requested:2000,approved:0},
+        {category:'Lunch',details:'Team lunch x 3',requested:1800,approved:0},
+        {category:'Accommodation',details:'Hotel 1 night',requested:2000,approved:0}
+      ]
+    }];
+    pcPendingCount=1;updatePCApproveUI();renderPCApproveList();return;
+  }
+  try{
+    const res=await reimbApiFetch({action:'getPCPendingApprovals',email:user.email,staffId:user.staffId});
+    pcPending=res.requests||[];pcPendingCount=pcPending.length;
+    updatePCApproveUI();renderPCApproveList();
+  }catch(e){body.innerHTML='<p style="text-align:center;color:var(--red);padding:2rem">Failed to load. Please try again.</p>';}
+}
+
+function renderPCApproveList(){
+  const body=qs('pc-approve-body');
+  if(!pcPending.length){
+    body.innerHTML='<div style="text-align:center;padding:3rem"><p style="font-size:32px;margin-bottom:10px">✅</p><p style="font-size:14px;color:var(--gray)">No pending petty cash approvals.</p></div>';
+    return;
+  }
+  body.innerHTML=pcPending.map((r,idx)=>{
+    const d=new Date(r.submittedAt);
+    const ds=d.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'});
+    const linesPreview=(r.lines||[]).map(l=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #f5f5f5"><span style="color:var(--gray)">${escapeHtml(l.category)} — ${escapeHtml(l.details)}</span><span style="font-weight:600">KES ${fmt(l.requested)}</span></div>`).join('');
+    return`<div class="pc-pending-item" onclick="openPCReviewModal(${idx})">
+      <div class="pending-item-hdr">
+        <div>
+          <div class="pending-item-name">${escapeHtml(r.name)}</div>
+          <span style="font-size:11px;background:#ede9f9;color:#533aab;padding:2px 8px;border-radius:9px;font-weight:600">${escapeHtml(r.staffId)}</span>
+        </div>
+        <div class="pending-item-amt" style="color:#533aab">KES ${fmt(r.totalRequested)}</div>
+      </div>
+      <div class="pending-item-meta">${escapeHtml(r.department)} · ${ds}</div>
+      <div style="margin-top:8px">${linesPreview}</div>
+      <div style="margin-top:10px;font-size:12px;color:#533aab;font-weight:600">Tap to set approved amounts →</div>
+    </div>`;
+  }).join('');
+}
+
+function openPCReviewModal(idx){
+  const r=pcPending[idx];if(!r)return;
+  window._pcReviewCtx={idx,token:r.token,pcId:r.pcId};
+  const lines=r.lines||[];
+
+  const lineInputRows=lines.map((l,li)=>`
+    <tr>
+      <td style="padding:7px 4px;font-size:12px;font-weight:600">${escapeHtml(l.category)}</td>
+      <td style="padding:7px 4px;font-size:12px;color:var(--gray)">${escapeHtml(l.details)}</td>
+      <td style="padding:7px 4px;font-size:12px;text-align:right">KES ${fmt(l.requested)}</td>
+      <td style="padding:7px 4px;text-align:right">
+        <input type="number" id="pc-apv-${li}" class="pc-apv-inp" value="${l.requested}" min="0" step="1" oninput="updatePCApproveTotal(${lines.length})">
+      </td>
+    </tr>`).join('');
+
+  qs('modal-content').innerHTML=`
+    <div class="modal-title" style="color:#533aab">Review Petty Cash</div>
+    <div class="modal-row"><span class="modal-lbl">Requester</span><span class="modal-val">${escapeHtml(r.name)} · ${escapeHtml(r.staffId)}</span></div>
+    <div class="modal-row"><span class="modal-lbl">Department</span><span class="modal-val">${escapeHtml(r.department)}</span></div>
+    <div style="margin:14px 0 4px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:8px">Set approved amount per line</div>
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <th style="font-size:10px;text-transform:uppercase;color:var(--gray);padding:5px 4px;border-bottom:1.5px solid var(--border);text-align:left">Category</th>
+          <th style="font-size:10px;text-transform:uppercase;color:var(--gray);padding:5px 4px;border-bottom:1.5px solid var(--border);text-align:left">Details</th>
+          <th style="font-size:10px;text-transform:uppercase;color:var(--gray);padding:5px 4px;border-bottom:1.5px solid var(--border);text-align:right">Requested</th>
+          <th style="font-size:10px;text-transform:uppercase;color:#533aab;padding:5px 4px;border-bottom:1.5px solid var(--border);text-align:right">Approve KES</th>
+        </tr>
+        ${lineInputRows}
+        <tr style="background:#ede9f9">
+          <td colspan="3" style="padding:8px 4px;font-size:13px;font-weight:700">Total Approving</td>
+          <td style="padding:8px 4px;text-align:right;font-size:14px;font-weight:700;color:#533aab" id="pc-apv-total">KES ${fmt(r.totalRequested)}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="modal-comment">
+      <label>Comment (required when rejecting)</label>
+      <textarea id="pc-review-comment" placeholder="Add a note for the requester..."></textarea>
+    </div>
+    <div id="pc-review-err" class="err hidden"></div>
+    <div class="modal-btns">
+      <button class="btn-reject" id="pc-btn-reject" onclick="submitPCDecision('rejected')">&#10060; Reject</button>
+      <button class="btn-approve" id="pc-btn-approve" onclick="submitPCDecision('approved')" style="background:#533aab">&#9989; Approve</button>
+    </div>
+    <button class="btn-secondary" style="margin-top:10px" onclick="closeModal()">Cancel</button>`;
+  qs('modal-overlay').classList.remove('hidden');
+  updatePCApproveTotal(lines.length);
+}
+
+function updatePCApproveTotal(lineCount){
+  let total=0;
+  for(let i=0;i<lineCount;i++){const inp=qs('pc-apv-'+i);if(inp)total+=parseFloat(inp.value)||0;}
+  const totEl=qs('pc-apv-total');if(totEl)totEl.textContent='KES '+fmt(total);
+  const btn=qs('pc-btn-approve');if(btn)btn.textContent=total>0?`✅ Approve KES ${fmt(total)}`:'✅ Approve';
+}
+
+async function submitPCDecision(decision){
+  const ctx=window._pcReviewCtx;if(!ctx)return;
+  const r=pcPending[ctx.idx];
+  const comment=qs('pc-review-comment').value.trim();
+  const errEl=qs('pc-review-err');errEl.classList.add('hidden');
+  if(decision==='rejected'&&!comment){errEl.textContent='Please add a comment explaining the rejection.';errEl.classList.remove('hidden');return;}
+
+  const approvedLines=(r.lines||[]).map((_,li)=>parseFloat(qs('pc-apv-'+li)?.value||0)||0);
+  qs('pc-btn-approve').disabled=true;qs('pc-btn-reject').disabled=true;
+  qs('pc-btn-approve').innerHTML='<div class="spinner" style="border-top-color:white;display:inline-block"></div>';
+
+  if(!isReimbDemo()){
+    try{await reimbApiFetch({action:'approvePettyCash',token:ctx.token,decision,comment,approvedLines});}
+    catch(e){
+      errEl.textContent='Failed to save. Please try again.';errEl.classList.remove('hidden');
+      qs('pc-btn-approve').disabled=false;qs('pc-btn-reject').disabled=false;
+      qs('pc-btn-approve').textContent='✅ Approve';return;
+    }
+  }
+  pcPending.splice(ctx.idx,1);pcPendingCount=pcPending.length;
+  updatePCApproveUI();closeModal();renderPCApproveList();
+}
+
+// ── Finance — Disburse ──
+async function loadPCDisburse(){
+  const body=qs('pc-disburse-body');
+  body.innerHTML='<div style="text-align:center;padding:3rem;color:var(--gray)"><div class="lg-spinner" style="margin:0 auto 14px;border-top-color:#533aab"></div>Loading...</div>';
+  let reqs=[];
+  if(isReimbDemo()){
+    reqs=[{
+      pcId:'PC-DEMO002',name:'Demo Staff',staffId:'AO002',department:'Commercial',
+      totalApproved:5800,payMethod:'mpesa',payDetails:{mpesaNumber:'0712345678'},
+      lmName:'Demo Manager',decidedAt:new Date().toISOString(),
+      lines:[
+        {category:'Transport',details:'Bus fare',requested:2000,approved:2000},
+        {category:'Lunch',details:'Team lunch',requested:1800,approved:1800},
+        {category:'Accommodation',details:'Hotel',requested:2000,approved:2000}
+      ]
+    }];
+  }else{
+    try{
+      const res=await reimbApiFetch({action:'getPCForDisburse',email:user.email,staffId:user.staffId});
+      reqs=res.requests||[];
+    }catch(e){body.innerHTML='<p style="text-align:center;color:var(--red);padding:2rem">Failed to load. Please try again.</p>';return;}
+  }
+  updatePCFinanceUI(reqs.length);
+  if(!reqs.length){
+    body.innerHTML='<div style="text-align:center;padding:3rem"><p style="font-size:32px;margin-bottom:10px">✅</p><p style="font-size:14px;color:var(--gray)">No approved requests to disburse.</p></div>';
+    return;
+  }
+  const pmLbl={account:'Bank Account',paybill:'Paybill',mpesa:'M-Pesa',till:'Till Number'};
+  const pdLbl={bankName:'Bank',accountNumber:'Acct No.',paybillNumber:'Paybill No.',accountRef:'Acct Ref',mpesaNumber:'M-Pesa No.',tillNumber:'Till No.'};
+
+  body.innerHTML=`<div style="background:#ede9f9;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#533aab"><strong>${reqs.length} approved request${reqs.length!==1?'s':''}</strong> ready for cash disbursement.</div>`+
+  reqs.map(r=>{
+    const pd=r.payDetails||{};
+    const pdRows=Object.entries(pd).filter(([,v])=>v).map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)"><span style="color:var(--gray)">${pdLbl[k]||k}</span><span style="font-family:monospace;font-weight:600">${escapeHtml(v)}</span></div>`).join('');
+    const linesHtml=(r.lines||[]).map(l=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--gray)">${escapeHtml(l.category)} — <em>${escapeHtml(l.details)}</em></span><span style="font-weight:700;color:#533aab">KES ${fmt(l.approved||l.requested)}</span></div>`).join('');
+    return`<div class="reimb-item">
+      <div class="reimb-item-hdr">
+        <div>
+          <div class="reimb-item-dept">${escapeHtml(r.name)} · ${escapeHtml(r.staffId)}</div>
+          <div class="reimb-item-date">${escapeHtml(r.department)} · Approved by ${escapeHtml(r.lmName||'LM')}</div>
+        </div>
+        <div class="reimb-item-amt" style="color:#533aab">KES ${fmt(r.totalApproved)}</div>
+      </div>
+      <div style="margin-top:10px;padding:10px;background:#f9fafb;border-radius:8px">${linesHtml}</div>
+      <div style="margin-top:10px;padding:10px;background:#f3f4f6;border-radius:8px">
+        <div style="font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">${pmLbl[r.payMethod]||r.payMethod}</div>
+        ${pdRows}
+      </div>
+      <button onclick="disbursePCRequest('${r.pcId}',this)" style="margin-top:12px;width:100%;padding:12px;background:#533aab;color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">&#128181; Mark as Disbursed</button>
+    </div>`;
+  }).join('');
+}
+
+async function disbursePCRequest(pcId,btn){
+  btn.disabled=true;btn.innerHTML='<span style="opacity:.7">Processing...</span>';
+  if(!isReimbDemo()){
+    try{
+      const res=await reimbApiFetch({action:'disbursePettyCash',pcId,disbursedBy:user.name});
+      if(res.error){btn.disabled=false;btn.textContent='💵 Mark as Disbursed';alert(res.error);return;}
+    }catch(e){btn.disabled=false;btn.textContent='💵 Mark as Disbursed';return;}
+  }
+  btn.textContent='✅ Disbursed — staff notified';btn.style.background='#9ca3af';
+  setTimeout(()=>loadPCDisburse(),1500);
+}
+
+// ── Reconciliation ──
+function openPCRecon(pcId){
+  const r=getPCLocal().find(x=>x.pcId===pcId);
+  if(!r)return;
+  window._pcReconCtx={pcId};
+  const lines=r.lines||[];
+
+  qs('pc-recon-id').textContent=pcId;
+  qs('pc-recon-err').classList.add('hidden');
+  qs('pc-recon-suc').classList.add('hidden');
+  qs('pc-recon-notes').value='';
+  const btn=qs('pc-recon-btn');btn.disabled=false;btn.textContent='Submit Reconciliation';
+  btn.onclick=submitPCRecon;
+
+  qs('pc-recon-lines').innerHTML=lines.map((l,li)=>`
+    <div style="background:#f9fafb;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:14px;font-weight:700">${escapeHtml(l.category)}</div>
+          <div style="font-size:12px;color:var(--gray);margin-top:2px">${escapeHtml(l.details)}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:10px">
+          <div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.4px">Approved</div>
+          <div style="font-size:16px;font-weight:700;color:#533aab">KES ${fmt(l.approved||l.requested)}</div>
+        </div>
+      </div>
+      <div class="fld" style="margin:0">
+        <label>Amount Actually Spent (KES)</label>
+        <input type="number" id="recon-${li}" class="recon-inp" placeholder="0" min="0" step="1" value="${l.spent||''}" oninput="updateReconTotal(${lines.length})">
+      </div>
+    </div>`).join('');
+  updateReconTotal(lines.length);
+  show('s-pc-recon');
+}
+
+function updateReconTotal(lineCount){
+  let total=0;
+  for(let i=0;i<lineCount;i++){const inp=qs('recon-'+i);if(inp)total+=parseFloat(inp.value)||0;}
+  const el=qs('pc-recon-total');if(el)el.textContent='KES '+fmt(total);
+}
+
+async function submitPCRecon(){
+  const ctx=window._pcReconCtx;if(!ctx)return;
+  const r=getPCLocal().find(x=>x.pcId===ctx.pcId);if(!r)return;
+  const lines=r.lines||[];
+  const spentLines=lines.map((_,li)=>parseFloat(qs('recon-'+li)?.value||0)||0);
+  const notes=qs('pc-recon-notes').value.trim();
+  const errEl=qs('pc-recon-err'),sucEl=qs('pc-recon-suc');
+  errEl.classList.add('hidden');sucEl.classList.add('hidden');
+  const btn=qs('pc-recon-btn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Submitting...';
+
+  if(!isReimbDemo()){
+    try{
+      const res=await reimbApiFetch({action:'reconcilePettyCash',pcId:ctx.pcId,spentLines,notes,reconciledBy:user.name});
+      if(res.error){errEl.textContent=res.error;errEl.classList.remove('hidden');btn.disabled=false;btn.textContent='Submit Reconciliation';return;}
+    }catch(e){errEl.textContent='Connection error. Please try again.';errEl.classList.remove('hidden');btn.disabled=false;btn.textContent='Submit Reconciliation';return;}
+  }
+
+  const updatedLines=lines.map((l,li)=>({...l,spent:spentLines[li]}));
+  const totalSpent=spentLines.reduce((s,x)=>s+x,0);
+  updateLocalPC(ctx.pcId,{status:'reconciled',lines:updatedLines,totalSpent,reconNotes:notes,reconciledAt:new Date().toISOString(),reconciledBy:user.name});
+
+  sucEl.innerHTML=`<div style="font-size:24px;margin-bottom:6px">✅</div><strong>Reconciliation submitted!</strong><br><span style="font-size:12px;margin-top:4px;display:block">Total spent: KES ${fmt(totalSpent)}</span>`;
+  sucEl.classList.remove('hidden');
+  btn.disabled=false;btn.textContent='Back to My Requests';
+  btn.onclick=()=>goPCHistory();
+  updatePCStats(getPCLocal().filter(x=>x.email===user.email));
 }
 
 init();
