@@ -1819,7 +1819,7 @@ function openModule(mod){
 // SHOP
 // ═══════════════════════════════════════
 function openShop(mod){
-  cart={};
+  cart={};module=mod;
   const isBar=mod==='bar';
   qs('sh-name').textContent=isBar?'Bar Order':user.name;
   qs('sh-id').textContent=isBar?user.name:user.staffId;
@@ -2089,7 +2089,7 @@ async function placeOrder(){
     return{id:p.id,name:p.name,var:p.var,cat:p.cat,q,pr,sub:pr*q,isStaff:isS};
   }).filter(Boolean);
   const total=items.reduce((s,i)=>s+i.sub,0);
-  const ord={email:user.email,name:user.name,sid:user.staffId,pt,payMethod,items,total,mk:monthKey(),weekKey:weekKey(),date:new Date().toISOString()};
+  const ord={email:user.email,name:user.name,sid:user.staffId,pt,source:module==='bar'?'Bar Order':'Staff Order',payMethod,items,total,mk:monthKey(),weekKey:weekKey(),date:new Date().toISOString()};
   let emailSent=false;
   if(!isDemo()){
     try{
