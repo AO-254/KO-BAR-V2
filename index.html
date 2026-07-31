@@ -1495,8 +1495,14 @@ function clearLock(em,sid){localStorage.removeItem(lockKey(em,sid));}
 // ═══════════════════════════════════════
 async function init(){
   show('s-loading');
-  if(isDemo()){PRODUCTS=BUNDLED_PRODUCTS;}
-  else{try{const d=await apiFetch({action:'getProducts'});PRODUCTS=(d.products&&d.products.length)?d.products:BUNDLED_PRODUCTS;}catch{PRODUCTS=BUNDLED_PRODUCTS;}}
+  try{
+    const d=await apiFetch({action:'getProducts'});
+    PRODUCTS=(d.products&&d.products.length)?d.products:[];
+  }catch(e){PRODUCTS=[];}
+  if(!PRODUCTS.length){
+    qs('s-loading').innerHTML='<div style="text-align:center;padding:2rem;color:white"><div style="font-size:40px;margin-bottom:14px">⚠️</div><p style="font-size:16px;font-weight:700;margin-bottom:8px">No Products Found</p><p style="font-size:13px;opacity:.8;max-width:300px;line-height:1.6;margin:0 auto">Check your Google Sheet\'s <strong>Products</strong> tab and make sure it follows the correct column format, then refresh.</p><button onclick="location.reload()" style="margin-top:18px;padding:10px 26px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.5);color:white;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">↺ Retry</button></div>';
+    return;
+  }
   buildCatBar();
   show('s-login');
 }
