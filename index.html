@@ -439,14 +439,14 @@ input,button{font-family:inherit;}
 
 <script>
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby9UjPoJ753Vsh-2CSKnQ-KwxWJCtdZW1lQ9_6vCHmh-IZcgEIFEJZ0Nfc2nogaIlRh/exec',
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzORyxcQNklWmyFuwQaID2N9V-Gb3HTYHuwHMbgSfAh5-q4Xht_V8yoJ-pdll72h7L8/exec',
   ADMIN_EMAIL: 'kobar@africanoriginals.com',
   WEEKLY_LIMIT: 2000,
   CLIENT_SECRET: 'KO@AO#2026$POS!xK9mZ',
-  REIMB_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw9OPyAW8vwvE921C-GyLsgVp61N5UYC9hHys1nbSOP4uwqCnAE-HeuXBWarUa4994/exec',
+  REIMB_SCRIPT_URL: 'YOUR_REIMBURSEMENT_APPS_SCRIPT_WEB_APP_URL_HERE',
   REIMB_CLIENT_SECRET: 'KO@AO#2026$REIMB!yM7nX',
-  REIMB_DEPARTMENTS: ['Commercial','Marketing','Ops & Production','People','Finance'],
-  SAMPLES_SCRIPT_URL: 'https://script.google.com/a/macros/africanoriginals.com/s/AKfycbyMFrp7V-ChE6klMYiIiPbHLYyNszF3JNPeuOrVE-PVWPxZN4TVfgLlQGBTiwZxGpHK/exec',
+  REIMB_DEPARTMENTS: ['Commercial','Marketing','Ops & Production','People'],
+  SAMPLES_SCRIPT_URL: 'YOUR_SAMPLES_APPS_SCRIPT_WEB_APP_URL_HERE',
   SAMPLES_CLIENT_KEY: 'KO@AO#2026$SP!xK9mZ',
 };
 
@@ -1496,7 +1496,7 @@ function clearLock(em,sid){localStorage.removeItem(lockKey(em,sid));}
 async function init(){
   show('s-loading');
   if(isDemo()){PRODUCTS=BUNDLED_PRODUCTS;}
-  else{try{const d=await apiFetch({action:'getProducts'});PRODUCTS=d.products||BUNDLED_PRODUCTS;}catch{PRODUCTS=BUNDLED_PRODUCTS;}}
+  else{try{const d=await apiFetch({action:'getProducts'});PRODUCTS=(d.products&&d.products.length)?d.products:BUNDLED_PRODUCTS;}catch{PRODUCTS=BUNDLED_PRODUCTS;}}
   buildCatBar();
   show('s-login');
 }
@@ -1835,7 +1835,7 @@ function openShop(mod){
 }
 
 function buildCatBar(){
-  const cats=['All',...new Set(PRODUCTS.map(p=>p.cat).filter(Boolean))];
+  const cats=['All',...new Set(PRODUCTS.map(p=>p.cat).filter(c=>c&&typeof c==='string'))];
   qs('cat-bar').innerHTML=cats.map(c=>`<button class="cat-btn${c==='All'?' active':''}" onclick="setcat('${c}')">${c}</button>`).join('');
 }
 function setcat(c){selectedCat=c;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.textContent===c));renderProds();}
@@ -2035,7 +2035,7 @@ function renderCart(){
   const spent=pt==='staff'?weeklySpend(user.email):0;
   const cst=cartStaffTotal();const ct=cartTotal();const newTot=spent+cst;const remain=getUserLimit()-newTot;
   const listHTML=items.map(([id,q])=>{
-    const p=PRODUCTS.find(x=>x.id==id);const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
+    const p=PRODUCTS.find(x=>x.id==id);if(!p)return '';const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
     return`<div class="ci"><div class="ci-ico" style="background:${p.clr||'#1a4a8a'}">${escapeHtml(p.ltr||p.name[0])}</div>
       <div class="ci-info"><div class="ci-name">${escapeHtml(p.name)} ${escapeHtml(p.var)}</div><div class="ci-det">Qty: ${q} × KES ${fmt(pr)}</div>
       <span class="ci-tag tag-${isS?'staff':'normal'}">${isS?'Staff Price':'Normal Price'}</span></div>
@@ -2085,9 +2085,9 @@ async function placeOrder(){
   const btn=document.querySelector('.co-btn');
   if(btn){btn.disabled=true;btn.textContent='Placing order…';}
   const items=Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
-    const p=PRODUCTS.find(x=>x.id==id);const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
+    const p=PRODUCTS.find(x=>x.id==id);if(!p)return null;const isS=pt==='staff'&&p.sp>0;const pr=isS?p.sp:p.np;
     return{id:p.id,name:p.name,var:p.var,cat:p.cat,q,pr,sub:pr*q,isStaff:isS};
-  });
+  }).filter(Boolean);
   const total=items.reduce((s,i)=>s+i.sub,0);
   const ord={email:user.email,name:user.name,sid:user.staffId,pt,payMethod,items,total,mk:monthKey(),weekKey:weekKey(),date:new Date().toISOString()};
   let emailSent=false;
