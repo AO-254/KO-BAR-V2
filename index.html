@@ -2261,7 +2261,8 @@ async function loadReimbUser(){
   try{
     const d=await reimbApiFetch({action:'checkReimbUser',email:user.email,staffId:user.staffId});
     if(!d.found) return;
-    user.reimbRole=d.role;
+    user.reimbRole=d.reimbRole;
+    user.advRole=d.advRole;    
     user.department=d.department||'';
     user.lmName=d.lmName||'';
     user.lmEmail=d.lmEmail||'';
@@ -3230,8 +3231,8 @@ async function submitPCRecon(){
 
 let advPending = [], advHRCount = 0, advPayPending = [], advPayMethod = '';
 
-function isHR()      { return user.reimbRole === 'hr'; }
-function isPayroll() { return user.reimbRole === 'payroll'; }
+function isHR()      { return user.advRole === 'hr'; }
+function isPayroll() { return user.advRole === 'payroll'; }
 
 function monthLabel(ym){
   if(!ym) return '—';
@@ -3620,8 +3621,8 @@ async function markAdvPaid(advId,idx,btn){
 // SAMPLES & POSM MODULE
 // ═══════════════════════════════════════
 
-function isInvoicing(){ return user.reimbRole==='invoicing'; }
-function isWarehouse(){ return user.reimbRole==='warehouse'; }
+function isInvoicing(){ return user.samplesRole==='invoicing'; }
+function isWarehouse(){ return user.samplesRole==='warehouse'; }
 function isSamplesApprover(){ return['lm','manager','approver'].includes(user.samplesRole); }
 function isSamplesInvoicing(){ return user.samplesRole==='invoicing'; }
 function isSamplesWarehouse(){ return user.samplesRole==='warehouse'; }
