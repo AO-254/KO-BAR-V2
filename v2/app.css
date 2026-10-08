@@ -1,0 +1,1026 @@
+/* ═══════════════════════════════════════════════════════════
+   KO STAFF PORTAL — design system
+
+   Built from the African Originals palette: the gold and the hibiscus
+   pink off the brand assets, on a warm ground rather than the cold grey
+   the old app used.
+
+   Two notes on decisions that look odd but are deliberate:
+
+   • Black on gold, not white. Gold #FBC62A against white is 1.6:1 —
+     unreadable. Against near-black it is 13:1. Same for the pink:
+     black-on-pink is 6.4:1, white-on-pink 3.3:1.
+
+   • System fonts. This is a tool someone opens twenty times a shift on a
+     phone at a bar, often on a slow connection. A webfont would cost a
+     render delay every time for no gain the brand actually needs — the
+     colour and the layout carry it.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Sampled from the brand artwork, not chosen: the gold panel, the pink
+     ground it sits on, and the hibiscus. */
+  --gold:        #FBC62A;
+  --pink:        #EE4A91;
+  --petal:       #FFD302;
+  --outline:     #FF3E85;
+
+  --gold-deep:   #8A5A05;
+  --gold-wash:   #FEF0C8;
+  --hib:         #D8336B;
+  --hib-deep:    #A81F4F;
+  --hib-wash:    #FCEBF1;
+
+  /* The gold IS the page, the way it is the panel in the artwork.
+     Content sits on it in white. Black on gold is 13:1. */
+  --bg:          #FBC62A;
+  --surface:     #FFFFFF;
+  --sunk:        #FEF6E0;
+  --ink:         #17140C;
+  --ink-2:       #5C5647;
+  --ink-3:       #8B8472;
+  --line:        rgba(23, 20, 12, .14);
+  --hair:        rgba(23, 20, 12, .07);
+
+  /* meaning */
+  --good:        #0F6E56;
+  --good-wash:   #E3F1EC;
+  --warn:        #8A5A05;
+  --warn-wash:   #FDF3DC;
+  --bad:         #A32D2D;
+  --bad-wash:    #FBEDEA;
+
+  /* module identity */
+  --m-orders:    #8A5A05;
+  --m-reimb:     #0F6E56;
+  --m-petty:     #D8336B;
+  --m-advance:   #5B4B8A;
+  --m-samples:   #0E7490;
+
+  --shadow:      0 1px 2px rgba(23,20,12,.05), 0 10px 28px -16px rgba(23,20,12,.20);
+  --shadow-lift: 0 2px 6px rgba(23,20,12,.08), 0 18px 40px -20px rgba(23,20,12,.30);
+  --r:           12px;
+  --r-sm:        8px;
+  --tap:         48px;   /* nothing tappable is smaller than this */
+}
+
+/* At night the gold stops being the ground and goes back to being the
+   accent — a full gold page in a dark room is punishing, and a bar at
+   eleven at night is exactly where this gets used. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --gold:      #FBC62A;
+    --pink:      #C23A75;
+    --petal:     #FFD302;
+    --outline:   #FF3E85;
+    --gold-deep: #F5C763;
+    --gold-wash: #2F2716;
+    --hib:       #FF5C8D;
+    --hib-deep:  #FF87AC;
+    --hib-wash:  #301A22;
+    --bg:        #14120C;
+    --surface:   #1D1A13;
+    --sunk:      #221E16;
+    --ink:       #F3EEE1;
+    --ink-2:     #B3AC99;
+    --ink-3:     #837D6C;
+    --line:      rgba(243,238,225,.17);
+    --hair:      rgba(243,238,225,.08);
+    --good:      #4FBFA0;  --good-wash: #162B24;
+    --warn:      #F5C763;  --warn-wash: #2F2716;
+    --bad:       #E8736B;  --bad-wash:  #33201C;
+    --m-orders:  #E0A93C;
+    --m-reimb:   #4FBFA0;
+    --m-petty:   #FF5C8D;
+    --m-advance: #A294D6;
+    --m-samples: #4DC2DE;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.7);
+    --shadow-lift: 0 2px 6px rgba(0,0,0,.5), 0 18px 40px -20px rgba(0,0,0,.8);
+  }
+}
+
+[data-theme="dark"] {
+  --gold:#FBC62A; --pink:#C23A75; --petal:#FFD302; --outline:#FF3E85;
+  --gold-deep:#F5C763; --gold-wash:#2F2716;
+  --hib:#FF5C8D;  --hib-deep:#FF87AC;  --hib-wash:#301A22;
+  --bg:#14120C; --surface:#1D1A13; --sunk:#221E16;
+  --ink:#F3EEE1; --ink-2:#B3AC99; --ink-3:#837D6C;
+  --line:rgba(243,238,225,.17); --hair:rgba(243,238,225,.08);
+  --good:#4FBFA0; --good-wash:#162B24;
+  --warn:#F5C763; --warn-wash:#2F2716;
+  --bad:#E8736B;  --bad-wash:#33201C;
+  --m-orders:#E0A93C; --m-reimb:#4FBFA0; --m-petty:#FF5C8D;
+  --m-advance:#A294D6; --m-samples:#4DC2DE;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -16px rgba(0,0,0,.7);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.5),0 18px 40px -20px rgba(0,0,0,.8);
+}
+
+/* ── base ───────────────────────────────────────────────── */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 650; letter-spacing: -.015em; line-height: 1.2; }
+h1 { font-size: 24px; }
+h2 { font-size: 19px; }
+h3 { font-size: 16px; }
+p  { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--ink-2); }
+.faint { color: var(--ink-3); font-size: 13px; }
+.center { text-align: center; }
+[hidden] { display: none !important; }
+
+/* ── layout ─────────────────────────────────────────────── */
+.screen { display: none; }
+.screen.on { display: block; animation: rise .18s ease-out; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) {
+  .screen.on { animation: none; }
+  * { transition: none !important; }
+}
+
+.wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 96px; }
+.wrap.narrow { max-width: 420px; }
+
+/* ── the pink linework ──────────────────────────────────────
+   The fan pattern from the artwork's border, redrawn as a tile so it
+   scales and costs nothing to ship. */
+.linework {
+  background-color: var(--pink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='190'%3E%3Cg fill='none' stroke='%23D93A7E' stroke-width='2.4'%3E%3Ccircle cx='0' cy='190' r='24'/%3E%3Ccircle cx='0' cy='190' r='46'/%3E%3Ccircle cx='0' cy='190' r='68'/%3E%3Ccircle cx='0' cy='190' r='90'/%3E%3Ccircle cx='0' cy='190' r='112'/%3E%3Ccircle cx='0' cy='190' r='134'/%3E%3Ccircle cx='190' cy='0' r='26'/%3E%3Ccircle cx='190' cy='0' r='50'/%3E%3Ccircle cx='190' cy='0' r='74'/%3E%3Ccircle cx='190' cy='0' r='98'/%3E%3Ccircle cx='190' cy='0' r='122'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 190px 190px;
+}
+
+/* ── top bar ──────────────────────────────────────────────
+   Black, because that is what the monogram is in the artwork — the
+   letterforms are cut black shapes, never gold on gold. */
+.bar {
+  position: sticky; top: 0; z-index: 20;
+  background: #17140C;
+  padding: env(safe-area-inset-top) 0 0;
+  border-bottom: 3px solid var(--pink);
+}
+.bar-in {
+  max-width: 640px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  min-height: 60px;
+}
+.bar h1 { font-size: 17px; color: #FBC62A; flex: 1; }
+.bar .sub { font-size: 12px; color: rgba(255,255,255,.62); display: block; font-weight: 400; letter-spacing: 0; }
+.bar .wordmark { height: 22px; width: auto; flex: none; filter: invert(1); }
+.bar .who {
+  flex: 1; min-width: 0; text-align: right;
+  font-size: 12.5px; color: rgba(255,255,255,.7);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.back {
+  width: 38px; height: 38px; border: 0; border-radius: 10px; flex: none;
+  background: rgba(255,255,255,.12); color: var(--bg);
+  font-size: 20px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.back:active { background: rgba(255,255,255,.22); }
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex: none;
+  background: var(--gold); color: #17140C;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; cursor: pointer; border: 0;
+}
+
+/* ── cards ──────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.card.flat { box-shadow: none; }
+.card h2 { margin-bottom: 4px; }
+
+/* These sit directly on the gold, so they take the darker ink — the
+   faint grey that works on a white card is only about 3:1 on gold. */
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(23,20,12,.66);
+  margin: 26px 0 10px;
+}
+.section-label:first-child { margin-top: 18px; }
+.card .section-label, .sheet .section-label { color: var(--ink-3); }
+
+/* Same reason: anything loose on the page, rather than in a card.
+   .66 is where ink on this gold clears 4.5:1 — .60 does not. */
+.wrap > .faint, .wrap > .muted { color: rgba(23,20,12,.66); }
+
+/* ── the home grid ──────────────────────────────────────── */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+@media (min-width: 560px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+.mod {
+  position: relative; overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 18px 16px 16px;
+  text-align: left; cursor: pointer;
+  min-height: 116px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  box-shadow: var(--shadow);
+  transition: transform .12s ease, box-shadow .12s ease;
+  color: var(--ink); font: inherit;
+}
+.mod::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 4px;
+  background: var(--tone, var(--gold));
+}
+.mod:active { transform: translateY(1px); box-shadow: var(--shadow); }
+.mod:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.mod .ico { font-size: 22px; margin-bottom: auto; }
+.mod .name { font-weight: 650; font-size: 15px; letter-spacing: -.01em; }
+.mod .meta { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.mod .pip {
+  position: absolute; top: 12px; right: 12px;
+  min-width: 22px; height: 22px; padding: 0 7px;
+  border-radius: 11px; background: var(--tone, var(--gold)); color: #17140C;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── forms ──────────────────────────────────────────────── */
+.field { margin-bottom: 14px; }
+label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--ink-2); margin-bottom: 6px;
+}
+/* A field has to sit on something other than what is behind it, and what
+   is behind it changes: the gold page on a form, white inside a card or an
+   approval sheet. One colour cannot do both — gold on gold was invisible,
+   and white on white would be too. So the default is white for the page,
+   and the rule below drops it to the warm sunk tone wherever it is already
+   on white. */
+input, select, textarea {
+  width: 100%; min-height: var(--tap);
+  padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--ink);
+  font: inherit; font-size: 16px;   /* 16px stops iOS zooming on focus */
+}
+.card input, .card select, .card textarea,
+.sheet input, .sheet select, .sheet textarea { background: var(--sunk); }
+textarea { min-height: 84px; resize: vertical; line-height: 1.45; }
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-wash);
+}
+input[readonly], input:disabled { background: var(--sunk); color: var(--ink-2); }
+.card input[readonly], .card input:disabled,
+.sheet input[readonly], .sheet input:disabled { background: var(--hair); }
+
+/* Forms are white panels on the gold, the same as the product tiles. A
+   label and an input bare on the page read as an unfinished screen. */
+.form-card { padding: 16px; }
+.form-card > .field:last-child,
+.form-card > div:last-child > .field:last-child { margin-bottom: 0; }
+.form-card .section-label:first-child { margin-top: 0; }
+input.pin {
+  text-align: center; letter-spacing: .5em; font-size: 26px;
+  font-variant-numeric: tabular-nums; padding-left: .5em;
+}
+.hint { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+.err {
+  background: var(--bad-wash); color: var(--bad);
+  border-radius: var(--r-sm); padding: 11px 14px;
+  font-size: 14px; margin-bottom: 14px;
+}
+.ok-note {
+  background: var(--good-wash); color: var(--good);
+  border-radius: var(--r-sm); padding: 11px 14px;
+  font-size: 14px; margin-bottom: 14px;
+}
+
+/* ── buttons ────────────────────────────────────────────── */
+.btn {
+  width: 100%; min-height: var(--tap);
+  border: 0; border-radius: var(--r-sm);
+  background: var(--ink); color: var(--bg);
+  font: inherit; font-size: 15px; font-weight: 650;
+  cursor: pointer; padding: 13px 18px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn:active { opacity: .85; }
+.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.btn[disabled] { opacity: .45; cursor: default; }
+.btn.gold { background: var(--gold); color: #17140C; }
+.btn.good { background: var(--good); color: #fff; }
+.btn.bad  { background: var(--bad);  color: #fff; }
+.btn.ghost {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn.link {
+  background: none; color: var(--ink-2); font-weight: 500;
+  min-height: 40px; text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-row { display: flex; gap: 10px; }
+.btn-row .btn { flex: 1; }
+
+/* ── lists ──────────────────────────────────────────────── */
+.list { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface); }
+.row {
+  display: flex; gap: 12px; align-items: center;
+  padding: 14px 16px; border-bottom: 1px solid var(--hair);
+  width: 100%; text-align: left; background: none; border-left: 0;
+  border-right: 0; border-top: 0; font: inherit; color: var(--ink);
+  cursor: pointer; min-height: var(--tap);
+}
+.row:last-child { border-bottom: 0; }
+.row:active { background: var(--sunk); }
+.row .body { flex: 1; min-width: 0; }
+.row .title { font-weight: 600; font-size: 15px; }
+.row .sub { font-size: 12.5px; color: var(--ink-3); margin-top: 1px; }
+.row .amt { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row .chev { color: var(--ink-3); flex: none; }
+
+.empty {
+  text-align: center; padding: 40px 20px; color: var(--ink-3);
+  border: 1px dashed var(--line); border-radius: var(--r);
+}
+.empty .big { font-size: 30px; margin-bottom: 8px; }
+
+/* ── status pills ───────────────────────────────────────── */
+.pill {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+}
+.pill.submitted  { background: var(--gold-wash); color: var(--gold-deep); }
+.pill.approved   { background: var(--good-wash); color: var(--good); }
+.pill.rejected   { background: var(--bad-wash);  color: var(--bad); }
+.pill.paid,
+.pill.disbursed,
+.pill.dispatched { background: var(--good-wash); color: var(--good); }
+.pill.invoiced   { background: var(--hib-wash);  color: var(--hib-deep); }
+.pill.reconciled { background: var(--sunk); color: var(--ink-2); }
+
+/* ── key/value ──────────────────────────────────────────── */
+.kv { width: 100%; border-collapse: collapse; font-size: 14px; }
+.kv td { padding: 9px 0; border-bottom: 1px solid var(--hair); vertical-align: top; }
+.kv tr:last-child td { border-bottom: 0; }
+.kv td:first-child { color: var(--ink-2); width: 42%; }
+.kv td:last-child { text-align: right; font-weight: 550; }
+
+/* ── the weekly limit meter ─────────────────────────────── */
+.meter { margin: 14px 0 4px; }
+.meter .track { height: 8px; border-radius: 4px; background: var(--sunk); overflow: hidden; }
+.meter .fill { height: 100%; background: var(--good); border-radius: 4px; transition: width .3s ease; }
+.meter .fill.warn { background: var(--gold); }
+.meter .fill.over { background: var(--bad); }
+.meter .legend { display: flex; justify-content: space-between; font-size: 12px; margin-top: 6px; color: var(--ink-2); }
+
+/* ── basket ─────────────────────────────────────────────── */
+.basket {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 28px -18px rgba(23,20,12,.5);
+}
+.basket-in { max-width: 640px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.basket .total { flex: 1; }
+.basket .total b { display: block; font-size: 19px; font-variant-numeric: tabular-nums; }
+.basket .btn { width: auto; padding: 13px 24px; }
+
+/* ── stepper ────────────────────────────────────────────── */
+.step { display: flex; align-items: center; gap: 8px; }
+.step button {
+  width: 38px; height: 38px; flex: none; border-radius: 9px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  font-size: 19px; cursor: pointer; line-height: 1;
+}
+.step button:active { background: var(--sunk); }
+.step input { width: 62px; min-height: 38px; text-align: center; padding: 6px; }
+
+/* ── toast ──────────────────────────────────────────────── */
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%);
+  z-index: 60; max-width: 90vw;
+  background: var(--ink); color: var(--bg);
+  padding: 12px 18px; border-radius: 22px;
+  font-size: 14px; box-shadow: var(--shadow-lift);
+  animation: pop .2s ease-out;
+}
+.toast.bad { background: var(--bad); color: #fff; }
+@keyframes pop { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+/* ── busy ───────────────────────────────────────────────── */
+.spin {
+  width: 17px; height: 17px; border-radius: 50%;
+  border: 2px solid currentColor; border-top-color: transparent;
+  animation: turn .7s linear infinite; display: inline-block;
+}
+@keyframes turn { to { transform: rotate(360deg); } }
+
+.veil {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(23,20,12,.35);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── sheet (modal from the bottom on phone) ─────────────── */
+.sheet-bg {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(23,20,12,.45);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.sheet {
+  background: var(--surface); width: 100%; max-width: 640px;
+  border-radius: 18px 18px 0 0;
+  padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height: 88vh; overflow-y: auto;
+  animation: up .2s ease-out;
+}
+@keyframes up { from { transform: translateY(18px); } }
+@media (min-width: 560px) {
+  .sheet-bg { align-items: center; }
+  .sheet { border-radius: var(--r); max-height: 84vh; margin: 0 16px; }
+}
+.sheet .grab { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: -6px auto 14px; }
+
+/* ── the way in ───────────────────────────────────────────
+   The artwork exactly: pink linework ground, gold panel floating on it,
+   the wordmark in black. This is the front door, so it gets the full
+   identity; the working screens inside stay calmer. */
+.entry {
+  min-height: 100dvh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 28px 16px calc(28px + env(safe-area-inset-bottom));
+}
+.panel {
+  width: 100%; max-width: 400px; margin: 0 auto;
+  background: var(--gold);
+  border-radius: 4px;                      /* cut, not rounded */
+  padding: 30px 24px 26px;
+  box-shadow: 0 24px 60px -24px rgba(0,0,0,.55);
+  position: relative; overflow: hidden;
+}
+/* The hibiscus, cropped by the panel edge the way the monogram is
+   cropped by the gold in the artwork. */
+.panel::after {
+  content: ""; position: absolute; right: -34px; bottom: -34px;
+  width: 132px; height: 132px;
+  background: url("hibiscus.png") no-repeat center/contain;
+  opacity: .5; pointer-events: none;
+}
+.panel > * { position: relative; z-index: 1; }
+
+.panel .mark { display: block; width: 168px; max-width: 62%; height: auto; margin: 0 0 20px; }
+.panel h1 { font-size: 21px; color: #17140C; }
+.panel .lede { color: rgba(23,20,12,.72); font-size: 14px; margin: 4px 0 20px; }
+
+/* On gold, inputs are white so the field edge is obvious. */
+.panel label { color: rgba(23,20,12,.72); }
+.panel input { background: #fff; border-color: rgba(23,20,12,.28); }
+.panel input:focus { border-color: #17140C; box-shadow: 0 0 0 3px rgba(23,20,12,.18); }
+.panel .hint { color: rgba(23,20,12,.6); }
+.panel .btn { background: #17140C; color: var(--gold); }
+.panel .btn.link { background: none; color: rgba(23,20,12,.75); }
+.panel .err { background: #7A1020; color: #fff; }
+.panel .ok-note { background: rgba(23,20,12,.1); color: #17140C; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .panel { box-shadow: 0 24px 60px -24px rgba(0,0,0,.8); }
+}
+
+/* ── upload dropzone ────────────────────────────────────── */
+.drop {
+  border: 2px dashed var(--line); border-radius: var(--r);
+  padding: 26px 18px; text-align: center; cursor: pointer;
+  background: var(--sunk); color: var(--ink-2);
+}
+.drop:hover, .drop.over { border-color: var(--gold); background: var(--gold-wash); color: var(--gold-deep); }
+.drop .big { font-size: 26px; margin-bottom: 6px; }
+
+.problem {
+  display: flex; gap: 10px; padding: 9px 0;
+  border-bottom: 1px solid var(--hair); font-size: 13.5px;
+}
+.problem:last-child { border-bottom: 0; }
+.problem .n { color: var(--ink-3); flex: none; min-width: 52px; }
+.problem.merged .n { color: var(--gold-deep); }
+
+/* ── file chips ─────────────────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--sunk); border-radius: 18px;
+  padding: 6px 8px 6px 12px; font-size: 13px; max-width: 100%;
+}
+.chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip button {
+  border: 0; background: var(--line); color: var(--ink-2);
+  width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+  font-size: 13px; line-height: 1; flex: none;
+}
+
+/* ── category chips ─────────────────────────────────────── */
+.chip-btn {
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 20px; padding: 9px 15px; font: inherit; font-size: 13.5px;
+  white-space: nowrap; cursor: pointer; min-height: 40px;
+}
+/* Same reasoning as the fields: a white chip on a white card is a border
+   and nothing else. Selected stays near-black in both places. */
+.card .chip-btn, .sheet .chip-btn { background: var(--sunk); }
+.chip-btn.on { background: var(--ink); color: var(--gold); border-color: var(--ink); }
+.card .chip-btn.on, .sheet .chip-btn.on { background: var(--ink); }
+.chip-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+/* Only the sideways-scrolling category strip refuses to wrap. This used to
+   be a bare .chips rule, which also caught the attached-file list — so a
+   fourth receipt had nowhere to go and spilled out of the card onto the
+   page. Scoped to the strip it was written for. */
+.scroll-x .chips { flex-wrap: nowrap; padding-bottom: 4px; }
+
+/* A file chip gives its name room to be read and the row wraps under
+   itself, however many are attached. */
+.chip { min-width: 0; }
+.chip span { max-width: 230px; }
+
+/* ── a chosen option among several ──────────────────────── */
+.btn.ghost.on { background: var(--ink); color: var(--gold); border-color: var(--ink); }
+
+/* Struck-through old price beside a staff price. */
+.row s { color: var(--ink-3); text-decoration-thickness: 1px; }
+
+/* Quantity boxes in a long stock list. */
+.stockbox {
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--bg); color: var(--ink); font: inherit; padding: 8px;
+}
+.stockbox:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-wash); }
+
+/* wide content never makes the page scroll sideways */
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ═══════════════════════════════════════════════════════════
+   THE PRODUCT GRID
+
+   Tiles, not list rows. A bar order is picked at arm's length on a phone
+   in bad light: a coloured initial is found by shape before the name is
+   read, and a tile gives the quantity buttons room to be hit properly.
+   ═══════════════════════════════════════════════════════════ */
+
+.prod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+  padding-bottom: 20px;
+}
+
+.pc {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 12px 12px 10px;
+  box-shadow: var(--shadow);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+/* Anything in the basket says so on the tile, so the basket bar is a
+   confirmation rather than the only place the count lives. */
+.pc.inc {
+  border-color: var(--ink);
+  box-shadow: var(--shadow-lift);
+}
+
+.pc-ico {
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  color: #fff;
+  font-weight: 800; font-size: 17px;
+  margin-bottom: 9px;
+  flex: none;
+}
+.pc-name {
+  font-weight: 700; font-size: 13.5px; line-height: 1.3;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.pc-var {
+  font-size: 11.5px; color: var(--ink-3);
+  margin-top: 2px; line-height: 1.35;
+}
+.no-staff-tag {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--warn-wash); color: var(--warn);
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: .02em;
+}
+
+/* The price is the last thing before the buttons and sits on its own line,
+   pushed to the bottom so tiles of different name lengths still line up. */
+.pc-price {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 13.5px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.pc-price small { font-weight: 600; font-size: 10.5px; color: var(--ink-3); }
+.pc-price.pp-staff { color: var(--good); }
+
+.qty-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--hair);
+}
+.qb {
+  width: 38px; height: 38px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 19px; font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.qb:active:not(:disabled) { background: var(--sunk); }
+.qb:disabled { opacity: .3; cursor: not-allowed; }
+.qb:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.qn {
+  flex: 1; text-align: center;
+  font-size: 16px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* Loading state — the same shape as the tiles, so nothing jumps when the
+   real ones arrive. */
+.pc.skel, .card.skel-bar {
+  background: linear-gradient(100deg, var(--sunk) 30%, var(--gold-wash) 50%, var(--sunk) 70%);
+  background-size: 220% 100%;
+  animation: skel 1.4s linear infinite;
+  border-color: var(--hair);
+  box-shadow: none;
+}
+.pc.skel { height: 164px; }
+.card.skel-bar { height: 86px; }
+@keyframes skel { to { background-position: -120% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .pc.skel, .card.skel-bar { animation: none; }
+}
+
+/* ── which price ─────────────────────────────────────────────
+   Two buttons, one lit. Not a switch: a switch implies on and off, and
+   neither of these is the absence of the other. */
+.seg {
+  display: flex;
+  gap: 0;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+.seg-btn {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit; font-size: 13px; font-weight: 700;
+  cursor: pointer;
+}
+.seg-btn + .seg-btn { border-left: 1px solid var(--line); }
+.seg-btn.on { background: var(--ink); color: var(--gold); }
+.seg-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
+
+/* ── what the week has cost ──────────────────────────────────
+   Consumption, not a budget: the big number is what has gone. */
+.spend-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.spend-now {
+  font-size: 26px; font-weight: 800; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.spend-left {
+  font-size: 12.5px; font-weight: 700;
+  color: var(--good);
+  padding: 4px 9px; border-radius: 999px;
+  background: var(--good-wash);
+  white-space: nowrap;
+}
+.spend-left.spent { color: var(--bad); background: var(--bad-wash); }
+
+#ord-limit-card .track {
+  height: 8px; border-radius: 4px;
+  background: var(--sunk);
+  overflow: hidden;
+  margin-top: 12px;
+}
+#ord-limit-card .fill {
+  height: 100%; border-radius: 4px;
+  background: var(--good);
+  transition: width .3s ease;
+}
+#ord-limit-card .fill.warn { background: var(--gold-deep); }
+#ord-limit-card .fill.over { background: var(--bad); }
+
+/* Paying normal price does not touch the allowance, so the card steps back
+   rather than disappearing — it is still the answer to "how am I doing?". */
+#ord-limit-card.dim { opacity: .5; }
+
+/* ═══════════════════════════════════════════════════════════
+   AN ACTIVATION'S DELIVERIES
+
+   Thirty outlets on one request. Each is a card because the warehouse
+   packs one box per outlet, but the request above them stays single —
+   one approval, one invoice, one van.
+   ═══════════════════════════════════════════════════════════ */
+
+.drop-card {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.drop-head { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+.drop-head b { flex: 1; color: var(--ink); }
+.drop-n {
+  flex: none;
+  width: 21px; height: 21px;
+  border-radius: 5px;
+  background: var(--ink); color: var(--gold);
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.drop-units {
+  flex: none;
+  font-weight: 800; font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.drop-meta { font-size: 11.5px; color: var(--ink-3); margin: 4px 0 7px; line-height: 1.4; }
+.drop-items { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.drop-items span {
+  font-size: 11.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--sunk);
+  color: var(--ink-2);
+}
+.drop-items b { color: var(--ink); }
+
+/* What the whole thing covers, said once before the per-outlet detail. */
+.note-scope {
+  margin: 0 0 12px;
+  padding: 9px 12px;
+  border-left: 3px solid var(--gold-deep);
+  background: var(--warn-wash);
+  color: var(--warn);
+  font-size: 12.5px; font-weight: 700;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+
+/* Download, fill in, upload back — numbered because it genuinely is an
+   order of operations, not decoration. */
+.steps { margin: 0 0 14px; padding-left: 0; list-style: none; counter-reset: s; }
+.steps li {
+  counter-increment: s;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 8px;
+  font-size: 13px; color: var(--ink-2); line-height: 1.5;
+}
+.steps li b { color: var(--ink); }
+.steps li::before {
+  content: counter(s);
+  position: absolute; left: 0; top: 1px;
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  background: var(--ink); color: var(--gold);
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 800;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROOM ON A LAPTOP
+
+   The app is built for a phone, and 640px is the right measure for a form
+   or a list — text past that stops being readable. A wall of product tiles
+   is the opposite: it wants every column it can get, and squeezing it into
+   a phone-width column on a 1400px screen means scrolling past three tiles
+   a row when nine would fit.
+
+   So the two screens that are grids of things — picking products, counting
+   stock — widen, and everything else stays a single column. The bar and the
+   basket widen with them, or the header would float in the middle of the
+   content it belongs to.
+   ═══════════════════════════════════════════════════════════ */
+
+@media (min-width: 760px) {
+  .screen.wide .wrap,
+  .screen.wide .bar-in,
+  .screen.wide .basket-in { max-width: 1120px; }
+
+  /* A touch more per tile now there is room — names wrap less. */
+  .screen.wide .prod-grid { grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); }
+
+  /* The allowance and the price toggle sit side by side rather than
+     stacking, so the products start higher up the page. They share a
+     container, so this is a flex row rather than something dragged into
+     place with a negative margin. */
+  .ord-head { display: flex; align-items: stretch; gap: 12px; }
+  .ord-head > .card { flex: 1; margin: 0; }
+  .ord-head > .seg { flex: none; width: 300px; margin-top: 0; align-self: stretch; }
+  .ord-head > .seg .seg-btn { font-size: 13.5px; }
+}
+
+/* On a phone the two simply stack, which is what they already do. */
+.ord-head > .seg { margin-top: 12px; }
+
+/* The category strip scrolls sideways by design, but a permanent grey bar
+   under it on a laptop reads as a mistake. Slim it down and let it fade in
+   on hover; on a trackpad the strip still scrolls either way. */
+.scroll-x { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.scroll-x:hover { scrollbar-color: var(--line) transparent; }
+.scroll-x::-webkit-scrollbar { height: 6px; }
+.scroll-x::-webkit-scrollbar-thumb { background: transparent; border-radius: 3px; }
+.scroll-x:hover::-webkit-scrollbar-thumb { background: var(--line); }
+
+/* Nothing may push the page sideways — a tile or a long product name that
+   overflows its track would scroll the whole screen. */
+body { overflow-x: hidden; }
+.prod-grid { min-width: 0; }
+.pc { min-width: 0; }
+.pc-name, .pc-var { overflow-wrap: anywhere; }
+
+/* Two kinds of finding on an upload, and the difference is the whole point:
+   a stop has to be fixed in the sheet before anything can be sent, a note
+   is something that happened which you should know about. Colouring them
+   the same would make thirty harmless "matched to a known account" lines
+   look like thirty errors. */
+.problem.stop .n   { color: var(--bad); font-weight: 700; }
+.problem.merged .n { color: var(--gold-deep); font-weight: 700; }
+.problem b { color: var(--ink); }
+
+/* ═══════════════════════════════════════════════════════════
+   BUILDING AN ACTIVATION
+
+   Two screens: pick the products, then say where they go. The second one
+   is a stack of outlets, collapsed to a line each so twenty of them stay
+   readable, and opened one at a time to adjust what that outlet gets.
+   ═══════════════════════════════════════════════════════════ */
+
+/* The running total, pinned to the bottom of the flow rather than the
+   viewport — it belongs to the list above it, not to the window. */
+.act-bar {
+  position: sticky; bottom: 0;
+  display: flex; align-items: center; gap: 12px;
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  background: var(--ink);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-lift);
+}
+.act-bar .l { flex: 1; min-width: 0; }
+.act-bar .l span { display: block; font-size: 11.5px; color: rgba(255,255,255,.6); }
+.act-bar .l b {
+  display: block; color: #fff; font-size: 15px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.act-bar .btn { flex: none; margin: 0; }
+.act-bar .btn[disabled] { opacity: .4; cursor: not-allowed; }
+
+/* A quantity typed rather than tapped — an activation asks for 3,600 of
+   something and nobody presses plus that many times. */
+.qn-in {
+  flex: 1; min-width: 0; min-height: 38px;
+  text-align: center; padding: 6px 4px;
+  font-size: 15px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--sunk); color: var(--ink);
+}
+.qn-in:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--gold-wash); }
+
+/* ── the outlet stack ── */
+.o-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.o-card.open { border-color: var(--ink); box-shadow: var(--shadow); }
+/* An outlet with no name yet is visibly unfinished, rather than a row you
+   scroll past and discover at the end. */
+.o-card.todo { border-style: dashed; }
+
+.o-head {
+  display: flex; align-items: center; gap: 9px;
+  padding: 11px 13px;
+  cursor: pointer;
+  min-height: var(--tap);
+}
+.o-head:hover { background: var(--sunk); }
+.o-n {
+  flex: none; width: 21px; height: 21px;
+  border-radius: 5px;
+  background: var(--ink); color: var(--gold);
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.o-name {
+  flex: 1; min-width: 0;
+  font-size: 14px; font-weight: 700; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.o-name.empty { color: var(--ink-3); font-weight: 500; font-style: italic; }
+.o-u {
+  flex: none; font-size: 13.5px; font-weight: 800;
+  font-variant-numeric: tabular-nums; color: var(--ink);
+}
+.o-car { flex: none; color: var(--ink-3); font-size: 12px; }
+.o-card .o-meta {
+  font-size: 11.5px; color: var(--ink-3);
+  margin: 0; padding: 0 13px 11px 43px;
+}
+/* One padded body rather than margins on each child — a child with its own
+   inline margin would beat them and sit flush against the edge. */
+.o-body { padding: 2px 13px 0; }
+.o-body > .field:first-child { margin-top: 8px; }
+.o-body table.alloc { width: 100%; }
+
+.two-up { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 460px) { .two-up { grid-template-columns: 1fr; gap: 0; } }
+
+.m-lab2 {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-3); margin: 4px 0 6px;
+}
+
+/* What this one outlet gets. Product on the left, a box on the right — the
+   same shape as the sheet, so moving between them costs nothing. */
+table.alloc { border-collapse: collapse; margin-bottom: 10px; }
+table.alloc td {
+  padding: 5px 0; border-bottom: 1px solid var(--hair);
+  font-size: 13px; color: var(--ink);
+}
+table.alloc tr:last-child td { border-bottom: 0; }
+table.alloc td.q { width: 92px; padding-left: 10px; }
+table.alloc td.q input {
+  min-height: 38px; text-align: center; padding: 6px;
+  font-variant-numeric: tabular-nums; font-weight: 700;
+  background: var(--sunk);
+}
+table.alloc .faint { font-size: 10.5px; color: var(--ink-3); }
+
+.o-acts { display: flex; gap: 14px; flex-wrap: wrap; padding-bottom: 12px; }
+.o-acts .btn.link { width: auto; margin: 0; padding: 4px 0; font-size: 13px; }
+.btn.link.bad { color: var(--bad); }
+
+/* ── the samples grid ────────────────────────────────────────
+   Same tiles as Staff Orders with the price line taken out, because a
+   sample is not being sold. Without that line there is nothing pushing
+   the quantity row to the bottom, so it takes the job over and tiles of
+   different name lengths still line up. */
+.prod-grid.nop .qty-row { margin-top: auto; }
+
+/* The card top left holds a destination rather than a figure, so the big
+   line is a name — smaller, and allowed to wrap onto a second line rather
+   than running off the side of the card. */
+.spend-now.dest {
+  font-size: 17px; line-height: 1.2;
+  overflow-wrap: anywhere;
+  font-variant-numeric: normal;
+}
+.spend-now.dest.none { color: var(--ink-3); font-weight: 600; font-style: italic; }
+#sr-card .spend-head { align-items: center; }
+#sr-card .btn.ghost { flex: none; }

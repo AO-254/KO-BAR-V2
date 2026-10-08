@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17140C">
+<title>KO Staff Portal</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     SIGNING IN
+     Three screens, one flow. Setting a PIN for the first time
+     and resetting a forgotten one are the same journey.
+     ═══════════════════════════════════════════════════════ -->
+
+<section id="s-login" class="screen entry linework">
+  <div class="panel">
+    <img class="mark" src="wordmark.png" alt="African Originals">
+    <h1>Staff Portal</h1>
+    <p class="lede">Sign in with your staff ID and PIN.</p>
+
+    <div id="login-err" class="err" hidden></div>
+
+    <div class="field">
+      <label for="li-id">Staff ID or work email</label>
+      <input id="li-id" type="text" autocomplete="username" autocapitalize="characters"
+             placeholder="SB169" enterkeyhint="next">
+    </div>
+
+    <div class="field">
+      <label for="li-pin">6-digit PIN</label>
+      <input id="li-pin" class="pin" type="password" inputmode="numeric"
+             autocomplete="current-password" maxlength="6" placeholder="······"
+             enterkeyhint="go">
+    </div>
+
+    <button id="li-go" class="btn">Sign in</button>
+    <button id="li-forgot" class="btn link">Forgot my PIN, or setting one up</button>
+  </div>
+</section>
+
+<section id="s-enrol" class="screen entry linework">
+  <div class="panel">
+    <img class="mark" src="wordmark.png" alt="African Originals">
+    <h1>Set up your PIN</h1>
+    <p class="lede">We'll send a code to your work email.</p>
+
+    <div id="enrol-err" class="err" hidden></div>
+    <div id="enrol-sent" class="ok-note" hidden></div>
+
+    <div class="field">
+      <label for="en-id">Staff ID or work email</label>
+      <input id="en-id" type="text" autocapitalize="characters" placeholder="SB169" enterkeyhint="go">
+    </div>
+
+    <button id="en-send" class="btn">Send me a code</button>
+    <button id="en-have" class="btn link">I already have a code</button>
+    <button id="en-back" class="btn link">Back to sign in</button>
+  </div>
+</section>
+
+<section id="s-verify" class="screen entry linework">
+  <div class="panel">
+    <img class="mark" src="wordmark.png" alt="African Originals">
+    <h1>Choose your PIN</h1>
+    <p class="lede" id="vf-who">Enter the code we sent you, then pick a PIN.</p>
+
+    <div id="verify-err" class="err" hidden></div>
+
+    <div class="field">
+      <label for="vf-code">6-digit code from your email</label>
+      <input id="vf-code" class="pin" type="text" inputmode="numeric" maxlength="6" placeholder="······">
+    </div>
+
+    <div class="field">
+      <label for="vf-pin">Your new PIN</label>
+      <input id="vf-pin" class="pin" type="password" inputmode="numeric"
+             autocomplete="new-password" maxlength="6" placeholder="······">
+      <p class="hint">Six digits. Not all the same, and not in a run.</p>
+    </div>
+
+    <div class="field">
+      <label for="vf-pin2">Type it again</label>
+      <input id="vf-pin2" class="pin" type="password" inputmode="numeric"
+             autocomplete="new-password" maxlength="6" placeholder="······" enterkeyhint="go">
+    </div>
+
+    <button id="vf-go" class="btn">Save my PIN</button>
+    <button id="vf-back" class="btn link">Back</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     HOME
+     ═══════════════════════════════════════════════════════ -->
+
+<section id="s-home" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <img class="wordmark" src="wordmark.png" alt="African Originals">
+      <span class="who" id="home-hello">—</span>
+      <button class="avatar" id="home-avatar" aria-label="Your account">··</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- The weekly allowance used to sit here. It lives inside Staff Orders
+         now, next to the products it is spent on, where it is the number you
+         act on rather than one more thing on the way in. -->
+    <div class="grid" id="home-grid"></div>
+
+    <p class="faint center" style="margin-top:22px" id="home-version"></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     YOUR ACCOUNT
+     ═══════════════════════════════════════════════════════ -->
+
+<section id="s-account" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1>Your account</h1>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="card">
+      <table class="kv">
+        <tr><td>Name</td><td id="acc-name">—</td></tr>
+        <tr><td>Staff ID</td><td id="acc-id" class="num">—</td></tr>
+        <tr><td>Email</td><td id="acc-email">—</td></tr>
+        <tr><td>Department</td><td id="acc-dept">—</td></tr>
+        <tr><td>Approved by</td><td id="acc-lm">—</td></tr>
+        <!-- App and backend side by side. Apps Script serves whatever version
+             was last DEPLOYED, not what is in the editor, so when the two
+             disagree you are looking at stale code rather than a bug. -->
+        <tr><td>Version</td><td id="acc-build" class="num">—</td></tr>
+      </table>
+    </div>
+
+    <div class="section-label">Security</div>
+    <button class="btn ghost" id="acc-changepin">Change my PIN</button>
+
+    <div id="acc-admin" hidden>
+      <div class="section-label">Admin</div>
+      <button class="btn ghost" id="acc-issue">Give someone a sign-in code</button>
+      <p class="hint">For anyone whose email can't reach them. The code is shown
+        on screen — read it out in person, don't send it.</p>
+    </div>
+
+    <div class="section-label">&nbsp;</div>
+    <button class="btn ghost" id="acc-out">Sign out</button>
+  </div>
+</section>
+
+<section id="s-changepin" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1>Change your PIN</h1>
+    </div>
+  </header>
+
+  <div class="wrap narrow">
+    <div id="cp-err" class="err" hidden></div>
+
+    <div class="field">
+      <label for="cp-old">Your current PIN</label>
+      <input id="cp-old" class="pin" type="password" inputmode="numeric" maxlength="6" placeholder="······">
+    </div>
+    <div class="field">
+      <label for="cp-new">New PIN</label>
+      <input id="cp-new" class="pin" type="password" inputmode="numeric" maxlength="6" placeholder="······">
+    </div>
+    <div class="field">
+      <label for="cp-new2">Type it again</label>
+      <input id="cp-new2" class="pin" type="password" inputmode="numeric" maxlength="6" placeholder="······">
+    </div>
+
+    <button id="cp-go" class="btn gold">Save</button>
+  </div>
+</section>
+
+<section id="s-issue" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1>Give someone a code</h1>
+    </div>
+  </header>
+
+  <div class="wrap narrow">
+    <div id="iss-err" class="err" hidden></div>
+
+    <div class="field">
+      <label for="iss-id">Their staff ID</label>
+      <input id="iss-id" type="text" autocapitalize="characters" placeholder="SB136">
+    </div>
+    <button id="iss-go" class="btn gold">Generate a code</button>
+
+    <div id="iss-out" class="card" hidden style="margin-top:18px;text-align:center">
+      <p class="faint" id="iss-for">—</p>
+      <p class="pin num" id="iss-code"
+         style="font-size:38px;font-weight:700;letter-spacing:.14em;margin:8px 0"></p>
+      <p class="hint" id="iss-note">—</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     STAFF ORDERS
+     Shells only. The bodies are rendered by orders.js, so the
+     markup and the data cannot drift apart.
+     ═══════════════════════════════════════════════════════ -->
+
+<section id="s-orders" class="screen wide">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1 id="ord-title">Staff Order<span class="sub" id="ord-sub">Staff price</span></h1>
+      <button class="avatar" id="ord-hist" aria-label="Your past orders" style="background:rgba(255,255,255,.14);color:#FBC62A">⏱</button>
+    </div>
+  </header>
+  <div class="wrap" id="ord-body"></div>
+  <div class="basket" id="ord-basket" hidden>
+    <div class="basket-in">
+      <div class="total">
+        <span class="faint" id="ord-count">0 items</span>
+        <b id="ord-total">KES 0</b>
+      </div>
+      <button class="btn gold" id="ord-go">Review</button>
+    </div>
+  </div>
+</section>
+
+<section id="s-myorders" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1>Your orders</h1>
+    </div>
+  </header>
+  <div class="wrap" id="myord-body"></div>
+</section>
+
+<section id="s-bar" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1>Bar</h1>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="grid" id="bar-grid"></div>
+  </div>
+</section>
+
+<section id="s-stock" class="screen wide">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1 id="stock-title">Opening stock<span class="sub" id="stock-sub">—</span></h1>
+    </div>
+  </header>
+  <div class="wrap" id="stock-body"></div>
+  <div class="basket" id="stock-bar" hidden>
+    <div class="basket-in">
+      <div class="total">
+        <span class="faint" id="stock-count">0 counted</span>
+        <b id="stock-date">—</b>
+      </div>
+      <button class="btn gold" id="stock-save">Save</button>
+    </div>
+  </div>
+</section>
+
+<section id="s-queue" class="screen">
+  <header class="bar">
+    <div class="bar-in">
+      <button class="back" data-back aria-label="Back">←</button>
+      <h1>Order queue<span class="sub" id="queue-sub">Today</span></h1>
+    </div>
+  </header>
+  <div class="wrap" id="queue-body"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     MONEY AND STOCK
+     One shell per screen; the bodies are rendered in JS.
+     ═══════════════════════════════════════════════════════ -->
+
+<section id="s-reimb" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1 id="rb-title">Reimbursement<span class="sub" id="rb-sub">Claim money back</span></h1>
+  </div></header>
+  <div class="wrap" id="rb-body"></div>
+</section>
+
+<section id="s-reimb-queue" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Claims to approve</h1>
+  </div></header>
+  <div class="wrap" id="rbq-body"></div>
+</section>
+
+<section id="s-reimb-pay" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Claims to pay</h1>
+  </div></header>
+  <div class="wrap" id="rbp-body"></div>
+</section>
+
+<section id="s-petty" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1 id="pc-title">Petty Cash<span class="sub" id="pc-sub">Ask for a float</span></h1>
+  </div></header>
+  <div class="wrap" id="pc-body"></div>
+</section>
+
+<section id="s-petty-queue" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Petty cash to approve</h1>
+  </div></header>
+  <div class="wrap" id="pcq-body"></div>
+</section>
+
+<section id="s-petty-disburse" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Cash to hand over</h1>
+  </div></header>
+  <div class="wrap" id="pcd-body"></div>
+</section>
+
+<section id="s-advance" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1 id="ad-title">Salary Advance<span class="sub" id="ad-sub">Against your pay</span></h1>
+  </div></header>
+  <div class="wrap" id="ad-body"></div>
+</section>
+
+<section id="s-advance-hr" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Advances to decide</h1>
+  </div></header>
+  <div class="wrap" id="adhr-body"></div>
+</section>
+
+<section id="s-advance-payroll" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Advances to pay</h1>
+  </div></header>
+  <div class="wrap" id="adpay-body"></div>
+</section>
+
+<section id="s-samples" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1 id="sr-title">Samples &amp; POSM<span class="sub" id="sr-sub">Request stock</span></h1>
+  </div></header>
+  <div class="wrap" id="sr-body"></div>
+</section>
+
+<section id="s-samples-queue" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Samples to approve</h1>
+  </div></header>
+  <div class="wrap" id="srq-body"></div>
+</section>
+
+<section id="s-samples-invoice" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Samples to invoice</h1>
+  </div></header>
+  <div class="wrap" id="sri-body"></div>
+</section>
+
+<section id="s-samples-dispatch" class="screen">
+  <header class="bar"><div class="bar-in">
+    <button class="back" data-back aria-label="Back">←</button>
+    <h1>Samples to dispatch</h1>
+  </div></header>
+  <div class="wrap" id="srd-body"></div>
+</section>
+
+<div id="toast-host"></div>
+<div id="sheet-host"></div>
+
+<script src="app.js"></script>
+<script src="orders.js"></script>
+<script src="claims.js"></script>
+<script src="more.js"></script>
+</body>
+</html>
