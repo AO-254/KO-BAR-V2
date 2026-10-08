@@ -463,10 +463,18 @@ input.pin {
    The artwork exactly: pink linework ground, gold panel floating on it,
    the wordmark in black. This is the front door, so it gets the full
    identity; the working screens inside stay calmer. */
+/* The sign-in screens centre their panel vertically, which needs flex — but
+   `display` is exactly the property .screen uses to hide a screen that is not
+   the current one. Setting it here as a plain .entry rule beat `.screen
+   { display: none }` on source order at equal specificity, so sign-in, enrol
+   and verify were all on the page at once, each a full viewport tall, found
+   by scrolling. The layout belongs on the ACTIVE entry screen only. */
 .entry {
   min-height: 100dvh;
-  display: flex; flex-direction: column; justify-content: center;
   padding: 28px 16px calc(28px + env(safe-area-inset-bottom));
+}
+.screen.entry.on {
+  display: flex; flex-direction: column; justify-content: center;
 }
 .panel {
   width: 100%; max-width: 400px; margin: 0 auto;
