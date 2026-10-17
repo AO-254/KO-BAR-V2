@@ -1032,3 +1032,39 @@ table.alloc .faint { font-size: 10.5px; color: var(--ink-3); }
 .spend-now.dest.none { color: var(--ink-3); font-weight: 600; font-style: italic; }
 #sr-card .spend-head { align-items: center; }
 #sr-card .btn.ghost { flex: none; }
+
+/* ── off sale ────────────────────────────────────────────────
+   Greyed, never hidden. A hidden tile sends somebody to the bar to ask
+   whether you have it; a greyed one answers before the question. The
+   price stays readable so it is clearly the same product, not a gap. */
+.pc.oos {
+  opacity: .62;
+  border-style: dashed;
+  box-shadow: none;
+  background: var(--sunk);
+}
+.pc.oos .pc-ico { filter: grayscale(1); }
+.pc.oos .pc-price { color: var(--ink-3); font-weight: 700; }
+.oos-tag {
+  display: inline-block; align-self: flex-start;
+  margin-top: 6px; padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bad-wash); color: var(--bad);
+  font-size: 10.5px; font-weight: 700;
+}
+
+/* The bar's own controls, on the bar's own picker only. Deliberately quiet —
+   they are used a few times a shift, not every tap. */
+.mark-out, .back-on {
+  width: 100%; margin-top: 8px;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: transparent; color: var(--ink-3);
+  font: inherit; font-size: 11px; font-weight: 700;
+  padding: 7px; cursor: pointer;
+}
+.mark-out:hover { border-color: var(--bad); color: var(--bad); }
+.back-on {
+  margin-top: auto; color: var(--good); border-color: var(--good);
+  height: auto;
+}
+.back-on:hover { background: var(--good-wash); }

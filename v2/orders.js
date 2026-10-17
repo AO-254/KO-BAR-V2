@@ -95,6 +95,9 @@ async function openOrders(asBar) {
       return;
     }
     renderPicker();
+    // Tiles are up; now check nothing has gone off sale since this list was
+    // cached. Deliberately not awaited — the screen is already usable.
+    refreshStock(true);
   } catch (e) {
     $('ord-body').innerHTML = '<div class="err">' + esc(e.message) + '</div>';
   }
@@ -202,6 +205,23 @@ function renderList() {
     // The allowance is a hard stop, so the tile refuses rather than letting
     // somebody build a basket the server will turn away at checkout.
     const blocked = staffPriced && price > left;
+    // Greyed, not hidden. Hiding it makes somebody walk to the bar and ask
+    // whether you have it; greying it answers that before it is asked.
+    if (p.oos) {
+      return '<div class="pc oos" id="pc' + p.id + '">'
+        + '<div class="pc-ico" style="background:' + esc(p.clr || '#1a4a8a') + '">'
+        + esc(p.ltr || p.name.charAt(0)) + '</div>'
+        + '<div class="pc-name">' + esc(p.name) + '</div>'
+        + '<div class="pc-var">' + esc(p.var || '')
+        + (p.cat ? (p.var ? ' · ' : '') + esc(p.cat) : '') + '</div>'
+        + '<span class="oos-tag">Out of stock</span>'
+        + '<div class="pc-price">KES ' + money(price).replace(/^KES\s*/, '')
+        + ' <small>/unit</small></div>'
+        + (channel === 'bar'
+            ? '<button class="qb back-on" data-back="' + p.id + '">Back on sale</button>'
+            : '')
+        + '</div>';
+    }
     return '<div class="pc' + (qty > 0 ? ' inc' : '') + '" id="pc' + p.id + '">'
       + '<div class="pc-ico" style="background:' + esc(p.clr || '#1a4a8a') + '">'
       + esc(p.ltr || p.name.charAt(0)) + '</div>'
@@ -218,10 +238,20 @@ function renderList() {
       + '<span class="qn" id="qn' + p.id + '">' + qty + '</span>'
       + '<button class="qb" data-more="' + p.id + '"' + (blocked ? ' disabled' : '')
       + ' aria-label="One more">+</button>'
-      + '</div></div>';
+      + '</div>'
+      + (channel === 'bar'
+          ? '<button class="mark-out" data-out="' + p.id + '">Mark out of stock</button>'
+          : '')
+      + '</div>';
   }).join('');
 
   $('ord-list').onclick = e => {
+    // Mid-service, without navigating anywhere.
+    const back = e.target.closest('[data-back]');
+    if (back) return setStock(Number(back.dataset.back), true);
+    const out = e.target.closest('[data-out]');
+    if (out) return setStock(Number(out.dataset.out), false);
+
     const more = e.target.closest('[data-more]');
     const less = e.target.closest('[data-less]');
     if (!more && !less) return;
@@ -300,6 +330,64 @@ function refreshLimit() {
   card.classList.toggle('dim', priceMode !== 'staff');
 }
 
+/* ── what is off sale ────────────────────────────────────────
+   Three layers, and only the last one is actually load-bearing:
+
+     1  the list refreshes in the background when the picker opens
+     2  it is re-checked when you tap Review
+     3  the SERVER refuses an out-of-stock line at checkout
+
+   Apps Script cannot push, so 1 and 2 are the best "immediately" available
+   and they are courtesy. However fresh the list, somebody can be mid-tap
+   when the last bottle goes — layer 3 is what makes it true.
+   ─────────────────────────────────────────────────────────── */
+
+// The barman, from a tile.
+async function setStock(id, inStock) {
+  const p = CATALOGUE.find(x => x.id === id);
+  if (!p) return;
+  try {
+    await api('setProductStock', { id: id, inStock: inStock });
+    p.oos = !inStock;
+    if (!inStock) basket.delete(id);          // nothing off sale stays in a basket
+    renderList(); refreshBasket();
+    toast(p.name + (inStock ? ' is back on sale.' : ' marked out of stock.'));
+  } catch (e) { toast(e.message, true); }
+}
+
+// Shows the cached tiles at once, then quietly checks whether anything has
+// gone off sale since and redraws if so. Nobody waits, and nobody is looking
+// at an hour-old list.
+async function refreshStock(silent) {
+  try {
+    const out = await api('getStockStatus', {});
+    const by = {};
+    (out.products || []).forEach(x => { by[x.id] = !!x.oos; });
+
+    let changed = false, droppedNames = [];
+    CATALOGUE.forEach(p => {
+      const now = by[p.id];
+      if (now === undefined || now === p.oos) return;
+      p.oos = now;
+      changed = true;
+      if (now && basket.has(p.id)) { basket.delete(p.id); droppedNames.push(p.name); }
+    });
+
+    if (changed) {
+      renderList(); refreshBasket();
+      if (channel === 'staff') refreshLimit();
+    }
+    // Only say something if it cost them a line they had already picked.
+    if (droppedNames.length && !silent) {
+      toast(droppedNames.join(', ') + (droppedNames.length === 1 ? ' has' : ' have')
+        + ' just gone out of stock.', true);
+    }
+    return out.outCount || 0;
+  } catch (e) {
+    return -1;    // a failed check must never block ordering
+  }
+}
+
 /* ── the bar ringing up for a named person ───────────────── */
 function pickStaffMember() {
   sheet(
@@ -328,7 +416,15 @@ function pickStaffMember() {
 }
 
 /* ── checkout ────────────────────────────────────────────── */
-function reviewOrder() {
+async function reviewOrder() {
+  if (!basketTotal().n) return;
+  // The moment that matters: somebody who has had this screen open while the
+  // last bottle went finds out here rather than at checkout.
+  const btn = $('ord-go');
+  busy(btn, true, 'Checking');
+  await refreshStock(false);
+  busy(btn, false);
+
   const b = basketTotal();
   if (!b.n) return;
   const lines = [];
@@ -388,6 +484,18 @@ async function placeOrder(payMethod, btn) {
   } catch (e) {
     busy(btn, false);
     toast(e.message, true);
+    // The server refused something as out of stock — reflect that at once
+    // rather than leaving them to tap Review again and get the same answer.
+    if (e.data && e.data.outOfStock) {
+      e.data.outOfStock.forEach(id => {
+        const p = CATALOGUE.find(x => x.id === id);
+        if (p) p.oos = true;
+        basket.delete(id);
+      });
+      closeSheet();
+      renderList(); refreshBasket();
+      if (channel === 'staff') refreshLimit();
+    }
     // A refusal carries the real figures, so the meter corrects itself.
     if (e.data && e.data.remaining !== undefined) {
       weekSpent = Number(e.data.alreadySpent) || weekSpent;
@@ -455,10 +563,21 @@ function openBar() {
     { n: 'Opening stock',  m: 'Count what is there', i: '📋', s: 'stock-open' },
     { n: 'Received stock', m: 'Log a delivery',      i: '📥', s: 'stock-recv' },
     { n: 'Order queue',    m: "Today's orders",      i: '📃', s: 'queue' },
+    { n: "What's out",     m: 'Mark things off sale', i: '🚫', s: 'oos' },
   ].map(x => '<button class="mod" data-bar="' + x.s + '" style="--tone:var(--m-orders)">'
+    + (x.s === 'oos' ? '<span class="pip" id="oos-pip" hidden>0</span>' : '')
     + '<span class="ico">' + x.i + '</span>'
     + '<span class="name">' + x.n + '</span>'
     + '<span class="meta">' + x.m + '</span></button>').join('');
+
+  // A standing count on the tile, because the way this fails is quietly:
+  // something marked out weeks ago that came back in and nobody lifted.
+  api('getStockStatus', {}).then(r => {
+    const pip = $('oos-pip');
+    if (!pip) return;
+    pip.textContent = r.outCount;
+    pip.hidden = !r.outCount;
+  }).catch(() => {});
 
   $('bar-grid').onclick = e => {
     const b = e.target.closest('[data-bar]');
@@ -468,6 +587,7 @@ function openBar() {
     if (to === 'stock-open') openStock('stock');
     if (to === 'stock-recv') openStock('receive');
     if (to === 'queue') openQueue();
+    if (to === 'oos') openOOS();
   };
   show('s-bar');
 }
@@ -526,13 +646,63 @@ async function saveStock() {
       type: stockType, items: items,
       date: new Date().toISOString().slice(0, 10),
     });
-    toast(out.count + ' items recorded.');
+    // Said out loud rather than done quietly: if the delivery went straight
+    // back out again, this is where that gets noticed.
+    toast((out.cleared && out.cleared.length)
+      ? out.count + ' recorded. ' + out.cleared.join(', ')
+        + (out.cleared.length === 1 ? ' is' : ' are') + ' back on sale.'
+      : out.count + ' items recorded.');
     stockQty.clear();
     $('stock-bar').hidden = true;
     back();
   } catch (e) {
     toast(e.message, true);
   } finally { busy(btn, false); }
+}
+
+/* ── what's out ──────────────────────────────────────────── */
+// Everything, in one list, with the out ones first and how long they have
+// been out. Sorting them to the top is the point: this screen exists to be
+// a reminder, not an inventory.
+async function openOOS() {
+  show('s-oos'); $('oos-body').innerHTML = '<div class="card center"><span class="spin"></span></div>';
+  try {
+    const out = await api('getStockStatus', {});
+    const list = (out.products || []).slice().sort((a, b) =>
+      (b.oos ? 1 : 0) - (a.oos ? 1 : 0) || a.name.localeCompare(b.name));
+
+    $('oos-sub').textContent = out.outCount
+      ? out.outCount + ' off sale' : 'Everything on sale';
+
+    $('oos-body').innerHTML =
+      '<p class="hint" style="margin:14px 0">Marking something out hides it from '
+      + 'everybody as soon as they open the list, and stops it being ordered. '
+      + 'Logging a delivery puts it back automatically.</p>'
+      + '<div class="list">' + list.map(x =>
+        '<div class="row" style="cursor:default"><div class="body">'
+        + '<div class="title">' + esc(x.name) + '</div>'
+        + '<div class="sub">' + esc(x.var || x.cat || '')
+        + (x.oos && x.oosAt ? ' · out since ' + when(x.oosAt) : '') + '</div></div>'
+        + '<button class="btn ' + (x.oos ? 'good' : 'ghost')
+        + '" data-tog="' + x.id + '" data-now="' + (x.oos ? '1' : '0') + '"'
+        + ' style="width:auto;padding:8px 14px;margin:0">'
+        + (x.oos ? 'Back on sale' : 'Mark out') + '</button></div>').join('')
+      + '</div>';
+
+    $('oos-body').onclick = async e => {
+      const b = e.target.closest('[data-tog]');
+      if (!b) return;
+      busy(b, true, '…');
+      try {
+        await api('setProductStock',
+          { id: Number(b.dataset.tog), inStock: b.dataset.now === '1' });
+        CATALOGUE = null;        // the picker must re-read, not use the old copy
+        openOOS();
+      } catch (err) { toast(err.message, true); busy(b, false); }
+    };
+  } catch (e) {
+    $('oos-body').innerHTML = '<div class="err">' + esc(e.message) + '</div>';
+  }
 }
 
 /* ── the queue ───────────────────────────────────────────── */
@@ -573,6 +743,7 @@ async function openQueue(dateStr) {
 // at once and the tap registers the first time.
 SCREENS['s-orders'] = () => { openOrders(false); };
 SCREENS['s-bar']    = openBar;
+SCREENS['s-oos']    = openOOS;
 
 document.addEventListener('DOMContentLoaded', () => {
   $('ord-go').addEventListener('click', reviewOrder);
