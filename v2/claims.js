@@ -335,6 +335,7 @@ async function openPetty() {
 
 function newPetty() {
   const state = {};
+  const files = [];
   const lineHtml = i =>
     '<div class="card" style="padding:14px"><div class="section-label" style="margin:0 0 8px">Line ' + (i + 1) + '</div>'
     + '<div class="field"><label for="pl-cat' + i + '">What for</label>'
@@ -349,7 +350,11 @@ function newPetty() {
     + '<div id="pc-lines">' + [0, 1].map(lineHtml).join('') + '</div>'
     + '<button class="btn ghost" id="pc-add">Add another line</button>'
     + '<div class="section-label">Paid to you by</div>'
-    + formCard(payPicker('pcp'))
+    + formCard(payPicker('pcp')
+      // Not a receipt — nothing has been spent yet. Whatever lets the person
+      // approving see what they are approving rather than just a figure.
+      + fileField('pc-files', 'Quotation or supporting document',
+                  'Optional. A quotation, a pro-forma, a list — whatever you have.'))
     + '<div class="card" style="display:flex;justify-content:space-between">'
     + '<b>Total</b><b class="num" id="pc-total">KES 0</b></div>'
     + '<button class="btn gold" id="pc-send" style="margin-top:14px">Send for approval</button>'
@@ -357,6 +362,7 @@ function newPetty() {
 
   let count = 2;
   wirePay('pcp', state);
+  wireFiles('pc-files', files);
 
   const retotal = () => {
     let t = 0;
@@ -383,7 +389,8 @@ function newPetty() {
     const btn = $('pc-send');
     busy(btn, true, 'Sending');
     try {
-      const out = await api('savePettyCash', Object.assign({ lines: lines }, readPay('pcp', state)));
+      const out = await api('savePettyCash',
+        Object.assign({ lines: lines, attachments: files }, readPay('pcp', state)));
       toast('Sent to ' + out.sentTo + '.');
       openPetty();
     } catch (e) { toast(e.message, true); busy(btn, false); }
@@ -407,6 +414,12 @@ function pettyDetail(r) {
         + money(Math.max(0, r.totalApproved - r.totalSpent)) + '</b></td></tr>' : '')
     + (r.lmComment ? '<tr><td>Comment</td><td>' + esc(r.lmComment) + '</td></tr>' : '')
     + '</table>'
+    // Both ends of the request: what you sent with it, and the receipts you
+    // attached afterwards. Two different things, so they are named differently.
+    + (r.attachUrl ? '<p style="margin-top:12px"><a href="' + esc(r.attachUrl)
+        + '" target="_blank" rel="noopener">What you attached</a></p>' : '')
+    + (r.reconAttachUrl ? '<p style="margin-top:8px"><a href="' + esc(r.reconAttachUrl)
+        + '" target="_blank" rel="noopener">Your receipts</a></p>' : '')
     + (canReconcile
         ? '<button class="btn gold" id="pd-rec" style="margin-top:16px">Reconcile it</button>'
         : '')
@@ -483,6 +496,8 @@ async function openPettyQueue() {
 function decidePetty(r) {
   sheet('<h2>' + esc(r.name) + '</h2>'
     + '<p class="faint">' + esc(r.department) + ' · ' + esc(r.pcId) + '</p>'
+    + (r.attachUrl ? '<p style="margin:12px 0"><a href="' + esc(r.attachUrl)
+        + '" target="_blank" rel="noopener">View what was attached</a></p>' : '')
     + '<p class="hint" style="margin:12px 0 4px">Change any amount to approve less. '
     + 'You cannot approve more than was asked.</p>'
     + r.lines.map((l, i) =>
