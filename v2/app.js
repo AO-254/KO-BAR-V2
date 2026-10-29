@@ -16,7 +16,7 @@ const CONFIG = {
   // anyone can read it. The session token is what actually protects things.
   CLIENT_KEY:'ko_eXezKm6rt2whD1itHBMTGhsunIYZqPnxDHh35rYU',
 
-  VERSION: '2.1',
+  VERSION: '2.2',
 };
 
 /* ── session ─────────────────────────────────────────────── */
@@ -334,6 +334,9 @@ const QUEUES = [
   { key: 'q-sam-lm',    name: 'Samples to approve', ico: '✅', tone: 'var(--m-samples)',
     screen: 's-samples-queue', when: u => ['lm', 'manager', 'approver'].includes(u.roles.samples),
     count: 'getSamplesPendingApproval', field: 'requests' },
+  { key: 'q-sam-lead',  name: 'Final approval',     ico: '🖊️', tone: 'var(--m-samples)',
+    screen: 's-samples-lead', when: u => !!u.samplesCategoryLead,
+    count: 'getSamplesPendingLead', field: 'requests' },
   { key: 'q-sam-inv',   name: 'Samples to invoice', ico: '🧮', tone: 'var(--m-samples)',
     screen: 's-samples-invoice', when: u => u.roles.samples === 'invoicing',
     count: 'getSamplesForInvoicing', field: 'requests' },

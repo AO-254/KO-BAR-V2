@@ -203,6 +203,13 @@ async function openAdvancePayroll() {
 
 let SAMPLE_ITEMS = null;
 
+// `lead_review` is the status the sheet holds; it is not what anybody wants
+// to read on a phone. Everything else already says what it means.
+const srPill = r => r.status === 'lead_review'
+  ? '<span class="pill lead_review">with ' + esc(String(r.leadName || 'the category lead')
+      .split(',')[0].trim()) + '</span>'
+  : pill(r.status);
+
 async function sampleItems() {
   if (SAMPLE_ITEMS) return SAMPLE_ITEMS;
   const out = await api('getSampleItems', {});
@@ -228,8 +235,9 @@ async function openSamples() {
                 + esc(String(r.purpose).slice(0, 38)) + '</div>'
                 + '<div class="sub">' + r.units + ' units · '
                 + (r.dropCount > 1 ? r.dropCount + ' outlets' : esc(r.source || '—'))
+                + (r.category ? ' · ' + esc(r.category) : '')
                 + '</div></div>'
-                + pill(r.status) + '</button>').join('') + '</div>'
+                + srPill(r) + '</button>').join('') + '</div>'
           : '<div class="empty"><div class="big">📦</div>No requests yet.</div>');
 
     $('sr-new').onclick = newSamples;
@@ -266,7 +274,18 @@ let srCat     = null;
 let srFilter  = 'All';
 let srSearch  = '';
 let srPurpose = '';
+let srCategory = '';        // 'commercial' | 'stakeholder' — asked on review
 let srDest    = { outlet: '', phone: '', contact: '' };
+
+// Fixed in the backend too, where the request is refused if it arrives as
+// anything else. These two decide who gives the final approval, which is
+// why they are a choice of two rather than a box to type in.
+const SR_CATEGORIES = [
+  { key: 'commercial',  label: 'Commercial',
+    hint: 'Activations, brand training, commercial team samples' },
+  { key: 'stakeholder', label: 'Stakeholder management',
+    hint: 'Gifting, shareholder meetings' },
+];
 let srQty     = {};         // product name -> how many, for the one outlet
 let srUpload  = [];         // drops read from a sheet
 let srTemplate = null;
@@ -277,7 +296,7 @@ const upUnits = () => srUpload.reduce((s, d) => s + (d.units || 0), 0);
 
 async function newSamples() {
   srMode = 'one'; srFilter = 'All'; srSearch = '';
-  srPurpose = ''; srDest = { outlet: '', phone: '', contact: '' };
+  srPurpose = ''; srCategory = ''; srDest = { outlet: '', phone: '', contact: '' };
   srQty = {}; srUpload = [];
 
   $('sr-body').innerHTML = skeletonTiles();
@@ -561,7 +580,19 @@ function reviewSamples() {
   sheet(
     '<h2>' + drops.length + (drops.length === 1 ? ' outlet' : ' outlets') + '</h2>'
     + '<p class="faint">' + units + ' units in total</p>'
+    // Nothing is pre-selected on purpose: an unanswered choice should look
+    // unanswered, not like a default somebody meant to pick.
     + '<div class="field" style="margin-top:14px">'
+    + '<label>Which budget is this?</label>'
+    + '<div class="seg" id="rv-cat" role="group">'
+    + SR_CATEGORIES.map(c => '<button type="button" class="seg-btn'
+        + (srCategory === c.key ? ' on' : '') + '" data-cat="' + c.key + '">'
+        + esc(c.label) + '</button>').join('')
+    + '</div>'
+    + '<p class="hint" id="rv-cat-hint">' + esc(
+        (SR_CATEGORIES.filter(c => c.key === srCategory)[0] || {}).hint
+        || 'This decides who gives the final approval.') + '</p></div>'
+    + '<div class="field">'
     + '<label for="rv-purpose">What are the samples for?</label>'
     + '<input id="rv-purpose" placeholder="October Naivas activation" value="'
     + esc(srPurpose) + '"></div>'
@@ -576,18 +607,29 @@ function reviewSamples() {
     + '<button class="btn gold" id="rv-go" style="margin-top:14px">Send for approval</button>'
     + '<button class="btn link" onclick="closeSheet()">Keep editing</button>',
     host => {
+      host.querySelector('#rv-cat').onclick = e => {
+        const b = e.target.closest('[data-cat]');
+        if (!b) return;
+        srCategory = b.dataset.cat;
+        host.querySelectorAll('#rv-cat .seg-btn').forEach(x =>
+          x.classList.toggle('on', x.dataset.cat === srCategory));
+        const c = SR_CATEGORIES.filter(x => x.key === srCategory)[0];
+        host.querySelector('#rv-cat-hint').textContent = c ? c.hint : '';
+      };
       host.querySelector('#rv-go').onclick = e =>
         sendSamples(drops, host.querySelector('#rv-purpose').value.trim(), e.currentTarget);
     });
 }
 
 async function sendSamples(drops, purpose, btn) {
+  if (!srCategory) return toast('Choose which budget this comes from.', true);
   if (!purpose) return toast('Say what the samples are for.', true);
   srPurpose = purpose;
   busy(btn, true, 'Sending');
   try {
     const out = await api('saveSamplesRequest', {
       purpose: purpose,
+      category: srCategory,
       drops: drops.map(d => ({
         outlet: d.outlet, address: '', phone: d.phone || '', contact: d.contact || '',
         items: (d.items || []).filter(i => i.qty > 0).map(i => ({ name: i.name, qty: i.qty })),
@@ -898,12 +940,14 @@ async function samplesDetail(r) {
     } catch (e) { r.drops = []; }   // show what we have rather than nothing
   }
   sheet('<h2>' + esc(r.purpose) + '</h2>'
-    + '<p class="faint">' + esc(r.reqId) + ' · ' + pill(r.status) + '</p>'
+    + '<p class="faint">' + esc(r.reqId) + ' · ' + srPill(r) + '</p>'
     + '<table class="kv" style="margin-top:14px">'
+    + (r.category ? '<tr><td>Budget</td><td>' + esc(r.category) + '</td></tr>' : '')
     + '<tr><td>Going to</td><td>' + r.dropCount
     + (r.dropCount === 1 ? ' outlet' : ' outlets') + '</td></tr>'
     + '<tr><td>Units</td><td class="num">' + r.units + '</td></tr>'
     + (r.approverComment ? '<tr><td>Comment</td><td>' + esc(r.approverComment) + '</td></tr>' : '')
+    + (r.leadComment ? '<tr><td>Final approver</td><td>' + esc(r.leadComment) + '</td></tr>' : '')
     + (r.invoicedBy ? '<tr><td>Invoiced by</td><td>' + esc(r.invoicedBy) + '</td></tr>' : '')
     + (r.dispatchedBy ? '<tr><td>Dispatched by</td><td>' + esc(r.dispatchedBy) + '</td></tr>' : '')
     + '</table>'
@@ -918,7 +962,8 @@ async function samplesDetail(r) {
 function samplesRow(r) {
   return '<button class="row" data-srq="' + esc(r.reqId) + '">'
     + '<div class="body"><div class="title">' + esc(r.name) + '</div>'
-    + '<div class="sub">' + esc(String(r.purpose).slice(0, 38))
+    + '<div class="sub">' + (r.category ? esc(r.category) + ' · ' : '')
+    + esc(String(r.purpose).slice(0, 32))
     + (r.dropCount > 1 ? ' · <b>' + r.dropCount + ' outlets</b>' : '') + '</div></div>'
     + '<div class="amt">' + r.units + '</div>'
     + '<span class="chev">›</span></button>';
@@ -1000,6 +1045,39 @@ const openSamplesQueue = () => samplesQueue('s-samples-queue', 'srq-body',
       });
   });
 
+// The second stage. Same sheet as the first approval, with the category and
+// who already approved it said at the top — the lead is signing off on a
+// budget, so which budget is the first thing they need to see.
+const openSamplesLead = () => samplesQueue('s-samples-lead', 'srl-body',
+  'getSamplesPendingLead', r => {
+    sheet('<h2>' + esc(r.name) + '</h2>'
+      + '<p class="faint">' + esc(r.department) + ' · ' + esc(r.reqId) + '</p>'
+      + '<p style="margin:12px 0"><b>' + esc(r.category) + '</b> — ' + esc(r.purpose) + '</p>'
+      + '<p class="hint">Already approved by ' + esc(r.lmName) + '. This is the final approval.</p>'
+      + scopeNote(r, 'One decision covers all ' + r.dropCount + ' outlets.')
+      + dropsBlock(r) + itemTable(r, r.dropCount > 1 ? 'Everything, across all outlets' : 'Items')
+      + '<div class="field" style="margin-top:14px"><label for="sl-note">Comment (optional)</label>'
+      + '<textarea id="sl-note"></textarea></div>'
+      + '<div class="btn-row"><button class="btn bad" id="sl-no">Reject</button>'
+      + '<button class="btn good" id="sl-yes">Approve</button></div>',
+      host => {
+        const go = async (decision, btn) => {
+          busy(btn, true, 'Saving');
+          try {
+            await api('decideSamplesAsLead', {
+              reqId: r.reqId, decision: decision,
+              comment: host.querySelector('#sl-note').value.trim(),
+            });
+            closeSheet();
+            toast(decision === 'approved' ? 'Approved — sent to invoicing.' : 'Rejected.');
+            openSamplesLead();
+          } catch (e) { toast(e.message, true); busy(btn, false); }
+        };
+        host.querySelector('#sl-yes').onclick = e => go('approved', e.currentTarget);
+        host.querySelector('#sl-no').onclick = e => go('rejected', e.currentTarget);
+      });
+  });
+
 const openSamplesInvoice = () => samplesQueue('s-samples-invoice', 'sri-body',
   'getSamplesForInvoicing', r => {
     const files = [];
@@ -1052,5 +1130,6 @@ SCREENS['s-advance-hr']       = openAdvanceHR;
 SCREENS['s-advance-payroll']  = openAdvancePayroll;
 SCREENS['s-samples']          = openSamples;
 SCREENS['s-samples-queue']    = openSamplesQueue;
+SCREENS['s-samples-lead']     = openSamplesLead;
 SCREENS['s-samples-invoice']  = openSamplesInvoice;
 SCREENS['s-samples-dispatch'] = openSamplesDispatch;

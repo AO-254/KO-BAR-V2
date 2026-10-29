@@ -368,6 +368,9 @@ input.pin {
   padding: 3px 9px; border-radius: 20px; white-space: nowrap;
 }
 .pill.submitted  { background: var(--gold-wash); color: var(--gold-deep); }
+/* Past the first approval, not yet finished. Deliberately the same wash as
+   submitted — to the person waiting it is still "with somebody". */
+.pill.lead_review { background: var(--gold-wash); color: var(--gold-deep); }
 .pill.approved   { background: var(--good-wash); color: var(--good); }
 .pill.rejected   { background: var(--bad-wash);  color: var(--bad); }
 .pill.paid,
