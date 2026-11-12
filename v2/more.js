@@ -274,17 +274,19 @@ let srCat     = null;
 let srFilter  = 'All';
 let srSearch  = '';
 let srPurpose = '';
-let srCategory = '';        // 'commercial' | 'stakeholder' — asked on review
+let srCategory = '';        // one of SR_CATEGORIES' keys — asked on review
 let srDest    = { outlet: '', phone: '', contact: '' };
 
 // Fixed in the backend too, where the request is refused if it arrives as
-// anything else. These two decide who gives the final approval, which is
-// why they are a choice of two rather than a box to type in.
+// anything else. These decide who gives the final approval, which is why
+// they are a choice from a list rather than a box to type in.
 const SR_CATEGORIES = [
   { key: 'commercial',  label: 'Commercial',
     hint: 'Activations, brand training, commercial team samples' },
   { key: 'stakeholder', label: 'Stakeholder management',
     hint: 'Gifting, shareholder meetings' },
+  { key: 'marketing',   label: 'Marketing',
+    hint: 'Brand campaigns, photoshoots, PR and press, influencer samples, events' },
 ];
 let srQty     = {};         // product name -> how many, for the one outlet
 let srUpload  = [];         // drops read from a sheet

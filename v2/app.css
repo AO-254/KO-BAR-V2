@@ -728,6 +728,15 @@ input.pin {
 .seg-btn.on { background: var(--ink); color: var(--gold); }
 .seg-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
 
+/* Three categories will not sit side by side on a phone: the longest label
+   wraps to two lines while the others stay on one, which reads as broken.
+   Below this width the review sheet's strip becomes full-width rows. Scoped
+   to #rv-cat so the orders screen's own strip is left alone. */
+@media (max-width: 420px) {
+  #rv-cat { flex-direction: column; }
+  #rv-cat .seg-btn + .seg-btn { border-left: 0; border-top: 1px solid var(--line); }
+}
+
 /* ── what the week has cost ──────────────────────────────────
    Consumption, not a budget: the big number is what has gone. */
 .spend-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
