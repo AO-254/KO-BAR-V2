@@ -16,7 +16,7 @@ const CONFIG = {
   // anyone can read it. The session token is what actually protects things.
   CLIENT_KEY:'ko_eXezKm6rt2whD1itHBMTGhsunIYZqPnxDHh35rYU',
 
-  VERSION: '2.3',
+  VERSION: '2.4',
 };
 
 /* ── session ─────────────────────────────────────────────── */

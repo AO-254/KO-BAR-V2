@@ -18,6 +18,12 @@ let basket = new Map();        // product id -> qty
 let channel = 'staff';         // 'staff' | 'bar'
 let priceMode = 'staff';       // 'staff' | 'normal'
 let forStaff = null;           // when the bar rings one up for someone
+// Their allowance, read the moment they are named. The barman's own figures
+// say nothing at all about theirs.
+let forStaffWeek = null;       // { staffId, name, limit, spent, remaining }
+// How the basket currently falls across that allowance. Null unless the bar
+// is ringing up for a named person.
+let splitNow = null;
 let filterCat = 'All';
 let search = '';
 
@@ -45,10 +51,83 @@ function primeOrders(out) {
   }
 }
 
-const priceOf      = p => (priceMode === 'staff' && p.sp > 0) ? p.sp : p.np;
-const isStaffPriced = p => priceMode === 'staff' && p.sp > 0;
+// The allowance is spent unit by unit, in the order things were keyed: each
+// one takes the staff price while there is enough left to cover it, and the
+// rest of the round is at normal price. A cheap item later in the basket can
+// still fit after a dear one has not, which is deliberate — it uses the
+// allowance up rather than stranding the last few hundred shillings.
+//
+// The server works the same split out again from its own figures. This is a
+// preview of what it will charge, never an instruction.
+function splitBasket() {
+  const staff = [], normal = [];
+  let staffTotal = 0, normalTotal = 0;
+  let left = forStaffWeek ? forStaffWeek.remaining : 0;
+  // Only set when the ALLOWANCE is what pushed something to normal price.
+  // Shots and merchandise have no staff price and never had one, so they
+  // must not raise the warning on somebody with their full week untouched.
+  let ranOut = false;
+
+  basket.forEach((qty, id) => {
+    const p = CATALOGUE.find(x => x.id === id);
+    if (!p) return;
+    let atStaff = 0;
+    if (p.sp > 0) {
+      while (atStaff < qty && p.sp <= left) { atStaff++; left -= p.sp; }
+      if (atStaff < qty) ranOut = true;
+    }
+    if (atStaff) { staff.push({ p: p, qty: atStaff }); staffTotal += p.sp * atStaff; }
+    const rest = qty - atStaff;
+    if (rest)    { normal.push({ p: p, qty: rest });   normalTotal += p.np * rest; }
+  });
+
+  return { staff: staff, normal: normal, left: left,
+           staffTotal: staffTotal, normalTotal: normalTotal,
+           limitHit: ranOut };
+}
+
+// Why part of this round is at normal price, in the words the barman needs
+// at the moment they are about to say a number out loud. Written once and
+// used on both the basket bar and the review sheet, so the two cannot drift.
+function splitMessage(sp) {
+  if (sp.staffTotal > 0) {
+    return 'Weekly limit spent · ' + money(sp.staffTotal) + ' staff price, then '
+         + money(sp.normalTotal) + ' normal';
+  }
+  // Money left, but not enough to cover anything in the basket — saying
+  // "limit spent" there would be a lie they could be challenged on.
+  return sp.left > 0
+    ? money(sp.left) + ' left — not enough for this round · all at normal price'
+    : 'Weekly limit spent · all at normal price';
+}
+
+function recomputeSplit() {
+  splitNow = (forStaff && forStaffWeek) ? splitBasket() : null;
+}
+
+// At the bar for a named person the price is not a mode, it is a position in
+// the queue — so a tile shows what the NEXT one of it would cost.
+const barLeft = () => splitNow ? splitNow.left
+                    : (forStaffWeek ? forStaffWeek.remaining : 0);
+const fitsOnAllowance = p => !!forStaff && p.sp > 0 && p.sp <= barLeft();
+
+const priceOf = p => forStaff
+  ? (fitsOnAllowance(p) ? p.sp : p.np)
+  : ((priceMode === 'staff' && p.sp > 0) ? p.sp : p.np);
+const isStaffPriced = p => forStaff
+  ? fitsOnAllowance(p)
+  : (priceMode === 'staff' && p.sp > 0);
 
 function basketTotal() {
+  // When the bar is ringing up for somebody the basket is not at one price,
+  // so the totals come from the split rather than from a per-item lookup.
+  if (splitNow) {
+    let count = 0;
+    basket.forEach(qty => { count += qty; });
+    return { n: count,
+             total: splitNow.staffTotal + splitNow.normalTotal,
+             staffSpend: splitNow.staffTotal };
+  }
   let n = 0, total = 0, staffSpend = 0;
   basket.forEach((qty, id) => {
     const p = CATALOGUE.find(x => x.id === id);
@@ -64,6 +143,10 @@ function basketTotal() {
 // What is left on the allowance once the basket is counted. Only staff-priced
 // lines spend it, so a basket switched to normal price never runs it down.
 function allowanceLeft() {
+  // Nothing is blocked when the bar rings up for somebody: past their
+  // allowance the price changes, it does not stop. This one line is what
+  // keeps the tile, the + button and setQty all out of the way.
+  if (forStaff) return Infinity;
   if (priceMode !== 'staff') return Infinity;
   return weekLimit - weekSpent - basketTotal().staffSpend;
 }
@@ -76,6 +159,8 @@ async function openOrders(asBar) {
   channel   = asBar ? 'bar' : 'staff';
   priceMode = asBar ? 'normal' : 'staff';
   forStaff  = null;
+  forStaffWeek = null;
+  splitNow  = null;
   basket.clear();
   filterCat = 'All';
   search = '';
@@ -146,9 +231,18 @@ function renderPicker() {
     + '<button class="seg-btn' + (priceMode === 'normal' ? ' on' : '') + '" data-price="normal">Normal price</button>'
     + '</div>';
 
+  // Who it is for and what their allowance has left — the figure every price
+  // on the tiles below now depends on.
+  const allowGone = !!forStaffWeek && forStaffWeek.remaining <= 0;
   const barCard = '<div class="card" style="display:flex;gap:12px;align-items:center">'
     + '<div style="flex:1"><div class="faint">Ringing up for</div>'
-    + '<b id="for-name">A customer</b></div>'
+    + '<b id="for-name">' + esc(forStaffWeek ? forStaffWeek.name : 'A customer') + '</b>'
+    + (forStaffWeek
+        ? '<div class="allow-line' + (allowGone ? ' spent' : '') + '">'
+          + (allowGone ? 'Weekly limit spent · normal price'
+                       : money(forStaffWeek.remaining) + ' left this week') + '</div>'
+        : '')
+    + '</div>'
     + '<button class="btn ghost" id="for-pick" style="width:auto;padding:10px 16px">Change</button>'
     + '</div>';
 
@@ -290,8 +384,11 @@ function setQty(id, qty) {
 
   refreshBasket();
   if (channel === 'staff') refreshLimit();
-  // Whether every other tile can still be added to has just changed.
-  if (priceMode === 'staff') refreshAddButtons();
+  // At the bar for a named person, the allowance moving changes what every
+  // other tile COSTS — not merely whether it can be tapped — so the grid is
+  // redrawn rather than one number patched.
+  if (forStaff) renderList();
+  else if (priceMode === 'staff') refreshAddButtons();
 }
 
 function refreshAddButtons() {
@@ -304,10 +401,19 @@ function refreshAddButtons() {
 }
 
 function refreshBasket() {
+  recomputeSplit();
   const b = basketTotal();
   $('ord-count').textContent = b.n + (b.n === 1 ? ' item' : ' items');
   $('ord-total').textContent = money(b.total);
   $('ord-basket').hidden = b.n === 0;
+
+  // Said the moment it happens: the barman is about to quote a price, and it
+  // is no longer the one on the tiles they have been tapping.
+  const note = $('ord-split');
+  if (!note) return;
+  const hit = !!(splitNow && splitNow.limitHit);
+  note.hidden = !hit;
+  if (hit) note.textContent = splitMessage(splitNow);
 }
 
 // Reads as consumption — what has gone, out of what there was — rather than
@@ -401,16 +507,29 @@ function pickStaffMember() {
     + '<button class="btn gold" id="fs-ok">Use this</button></div>',
     host => {
       host.querySelector('#fs-none').onclick = () => {
-        forStaff = null; $('for-name').textContent = 'A customer';
-        priceMode = 'normal'; closeSheet(); renderList(); refreshBasket();
+        forStaff = null; forStaffWeek = null; splitNow = null;
+        priceMode = 'normal';
+        closeSheet(); renderPicker();
       };
-      host.querySelector('#fs-ok').onclick = () => {
+      // Held rather than taken from the event: currentTarget is gone by the
+      // time the first await returns.
+      const go = host.querySelector('#fs-ok');
+      go.onclick = async () => {
         const v = host.querySelector('#fs-id').value.trim().toUpperCase();
         if (!v) return;
-        forStaff = v;
-        $('for-name').textContent = v + ' · staff price';
-        priceMode = 'staff';      // preview the staff prices they will be charged
-        closeSheet(); renderList(); refreshBasket();
+        // Asked now rather than at checkout. A wrong ID becomes a typo to fix
+        // here, and every price on the screen behind depends on the answer.
+        busy(go, true, 'Checking');
+        try {
+          forStaffWeek = await api('getStaffWeek', { staffId: v });
+          forStaff  = forStaffWeek.staffId;
+          priceMode = 'staff';
+          closeSheet();
+          renderPicker();
+        } catch (err) {
+          busy(go, false);
+          toast(err.message, true);
+        }
       };
     });
 }
@@ -425,27 +544,71 @@ async function reviewOrder() {
   await refreshStock(false);
   busy(btn, false);
 
+  recomputeSplit();
   const b = basketTotal();
   if (!b.n) return;
-  const lines = [];
-  basket.forEach((qty, id) => {
-    const p = CATALOGUE.find(x => x.id === id);
-    if (p) lines.push({ p: p, qty: qty, sub: priceOf(p) * qty });
-  });
+
+  // A round at the bar can straddle the buyer's allowance. The staff-priced
+  // part goes first as its own order, with its own payment method; what is
+  // left stays in the basket and is sent after, at normal price.
+  const sp = splitNow;
+  const stage = !sp || !sp.limitHit ? null
+              : sp.staffTotal > 0   ? 'staff-part'
+              :                       'normal-all';
+
+  const group = (title, rows, unitOf) => !rows.length ? ''
+    : '<div class="section-label" style="margin-top:12px">' + title + '</div>'
+      + '<table class="kv" style="margin:6px 0">'
+      + rows.map(l => '<tr><td>' + esc(l.p.name) + (l.p.var ? ' · ' + esc(l.p.var) : '')
+          + ' <span class="faint">×' + l.qty + '</span></td><td class="num">'
+          + money(unitOf(l.p) * l.qty) + '</td></tr>').join('')
+      + '</table>';
+
+  let body, goLabel;
+  if (sp) {
+    // Every line priced from the split. priceOf() answers what the NEXT one
+    // would cost, which is the right answer on a tile and the wrong one on a
+    // receipt — a basket that used the allowance exactly would read as though
+    // none of it had.
+    body = group('On the allowance', sp.staff, p => p.sp)
+         + group('At normal price',  sp.normal, p => p.np)
+         + '<table class="kv" style="margin:6px 0"><tr><td><b>Total</b></td>'
+         + '<td class="num"><b>' + money(b.total) + '</b></td></tr></table>'
+         + (sp.limitHit
+             ? '<div class="split-warn">' + esc(splitMessage(sp)) + '. '
+               + (stage === 'staff-part'
+                   ? 'Send the staff-price part first — the rest stays in the basket '
+                     + 'for its own order.'
+                   : 'It all goes through as one order.')
+               + '</div>'
+             : '');
+    goLabel = stage === 'staff-part' ? 'Send ' + money(sp.staffTotal) + ' · staff price'
+            : stage === 'normal-all' ? 'Send ' + money(sp.normalTotal) + ' · normal price'
+            : 'Place the order';
+  } else {
+    const lines = [];
+    basket.forEach((qty, id) => {
+      const p = CATALOGUE.find(x => x.id === id);
+      if (p) lines.push({ p: p, qty: qty, sub: priceOf(p) * qty });
+    });
+    body = '<table class="kv" style="margin:12px 0">'
+      + lines.map(l => '<tr><td>' + esc(l.p.name) + (l.p.var ? ' · ' + esc(l.p.var) : '')
+          + ' <span class="faint">×' + l.qty + '</span></td><td class="num">'
+          + money(l.sub) + '</td></tr>').join('')
+      + '<tr><td><b>Total</b></td><td class="num"><b>' + money(b.total) + '</b></td></tr>'
+      + '</table>';
+    goLabel = 'Place the order';
+  }
 
   sheet(
-    '<h2>' + (forStaff ? 'Order for ' + esc(forStaff)
+    '<h2>' + (forStaffWeek ? 'Order for ' + esc(forStaffWeek.name)
               : channel === 'bar' ? 'Bar order' : 'Your order') + '</h2>'
-    + '<table class="kv" style="margin:12px 0">'
-    + lines.map(l => '<tr><td>' + esc(l.p.name) + (l.p.var ? ' · ' + esc(l.p.var) : '')
-        + ' <span class="faint">×' + l.qty + '</span></td><td class="num">' + money(l.sub) + '</td></tr>').join('')
-    + '<tr><td><b>Total</b></td><td class="num"><b>' + money(b.total) + '</b></td></tr>'
-    + '</table>'
+    + body
     + '<div class="section-label">Paying by</div>'
     + '<div class="btn-row" style="margin-bottom:16px">'
     + '<button class="btn ghost pay on" data-pay="cash">Cash</button>'
     + '<button class="btn ghost pay" data-pay="tab">Tab</button></div>'
-    + '<button class="btn gold" id="co-go">Place the order</button>'
+    + '<button class="btn gold" id="co-go">' + esc(goLabel) + '</button>'
     + '<button class="btn link" onclick="closeSheet()">Keep shopping</button>',
     host => {
       let pay = 'cash';
@@ -453,26 +616,53 @@ async function reviewOrder() {
         pay = b2.dataset.pay;
         host.querySelectorAll('.pay').forEach(x => x.classList.toggle('on', x === b2));
       });
-      host.querySelector('#co-go').onclick = () => placeOrder(pay, host.querySelector('#co-go'));
+      host.querySelector('#co-go').onclick =
+        () => placeOrder(pay, host.querySelector('#co-go'), stage);
     });
 }
 
-async function placeOrder(payMethod, btn) {
+async function placeOrder(payMethod, btn, stage) {
   const items = [];
-  basket.forEach((qty, id) => items.push({ id: id, qty: qty }));
+  if (stage === 'staff-part') splitNow.staff.forEach(l => items.push({ id: l.p.id, qty: l.qty }));
+  else basket.forEach((qty, id) => items.push({ id: id, qty: qty }));
+
   busy(btn, true, 'Sending');
   try {
     const spent = basketTotal().staffSpend;
+    const sending = stage === 'staff-part' ? splitNow.staff : null;
     const out = await api('saveOrder', {
       items: items,
       channel: forStaff ? 'staff' : channel,
-      priceType: forStaff ? 'staff' : priceMode,
+      priceType: stage === 'staff-part' ? 'staff'
+               : stage === 'normal-all' ? 'normal'
+               : (forStaff ? 'staff' : priceMode),
       payMethod: payMethod,
       forStaffId: forStaff || undefined,
     });
     closeSheet();
+
+    // Mid-round: take out what has just gone and leave the rest, already
+    // repriced, ready to send as its own order. Nothing is re-keyed.
+    if (stage === 'staff-part') {
+      sending.forEach(l => {
+        const now = basket.get(l.p.id) || 0;
+        if (now > l.qty) basket.set(l.p.id, now - l.qty);
+        else basket.delete(l.p.id);
+      });
+      // The server is the authority on the allowance — somebody else may
+      // have rung one up for the same person while this basket was open.
+      if (out.week) forStaffWeek = Object.assign({}, forStaffWeek, out.week);
+      recomputeSplit();
+      toast('Order ' + out.ref + ' · ' + money(out.total)
+          + (out.repriced ? ' · charged at normal price' : '')
+          + ' · ' + money(basketTotal().total) + ' still to send');
+      renderPicker();
+      return;
+    }
+
     basket.clear();
-    toast('Order ' + out.ref + ' · ' + money(out.total));
+    toast('Order ' + out.ref + ' · ' + money(out.total)
+        + (out.repriced ? ' · weekly limit spent, charged at normal price' : ''));
     // The allowance moves by exactly what was just charged against it, so
     // the meter is right without going back to the server for it.
     if (channel === 'staff' && !forStaff) {

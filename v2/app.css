@@ -402,6 +402,24 @@ input.pin {
   box-shadow: 0 -8px 28px -18px rgba(23,20,12,.5);
 }
 .basket-in { max-width: 640px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+
+/* The allowance running out mid-round. It sits above the total rather than
+   replacing it, because the barman still needs the figure to read out. */
+.split-note {
+  max-width: 640px; margin: 0 auto 10px;
+  background: var(--warn-wash); color: var(--warn);
+  border-radius: var(--r-sm); padding: 8px 12px;
+  font-size: 12.5px; font-weight: 700;
+}
+.split-warn {
+  background: var(--warn-wash); color: var(--warn);
+  border-radius: var(--r-sm); padding: 10px 13px;
+  font-size: 12.5px; line-height: 1.45; margin: 12px 0 4px;
+}
+
+/* What is left of the allowance of whoever is being rung up for. */
+.allow-line { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.allow-line.spent { color: var(--warn); font-weight: 700; }
 .basket .total { flex: 1; }
 .basket .total b { display: block; font-size: 19px; font-variant-numeric: tabular-nums; }
 .basket .btn { width: auto; padding: 13px 24px; }
